@@ -1,0 +1,35 @@
+[package]
+name = "beam_core"
+description = "RiverBeam orchestrator, invoke pipeline, and BEM error catalogue"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+beam_agents = { workspace = true }
+beam_audit = { workspace = true }
+riverbase_core = { workspace = true }
+beam_knowledge = { workspace = true }
+beam_memory = { workspace = true }
+beam_usage = { workspace = true }
+beam_routing = { workspace = true }
+beam_security = { workspace = true }
+beam_store = { workspace = true }
+beam_stream = { workspace = true }
+beam_types = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+async-trait = { workspace = true }
+beam_knowledge = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros"] }
+uuid = { workspace = true }
+
+[lints]
+workspace = true

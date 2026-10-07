@@ -1,0 +1,31 @@
+[package]
+name = "beam_worker"
+description = "Worker task dispatch for riverbeam (invoke + knowledge + memory RPC)"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+async-nats = { workspace = true }
+beam_core = { workspace = true }
+beam_types = { workspace = true }
+chrono = { workspace = true }
+riverbase_core = { workspace = true }
+riverbase_task = { workspace = true }
+futures-util = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync", "macros"] }
+tracing = { workspace = true }
+
+[dev-dependencies]
+beam_stream = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros", "sync", "time"] }
+uuid = { workspace = true }
+
+[features]
+default = []
+
+[lints]
+workspace = true

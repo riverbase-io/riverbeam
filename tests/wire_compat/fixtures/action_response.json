@@ -1,0 +1,11 @@
+{
+  "action_id": "9c1b2d3e-4f50-4a61-8273-849506172839",
+  "kind": "confirmation",
+  "request_id": "2b7c4d5e-6f70-4a81-9293-a4b5c6d7e8f9",
+  "status": "submitted",
+  "payload": {
+    "approved": true
+  },
+  "responder_id": "u1",
+  "responded_at": "2026-06-09T09:46:01.566411Z"
+}

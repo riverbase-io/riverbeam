@@ -1,0 +1,15 @@
+{
+  "agent_name": "kb-assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "what is river-beam?"
+    }
+  ],
+  "session_id": "5f8915eb-31eb-4f8a-9517-e2c15ce7bc41",
+  "metadata": {
+    "source": "web"
+  },
+  "request_id": "16d12ddc-651a-431d-997c-a756d5793ebf",
+  "stream": true
+}

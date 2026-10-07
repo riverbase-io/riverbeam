@@ -1,0 +1,24 @@
+[package]
+name = "beam_store"
+description = "Persistence façade for riverbeam (execution hierarchy + catalog)"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+async-trait = { workspace = true }
+beam_types = { workspace = true }
+chrono = { workspace = true }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
+riverbase_core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true, features = ["v4", "v5", "serde"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros", "sync"] }
+
+[lints]
+workspace = true

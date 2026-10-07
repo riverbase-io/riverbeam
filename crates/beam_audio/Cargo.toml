@@ -1,0 +1,29 @@
+[package]
+name = "beam_audio"
+description = "Realtime audio session machine + STT/TTS pipeline for riverbeam"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[features]
+default = []
+# Native WebM/MP4 decode (WAV always; WebM header recognized).
+audio-decode = []
+# OpenAI-compatible HTTP speech-to-text.
+audio-http-stt = ["dep:reqwest", "dep:tokio"]
+audio-whisper = ["audio-http-stt"]
+
+[dependencies]
+async-trait = { workspace = true }
+riverbase_core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true, optional = true, features = ["multipart"] }
+tokio = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros"] }
+
+[lints]
+workspace = true

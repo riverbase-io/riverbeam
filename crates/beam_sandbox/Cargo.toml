@@ -1,0 +1,19 @@
+[package]
+name = "beam_sandbox"
+description = "Path-jailed workspace sandbox and working-tree git tools for riverbeam"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+riverbase_core = { workspace = true }
+git2 = { version = "0.21", default-features = false, features = ["vendored-libgit2"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

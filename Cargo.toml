@@ -1,0 +1,72 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/beam_types",
+    "crates/beam_memory",
+    "crates/beam_routing",
+    "crates/beam_agents",
+    "crates/beam_sandbox",
+    "crates/beam_stream",
+    "crates/beam_store",
+    "crates/beam_knowledge",
+    "crates/beam_usage",
+    "crates/beam_audit",
+    "crates/beam_audio",
+    "crates/beam_security",
+    "crates/beam_core",
+    "crates/beam_worker",
+    "crates/beam_domain",
+]
+exclude = ["target"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "LicenseRef-RFX-Proprietary"
+authors = ["ABX Ltd"]
+
+[workspace.dependencies]
+riverbase_core = { path = "../riverbase/crates/riverbase_core", features = ["nats-io"] }
+riverbase_task = { path = "../riverbase/crates/riverbase_task", features = ["postgres", "nats-io"] }
+river_reed = { path = "../river-reed", features = ["grl-rule-engine"] }
+async-trait = "0.1"
+beam_types = { path = "crates/beam_types" }
+beam_memory = { path = "crates/beam_memory" }
+beam_routing = { path = "crates/beam_routing" }
+beam_agents = { path = "crates/beam_agents" }
+beam_sandbox = { path = "crates/beam_sandbox" }
+beam_stream = { path = "crates/beam_stream" }
+beam_core = { path = "crates/beam_core" }
+beam_worker = { path = "crates/beam_worker" }
+beam_domain = { path = "crates/beam_domain" }
+beam_store = { path = "crates/beam_store" }
+beam_knowledge = { path = "crates/beam_knowledge" }
+beam_usage = { path = "crates/beam_usage" }
+beam_audit = { path = "crates/beam_audit" }
+beam_audio = { path = "crates/beam_audio" }
+beam_security = { path = "crates/beam_security" }
+axum = { version = "0.8", features = ["json", "macros", "tokio", "ws"] }
+async-stream = "0.3"
+async-nats = "0.49"
+diesel = { version = "2.2", features = ["postgres", "chrono", "uuid", "serde_json", "r2d2"] }
+diesel-async = { version = "0.5", features = ["postgres", "deadpool"] }
+pgvector = { version = "0.4", features = ["diesel"] }
+regex = "1"
+tracing = "0.1"
+futures-util = "0.3"
+tokio-stream = { version = "0.1", features = ["sync"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.9"
+serde_json = { version = "1", features = ["preserve_order"] }
+thiserror = "2"
+tokio = { version = "1", features = ["rt", "macros"] }
+uuid = { version = "1", features = ["v4", "v5", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }

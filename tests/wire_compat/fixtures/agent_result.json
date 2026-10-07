@@ -1,0 +1,20 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Echo: what is river-beam?"
+    }
+  ],
+  "agent_name": "kb-assistant",
+  "model_used": "gpt-4o-mini",
+  "session_id": "5f8915eb-31eb-4f8a-9517-e2c15ce7bc41",
+  "request_id": "16d12ddc-651a-431d-997c-a756d5793ebf",
+  "interaction_id": "40744652-2720-4b10-86ee-7333c1be8165",
+  "token_usage": {
+    "prompt_tokens": 4,
+    "completion_tokens": 4,
+    "total_tokens": 8
+  },
+  "latency_ms": 0.0,
+  "interrupted": false
+}

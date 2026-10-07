@@ -1,0 +1,34 @@
+[package]
+name = "beam_knowledge"
+description = "RAG knowledge subsystem for riverbeam (embedder, vector store, retriever, ingest)"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[features]
+default = []
+# Polars-backed ingest QA stats (heavier compile; pure-Rust fallback otherwise).
+polars-ingest = ["dep:polars"]
+# Diesel + pgvector store (VECTOR(1536) + HNSW). Off by default so unit tests stay hermetic.
+postgres = ["dep:diesel", "dep:diesel-async", "dep:pgvector"]
+
+[dependencies]
+async-trait = { workspace = true }
+beam_types = { workspace = true }
+diesel = { workspace = true, optional = true }
+diesel-async = { workspace = true, optional = true }
+riverbase_core = { workspace = true }
+pgvector = { workspace = true, optional = true }
+reqwest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+polars = { version = "0.44", optional = true, default-features = false, features = ["lazy"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros", "net", "io-util"] }
+
+[lints]
+workspace = true

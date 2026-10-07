@@ -1,0 +1,23 @@
+[package]
+name = "beam_stream"
+description = "Agent stream transport and chunk buffering for riverbeam"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+async-nats = { workspace = true }
+async-trait = { workspace = true }
+beam_types = { workspace = true }
+riverbase_core = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["sync"] }
+
+[dev-dependencies]
+futures-util = { workspace = true }
+tokio = { workspace = true, features = ["rt", "macros", "sync", "time"] }
+uuid = { workspace = true }
+
+[lints]
+workspace = true

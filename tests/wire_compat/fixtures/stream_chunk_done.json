@@ -1,0 +1,16 @@
+{
+  "type": "done",
+  "result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Echo: what is river-beam?"
+      }
+    ],
+    "agent_name": "kb-assistant",
+    "interrupted": false
+  },
+  "agent_name": "kb-assistant",
+  "session_id": "5f8915eb-31eb-4f8a-9517-e2c15ce7bc41",
+  "run_id": "c36c753f-b90d-4834-9112-e12a343f6a0d"
+}
