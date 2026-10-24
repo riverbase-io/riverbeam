@@ -1,0 +1,24 @@
+# Riverbase settings for showcase-server. No secrets here: they come from
+# examples/showcase/.env (`just showcase-env`), with BEAM_DATABASE_URL,
+# RIVERBASE_DB_URL and NATS_URL from the justfile recipes.
+
+[riverbase]
+bind_addr = "127.0.0.1:8097"
+service_mode = "coupled"
+api_zone = ["default"]
+tenant = "showcase"
+
+[riverbase.bus]
+url = "nats://127.0.0.1:4222"
+
+[riverbase.auth]
+# Mock auth: the UI signs as a persona (each showcase lists its own).
+auth_provider = "mock"
+mock_sub = "b0b00000-0000-4000-8000-000000000002"
+mock_org_id = "1c0a7e52-6d1f-4c3b-9a2e-5b8d7f6e4a10"
+mock_org_name = "Loan Desk"
+mock_username = "bob"
+mock_realm_access = ["beam-user"]
+
+[riverbase.casbin]
+enabled = true

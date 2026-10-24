@@ -7,21 +7,30 @@ license = { workspace = true }
 authors = { workspace = true }
 
 [dependencies]
-async-nats = { workspace = true }
+beam_env = { workspace = true }
+async-trait = { workspace = true }
 beam_core = { workspace = true }
+beam_store = { workspace = true }
+beam_stream = { workspace = true }
+beam_telemetry = { workspace = true }
 beam_types = { workspace = true }
-chrono = { workspace = true }
 riverbase_core = { workspace = true }
-riverbase_task = { workspace = true }
 futures-util = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-tokio = { workspace = true, features = ["rt", "sync", "macros"] }
+tokio = { workspace = true, features = ["rt", "sync", "macros", "time"] }
 tracing = { workspace = true }
+uuid = { workspace = true }
 
 [dev-dependencies]
-beam_stream = { workspace = true }
-tokio = { workspace = true, features = ["rt", "macros", "sync", "time"] }
+# Tests build beams with security on (the default config).
+beam_core = { workspace = true, features = ["security-rules"] }
+beam_store = { workspace = true, features = ["testing"] }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
+beam_knowledge = { workspace = true }
+beam_runtime = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "sync", "time"] }
 uuid = { workspace = true }
 
 [features]

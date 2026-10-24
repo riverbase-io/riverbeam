@@ -164,6 +164,9 @@ mod tests {
 
     #[test]
     fn benign_text_scores_zero() {
-        assert_eq!(PatternLoader::score_injection("what is the weather today"), 0.0);
+        assert_eq!(
+            PatternLoader::score_injection("what is the weather today").to_bits(),
+            0.0_f64.to_bits()
+        );
     }
 }

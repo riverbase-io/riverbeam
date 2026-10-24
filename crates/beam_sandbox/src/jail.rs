@@ -12,6 +12,10 @@ pub struct SandboxRoot {
 impl SandboxRoot {
     /// Create (or open) a sandbox rooted at `root`. The directory is created
     /// if missing and then canonicalized.
+    ///
+    /// # Errors
+    /// `BEM-310` when the directory cannot be created, `BEM-311` when it cannot
+    /// be canonicalized.
     pub fn new(root: impl AsRef<Path>) -> RiverbaseResult<Self> {
         let root = root.as_ref();
         fs::create_dir_all(root).map_err(|e| crate::BEM_310.with_data(e.to_string()))?;
@@ -28,6 +32,10 @@ impl SandboxRoot {
     }
 
     /// Resolve `rel` inside the jail. Rejects absolute paths, NUL, and `..`.
+    ///
+    /// # Errors
+    /// `BEM-300`…`BEM-305` when `rel` is absolute, climbs out of the jail or
+    /// resolves outside it; `BEM-312`/`BEM-313` when canonicalizing fails.
     pub fn resolve(&self, rel: &str) -> RiverbaseResult<PathBuf> {
         if rel.is_empty() {
             return Ok(self.root.clone());
@@ -72,6 +80,11 @@ impl SandboxRoot {
         Ok(candidate)
     }
 
+    /// Every file under `rel`, relative to the root and sorted.
+    ///
+    /// # Errors
+    /// [`Self::resolve`]'s errors, `BEM-306` when `rel` is not a directory, and
+    /// `BEM-309`/`BEM-317`/`BEM-318` when walking it fails.
     pub fn list_tree(&self, rel: &str) -> RiverbaseResult<Vec<String>> {
         let dir = self.resolve(rel)?;
         if !dir.is_dir() {
@@ -83,13 +96,21 @@ impl SandboxRoot {
         Ok(out)
     }
 
+    /// The UTF-8 contents of `rel`.
+    ///
+    /// # Errors
+    /// [`Self::resolve`]'s errors, and `BEM-307` when the file cannot be read.
     pub fn read_file(&self, rel: &str) -> RiverbaseResult<String> {
         let path = self.resolve(rel)?;
-        fs::read_to_string(&path).map_err(|e| {
-            crate::BEM_307.with_data(format!("{}: {e}", path.display()))
-        })
+        fs::read_to_string(&path)
+            .map_err(|e| crate::BEM_307.with_data(format!("{}: {e}", path.display())))
     }
 
+    /// Write `body` to `rel`, creating its parent directories.
+    ///
+    /// # Errors
+    /// [`Self::resolve`]'s errors, `BEM-308` when the parent escapes the jail, and
+    /// `BEM-314`…`BEM-316` when creating or writing fails.
     pub fn write_file(&self, rel: &str, body: &str) -> RiverbaseResult<()> {
         let path = self.resolve(rel)?;
         if let Some(parent) = path.parent() {

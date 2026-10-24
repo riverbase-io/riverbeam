@@ -3,12 +3,14 @@
 //! The transport is abstracted behind [`StreamTransport`] so the wire binding
 //! (NATS / Redis / SSE bridge) is pluggable; tests use [`InMemoryTransport`].
 
-mod errors;
-#[allow(unused_imports)]
-pub(crate) use errors::*;
+#[allow(clippy::wildcard_imports)] // The error catalog (`beam_errors`).
+pub(crate) use beam_errors::*;
 
 mod broadcast;
+pub mod channel;
+pub mod durable;
 mod nats;
+pub mod replay;
 mod stream;
 mod transport;
 

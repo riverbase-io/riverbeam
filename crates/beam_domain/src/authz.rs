@@ -1,8 +1,9 @@
 //! Policy authorization for the beam domain.
 //!
-//! The same CSV policy governs the HTTP endpoint layer and the per-command
-//! layer in [`crate::BeamCommandEngine`]. Commands map to `beam.*` activity
-//! types; denials raise [`beam_core::BEM_067`] (HTTP 403).
+//! The same CSV policy governs riverbase's HTTP Casbin layer and the
+//! aliases riverbase's layer skips (`roles_may_run`, `roles_may_query`). Activities follow
+//! riverbase (`{command}.execute`, `{resource}.query`); denials raise
+//! [`beam_core::BEM_067`] (HTTP 403).
 //!
 //! `riverbase_http::casbin` now requires a Postgres adapter, so this crate
 //! evaluates the bundled policy in-process (same `p,` / `g,` rows).
@@ -12,27 +13,99 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 use riverbase_core::RiverbaseResult;
-use serde_json::Value;
 
 use crate::domain::BEAM_NAMESPACE;
 
 /// Resource name beam commands authorize against.
 pub const BEAM_RESOURCE: &str = "agent";
 
-/// Subject used when a request carries no authenticated user.
-pub const ANONYMOUS_SUBJECT: &str = "anonymous";
+/// The role that runs every command, on any row.
+pub const ADMIN_ROLE: &str = "beam-admin";
+/// The role that runs [`USER_COMMANDS`] (on its own rows) and every query.
+pub const USER_ROLE: &str = "beam-user";
 
-/// Casbin-style policy CSV for the beam domain (`p,` / `g,` rows).
-///
-/// `beam-user` may invoke/stream/resume agents; `beam-admin` may do anything.
-/// Role assignments (`g,` rows) are illustrative — production deployments load
-/// them from the principal's claims at the HTTP boundary.
-pub const BEAM_POLICY_CSV: &str = r"p, beam-user, flrs.beam, beam.invoke, agent, *, allow
-p, beam-user, flrs.beam, beam.stream, agent, *, allow
-p, beam-user, flrs.beam, beam.resume, agent, *, allow
-p, beam-admin, flrs.beam, *, *, *, allow
-g, alice, beam-admin
-";
+/// Whether `roles` may run `command` under the bundled policy
+/// ([`beam_policy_csv`]). For routes riverbase's Casbin layer does not see
+/// (the deprecated aliases, the audio socket).
+#[must_use]
+pub fn roles_may_run(roles: &[String], command: &str) -> bool {
+    roles.iter().any(|r| r == ADMIN_ROLE)
+        || (roles.iter().any(|r| r == USER_ROLE) && USER_COMMANDS.contains(&command))
+}
+
+/// Whether `roles` may query under the bundled policy (see [`roles_may_run`]).
+#[must_use]
+pub fn roles_may_query(roles: &[String]) -> bool {
+    roles.iter().any(|r| r == ADMIN_ROLE || r == USER_ROLE)
+}
+
+/// Commands a `beam-user` may run (on the rows the domain lets them reach);
+/// every other command needs `beam-admin`. Python requires no policy
+/// (`policy_required = False`); Rust always does.
+pub const USER_COMMANDS: [&str; 20] = [
+    "invoke",
+    "stream",
+    "resume",
+    "cancel-execution",
+    "retry-execution",
+    "update-session",
+    "remove-session",
+    "remove-message",
+    "remember-memory",
+    "forget-memory",
+    "edit-memory",
+    "expire-memory",
+    "submit-agent-feedback",
+    "delete-my-agent-data",
+    "set-my-tool-rule",
+    "remove-my-tool-rule",
+    "revoke-tool-grants",
+    "create-agent-profile",
+    "update-agent-profile",
+    "remove-agent-profile",
+];
+
+/// The beam policy (riverbase activity rows: `{command}.execute` on the
+/// command's resource, `{resource}.query`) for `namespace`: `beam-user`
+/// runs [`USER_COMMANDS`] and every query but `agent_dead_letter`;
+/// `beam-admin` everything.
+#[must_use]
+pub fn beam_policy_csv(namespace: &str) -> String {
+    use std::fmt::Write as _;
+    let mut csv = String::new();
+    for (key, resource) in crate::commands::COMMAND_KEYS {
+        if USER_COMMANDS.contains(&key) {
+            let _ = writeln!(
+                csv,
+                "p, {USER_ROLE}, {namespace}, {key}.execute, {resource}, *, allow"
+            );
+        }
+    }
+    // Dead letters hold other users' requests: admins only.
+    let admin_only = crate::query::resources::ADMIN_QUERY_RESOURCES;
+    for name in crate::query::resources::QUERY_RESOURCES
+        .iter()
+        .filter(|n| !admin_only.contains(n))
+    {
+        let _ = writeln!(
+            csv,
+            "p, {USER_ROLE}, {namespace}, {name}.query, {name}, *, allow"
+        );
+    }
+    // rc8's reports: each answers only for the caller's own rows.
+    for name in crate::reports::REPORTS {
+        let _ = writeln!(
+            csv,
+            "p, {USER_ROLE}, {namespace}, {name}.query, {name}, *, allow"
+        );
+    }
+    let _ = writeln!(csv, "p, {ADMIN_ROLE}, {namespace}, *, *, *, allow");
+    csv
+}
+
+/// [`beam_policy_csv`] for [`BEAM_NAMESPACE`].
+pub static BEAM_POLICY_CSV: std::sync::LazyLock<String> =
+    std::sync::LazyLock::new(|| beam_policy_csv(BEAM_NAMESPACE));
 
 /// A domain activity (command type + resource) used for policy checks.
 #[derive(Debug, Clone)]
@@ -197,44 +270,11 @@ impl ActivityAuthorizer for BeamPolicyAuthorizer {
     }
 }
 
-/// Map a beam command key to its domain activity type (audit + policy).
+/// A command's activity (riverbase's `{command}.execute` on its resource).
 #[must_use]
 pub fn activity_for_command(namespace: &str, cmdkey: &str) -> DomainActivity {
-    let activity_type = match cmdkey {
-        "invoke" => "beam.invoke",
-        "stream" => "beam.stream",
-        "resume" => "beam.resume",
-        other => other,
-    };
-    DomainActivity::new(namespace, activity_type).with_resource(BEAM_RESOURCE)
-}
-
-/// Extract the policy subject (user id) from a command payload's auth context.
-#[must_use]
-pub fn subject_from_payload(payload: &Value) -> String {
-    payload
-        .get("auth_context")
-        .and_then(|a| a.get("user_id"))
-        .and_then(Value::as_str)
-        .filter(|s| !s.is_empty())
-        .unwrap_or(ANONYMOUS_SUBJECT)
-        .to_string()
-}
-
-/// The agent name a command targets (used as the policy object id).
-#[must_use]
-pub fn object_from_payload(payload: &Value) -> String {
-    payload
-        .get("agent_name")
-        .and_then(Value::as_str)
-        .unwrap_or_default()
-        .to_string()
-}
-
-/// Build a beam activity from a command + payload, ready for enforcement.
-#[must_use]
-pub fn command_activity(cmdkey: &str, payload: &Value) -> DomainActivity {
-    activity_for_command(BEAM_NAMESPACE, cmdkey).with_object_id(object_from_payload(payload))
+    let resource = crate::commands::command_resource(cmdkey).unwrap_or(BEAM_RESOURCE);
+    DomainActivity::new(namespace, format!("{cmdkey}.execute")).with_resource(resource)
 }
 
 /// Build an authorizer from [`BEAM_POLICY_CSV`].
@@ -242,44 +282,57 @@ pub fn command_activity(cmdkey: &str, payload: &Value) -> DomainActivity {
 /// # Errors
 /// Never fails for the bundled policy; `RiverbaseResult` keeps the call site uniform.
 pub async fn build_beam_authorizer() -> RiverbaseResult<Arc<BeamPolicyAuthorizer>> {
-    Ok(Arc::new(BeamPolicyAuthorizer::from_csv(BEAM_POLICY_CSV)))
+    Ok(Arc::new(BeamPolicyAuthorizer::from_csv(&BEAM_POLICY_CSV)))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     #[test]
-    fn subject_and_object_extraction() {
-        let payload = json!({
-            "agent_name": "demo",
-            "auth_context": {"user_id": "alice"},
-        });
-        assert_eq!(subject_from_payload(&payload), "alice");
-        assert_eq!(object_from_payload(&payload), "demo");
-        assert_eq!(subject_from_payload(&json!({})), ANONYMOUS_SUBJECT);
+    fn roles_follow_the_bundled_policy() {
+        let roles = |r: &[&str]| r.iter().map(|s| (*s).to_owned()).collect::<Vec<_>>();
+        assert!(roles_may_run(&roles(&[USER_ROLE]), "invoke"));
+        assert!(!roles_may_run(&roles(&[USER_ROLE]), "reconcile-now"));
+        assert!(roles_may_run(&roles(&[ADMIN_ROLE]), "reconcile-now"));
+        assert!(!roles_may_run(&roles(&["viewer"]), "invoke"));
+        assert!(roles_may_query(&roles(&[USER_ROLE])));
+        assert!(!roles_may_query(&[]));
     }
 
-    #[tokio::test]
-    async fn admin_allowed_user_scoped_and_anon_denied() {
-        let auth = build_beam_authorizer().await.expect("authorizer");
-        let payload = json!({"agent_name": "demo", "auth_context": {"user_id": "alice"}});
-
-        let activity = command_activity("invoke", &payload);
-        auth.enforce(&ActivityRequest::new(subject_from_payload(&payload), activity))
-            .await
-            .expect("admin invoke allowed");
-
-        let activity = command_activity("invoke", &payload);
-        auth.enforce(&ActivityRequest::new("beam-user", activity))
-            .await
-            .expect("beam-user invoke allowed");
-
-        let activity = command_activity("invoke", &payload);
+    #[test]
+    fn users_run_their_commands_and_admins_everything() {
+        let auth = BeamPolicyAuthorizer::from_csv(&format!(
+            "{}g, u1, beam-user\ng, a1, beam-admin\n",
+            *BEAM_POLICY_CSV
+        ));
+        let run = |who: &str, cmd: &str| {
+            auth.enforce_sync(&ActivityRequest::new(
+                who,
+                activity_for_command(BEAM_NAMESPACE, cmd).with_object_id("x"),
+            ))
+        };
+        assert!(run("u1", "invoke").is_ok());
+        assert!(run("u1", "reconcile-now").is_err());
+        assert!(run("a1", "reconcile-now").is_ok());
+        // Legal holds are admin-only.
+        for hold in ["place-legal-hold", "release-legal-hold"] {
+            assert!(run("u1", hold).is_err(), "{hold}");
+            assert!(run("a1", hold).is_ok(), "{hold}");
+        }
+        assert!(run("nobody", "invoke").is_err());
+        let query = DomainActivity::new(BEAM_NAMESPACE, "agent_session.query")
+            .with_resource("agent_session")
+            .with_object_id("*");
         assert!(auth
-            .enforce(&ActivityRequest::new(ANONYMOUS_SUBJECT, activity))
-            .await
+            .enforce_sync(&ActivityRequest::new("u1", query))
+            .is_ok());
+        let dead = DomainActivity::new(BEAM_NAMESPACE, "agent_dead_letter.query")
+            .with_resource("agent_dead_letter")
+            .with_object_id("*");
+        assert!(auth
+            .enforce_sync(&ActivityRequest::new("u1", dead.clone()))
             .is_err());
+        assert!(auth.enforce_sync(&ActivityRequest::new("a1", dead)).is_ok());
     }
 }

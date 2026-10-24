@@ -1,0 +1,11 @@
+{
+  "action_id": "act-1",
+  "errors": [],
+  "kind": "beam.confirmation",
+  "lc_action_id": null,
+  "payload": null,
+  "request_id": "req-1",
+  "responded_at": "2026-10-18T09:30:15.123456Z",
+  "responder_id": null,
+  "status": "submitted"
+}

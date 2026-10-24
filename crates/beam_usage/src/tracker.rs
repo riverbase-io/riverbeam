@@ -3,6 +3,8 @@ use std::sync::Arc;
 use beam_types::Modality;
 use serde::{Deserialize, Serialize};
 
+use riverbase_core::RiverbaseResult;
+
 use crate::store::UsageStore;
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize, PartialEq)]
@@ -39,21 +41,51 @@ impl UsageTracker {
         Self { store }
     }
 
-    pub async fn record(&self, user_id: &str, event: &UsageEvent) {
+    /// Save the event and add it to the period's counters.
+    ///
+    /// # Errors
+    /// Store errors.
+    pub async fn record(&self, user_id: &str, event: &UsageEvent) -> RiverbaseResult<()> {
+        self.store.save_event(user_id, event).await?;
         let period = self.store.current_period();
-        self.store.increment(user_id, &period, "requests", event.requests).await;
+        self.store
+            .increment(user_id, &period, "requests", event.requests)
+            .await?;
         if event.tokens > 0 {
-            self.store.increment(user_id, &period, "tokens", event.tokens).await;
+            self.store
+                .increment(user_id, &period, "tokens", event.tokens)
+                .await?;
         }
+        Ok(())
     }
 
-    pub async fn get_usage(&self, user_id: &str) -> UsageSummary {
+    /// # Errors
+    /// Store errors.
+    pub async fn get_usage(&self, user_id: &str) -> RiverbaseResult<UsageSummary> {
         let period = self.store.current_period();
-        let counters = self.store.get_all(user_id, &period).await;
-        UsageSummary {
-            total_requests: counters.iter().find(|(k, _)| k == "requests").map_or(0, |(_, v)| *v),
-            total_tokens: counters.iter().find(|(k, _)| k == "tokens").map_or(0, |(_, v)| *v),
+        let counters = self.store.get_all(user_id, &period).await?;
+        let get = |name: &str| {
+            counters
+                .iter()
+                .find(|(k, _)| k == name)
+                .map_or(0, |(_, v)| *v)
+        };
+        Ok(UsageSummary {
+            total_requests: get("requests"),
+            total_tokens: get("tokens"),
             period,
-        }
+        })
+    }
+
+    /// # Errors
+    /// Store errors.
+    pub async fn get_usage_profile(&self, user_id: &str) -> RiverbaseResult<Option<String>> {
+        self.store.get_usage_profile(user_id).await
+    }
+
+    /// # Errors
+    /// Store errors.
+    pub async fn set_usage_profile(&self, user_id: &str, plan_key: &str) -> RiverbaseResult<()> {
+        self.store.set_usage_profile(user_id, plan_key).await
     }
 }

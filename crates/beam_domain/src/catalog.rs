@@ -81,6 +81,10 @@ impl Catalog {
         &self.sessions
     }
 
+    /// The agent named `name`.
+    ///
+    /// # Errors
+    /// `BEM-023` for an unknown agent.
     pub fn get_agent(&self, name: &str) -> RiverbaseResult<&AgentInfo> {
         self.agents
             .iter()
@@ -107,7 +111,10 @@ mod tests {
         assert!(catalog.get_agent("missing").is_err());
 
         let sid = Uuid::new_v4();
-        catalog.upsert_session(SessionInfo { session_id: sid, name: None });
+        catalog.upsert_session(SessionInfo {
+            session_id: sid,
+            name: None,
+        });
         catalog.upsert_session(SessionInfo {
             session_id: sid,
             name: Some("renamed".into()),

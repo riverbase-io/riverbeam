@@ -1,0 +1,12 @@
+{
+  "input": {
+    "q": "2+2"
+  },
+  "lc_step_id": "lc-step-1",
+  "result": {
+    "answer": 4
+  },
+  "status": "completed",
+  "step_id": "step-1",
+  "step_name": "agent"
+}

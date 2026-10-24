@@ -1,0 +1,46 @@
+# The showcases' models, on NVIDIA NIM (MODELS_CONFIG_PATH). Keys are never in
+# this file: each model names the variable that holds its key. Export
+# NVIDIA_API_KEY, or put it in examples/showcase/.env (gitignored).
+#
+# Aliases:
+#   fast    the chat agents and the step runtimes' model calls (text)
+#   vision  paystub_reader, damage_reader and invoice_reader (images)
+# Routing keeps the models that fit a request (an image needs `image`),
+# cheapest first; the others are the failover chain. NVIDIA retires models:
+# see https://integrate.api.nvidia.com/v1/models and change model_id.
+
+models:
+  - name: nemotron-lightning
+    provider: nvidia
+    provider_config:
+      model_id: nvidia/nemotron-3.5-lightning-30b-a3b
+    credential_ref:
+      name: nvidia
+      env: NVIDIA_API_KEY
+    modalities: [text]
+    capabilities: [chat, tools]
+    cost_per_1k_tokens: 0.2
+    # The window the prompt must fit (plan 020's per-call guard); unset, it
+    # falls back to max_tokens (4096).
+    context_window_tokens: 131072
+    max_output_tokens: 2048
+
+  - name: nemotron-super-vl
+    provider: nvidia
+    provider_config:
+      model_id: nvidia/nemotron-3.5-super-vl-120b-a12b
+    credential_ref:
+      name: nvidia
+      env: NVIDIA_API_KEY
+    modalities: [text, image]
+    capabilities: [chat, tools]
+    cost_per_1k_tokens: 0.5
+    # The window the prompt must fit (plan 020's per-call guard); unset, it
+    # falls back to max_tokens (4096).
+    context_window_tokens: 131072
+    max_output_tokens: 2048
+
+aliases:
+  fast: nemotron-lightning
+  vision: nemotron-super-vl
+  chat.default: nemotron-lightning

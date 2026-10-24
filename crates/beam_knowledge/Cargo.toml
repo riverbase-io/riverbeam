@@ -11,24 +11,35 @@ default = []
 # Polars-backed ingest QA stats (heavier compile; pure-Rust fallback otherwise).
 polars-ingest = ["dep:polars"]
 # Diesel + pgvector store (VECTOR(1536) + HNSW). Off by default so unit tests stay hermetic.
-postgres = ["dep:diesel", "dep:diesel-async", "dep:pgvector"]
+postgres = ["dep:beam_store"]
 
 [dependencies]
+beam_env = { workspace = true }
 async-trait = { workspace = true }
+beam_errors = { workspace = true }
+beam_store = { workspace = true, optional = true }
 beam_types = { workspace = true }
-diesel = { workspace = true, optional = true }
-diesel-async = { workspace = true, optional = true }
+chrono = { workspace = true }
+# Pure-Rust PDF text extraction (Python uses pypdf); plan 005 Phase 08.
+pdf-extract = "=0.12.1"
 riverbase_core = { workspace = true }
-pgvector = { workspace = true, optional = true }
 reqwest = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+sha2 = "0.10"
+tiktoken-rs = "0.12"
+tokio = { workspace = true, features = ["time", "sync"] }
 tracing = { workspace = true }
 uuid = { workspace = true }
 polars = { version = "0.44", optional = true, default-features = false, features = ["lazy"] }
 
 [dev-dependencies]
+beam_store = { workspace = true, features = ["testing"] }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros", "net", "io-util"] }
+chrono = { workspace = true }
+beam_types = { workspace = true }
 
 [lints]
 workspace = true

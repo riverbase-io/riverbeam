@@ -1,0 +1,17 @@
+{
+  "action_type": "confirmation",
+  "description": "Run the tool?",
+  "kind": "beam.confirmation",
+  "metadata": {
+    "tool": "calculator"
+  },
+  "payload": {
+    "question": "Run the tool?"
+  },
+  "request_id": "req-1",
+  "response_schema": {
+    "type": "object"
+  },
+  "submit_label": "Run",
+  "title": "Confirm"
+}

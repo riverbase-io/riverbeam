@@ -19,16 +19,24 @@ pub struct IngestStats {
 
 #[cfg(not(feature = "polars-ingest"))]
 #[must_use]
+#[allow(clippy::cast_precision_loss)] // Token counts, far below 2^52.
 pub fn ingest_stats(chunks: &[Chunk]) -> IngestStats {
     use std::collections::HashSet;
 
     let tokens: Vec<usize> = chunks
         .iter()
-        .map(|c| c.token_count.unwrap_or_else(|| c.text.split_whitespace().count()))
+        .map(|c| {
+            c.token_count
+                .unwrap_or_else(|| c.text.split_whitespace().count())
+        })
         .collect();
     let total: usize = tokens.iter().sum();
     let count = chunks.len();
-    let mean = if count == 0 { 0.0 } else { total as f64 / count as f64 };
+    let mean = if count == 0 {
+        0.0
+    } else {
+        total as f64 / count as f64
+    };
     let mut seen = HashSet::new();
     let duplicates = chunks
         .iter()
@@ -66,12 +74,15 @@ pub fn ingest_stats(chunks: &[Chunk]) -> IngestStats {
     let tokens: Vec<i64> = chunks
         .iter()
         .map(|c| {
-            i64::try_from(c.token_count.unwrap_or_else(|| c.text.split_whitespace().count()))
-                .unwrap_or(i64::MAX)
+            i64::try_from(
+                c.token_count
+                    .unwrap_or_else(|| c.text.split_whitespace().count()),
+            )
+            .unwrap_or(i64::MAX)
         })
         .collect();
-    let df = df!("text" => texts.clone(), "tokens" => tokens.clone())
-        .expect("ingest stats dataframe");
+    let df =
+        df!("text" => texts.clone(), "tokens" => tokens.clone()).expect("ingest stats dataframe");
 
     let total: i64 = tokens.iter().sum();
     let count = chunks.len();
@@ -96,14 +107,13 @@ pub fn ingest_stats(chunks: &[Chunk]) -> IngestStats {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     fn chunk(text: &str, tokens: usize) -> Chunk {
         Chunk {
             text: text.into(),
             chunk_index: 0,
             token_count: Some(tokens),
-            metadata: json!({}),
+            metadata: serde_json::Map::new(),
         }
     }
 

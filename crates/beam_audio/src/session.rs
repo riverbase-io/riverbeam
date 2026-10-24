@@ -37,13 +37,9 @@ pub fn can_transition(cur: SessionState, nxt: SessionState) -> bool {
     use SessionState::{Idle, Listening, Processing, Speaking};
     matches!(
         (cur, nxt),
-        (Idle, Listening)
-            | (Listening, Processing)
-            | (Listening, Idle)
-            | (Processing, Speaking)
-            | (Processing, Listening)
-            | (Processing, Idle)
-            | (Speaking, Listening)
+        (Idle | Processing | Speaking, Listening)
+            | (Listening, Processing | Idle)
+            | (Processing, Speaking | Idle)
             | (Speaking, Idle)
     )
 }
@@ -56,7 +52,7 @@ pub enum AppendOutcome {
     BufferOverflow,
 }
 
-/// WebM EBML magic check (ports `_is_probable_webm`).
+/// `WebM` EBML magic check (ports `_is_probable_webm`).
 #[must_use]
 pub fn is_probable_webm(chunk: &[u8]) -> bool {
     chunk.len() >= 4 && chunk[..4] == [0x1a, 0x45, 0xdf, 0xa3]
@@ -70,7 +66,37 @@ pub struct AudioSession {
     pub tts_seq: u64,
     pub agent_name: String,
     pub session_id: String,
+    /// What the client last sent with `{"type": "context"}`; every later
+    /// turn carries it.
+    pub inputs: TurnInputs,
     msg_timestamps: std::collections::VecDeque<f64>,
+}
+
+/// A voice turn's request facts and client capabilities, as the
+/// text chat sends them: `context` is a `beam_types::RequestContext`,
+/// `client` a `beam_types::ClientCapabilities`.
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct TurnInputs {
+    pub context: Option<serde_json::Value>,
+    pub client: Option<serde_json::Value>,
+}
+
+impl TurnInputs {
+    /// The inputs of a `{"type": "context", "context": …, "client": …}`
+    /// message, each checked against its wire type. `None` when either does
+    /// not parse.
+    #[must_use]
+    pub fn parse(message: &serde_json::Value) -> Option<Self> {
+        let part = |key: &str| message.get(key).filter(|v| !v.is_null()).cloned();
+        let (context, client) = (part("context"), part("client"));
+        if let Some(context) = &context {
+            serde_json::from_value::<beam_types::RequestContext>(context.clone()).ok()?;
+        }
+        if let Some(client) = &client {
+            serde_json::from_value::<beam_types::ClientCapabilities>(client.clone()).ok()?;
+        }
+        Some(Self { context, client })
+    }
 }
 
 impl AudioSession {
@@ -82,6 +108,7 @@ impl AudioSession {
             tts_seq: 0,
             agent_name: agent_name.into(),
             session_id: session_id.into(),
+            inputs: TurnInputs::default(),
             msg_timestamps: std::collections::VecDeque::new(),
         }
     }
@@ -137,8 +164,14 @@ mod tests {
     fn transitions_match_reference_table() {
         assert!(can_transition(SessionState::Idle, SessionState::Listening));
         assert!(!can_transition(SessionState::Idle, SessionState::Speaking));
-        assert!(can_transition(SessionState::Processing, SessionState::Speaking));
-        assert!(!can_transition(SessionState::Listening, SessionState::Speaking));
+        assert!(can_transition(
+            SessionState::Processing,
+            SessionState::Speaking
+        ));
+        assert!(!can_transition(
+            SessionState::Listening,
+            SessionState::Speaking
+        ));
     }
 
     #[test]

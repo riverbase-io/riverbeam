@@ -1,0 +1,39 @@
+[package]
+name = "beam_gateway"
+description = "Model gateway for riverbeam: rig providers, retry, timeout, circuit breaker, failover, token counting"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+beam_env = { workspace = true }
+async-stream = { workspace = true }
+async-trait = { workspace = true }
+# Bedrock takes the bearer key (Python's AWS_BEARER_TOKEN_BEDROCK) or the SDK's default chain.
+aws-sdk-bedrockruntime = "1.148"
+aws-smithy-runtime-api = "1"
+beam_errors = { workspace = true }
+beam_routing = { workspace = true }
+beam_runtime = { workspace = true }
+beam_types = { workspace = true }
+futures-util = { workspace = true }
+# All rig crates are pinned exactly (plan 005, D2).
+rig-agent = { version = "=0.44.0", default-features = false }
+rig-bedrock = "=0.44.0"
+rig-core = { version = "=0.44.0", default-features = false, features = ["reqwest", "rustls"] }
+riverbase_core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tiktoken-rs = "0.12"
+tokio = { workspace = true, features = ["sync", "time"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+axum = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "net", "sync", "time"] }
+uuid = { workspace = true }
+
+[lints]
+workspace = true

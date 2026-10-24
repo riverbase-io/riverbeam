@@ -1,0 +1,32 @@
+{
+  "name": "required_overflow",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": "word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word word "
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      }
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 200,
+      "context_window_tokens": 200,
+      "max_output_tokens": 50
+    },
+    "history": []
+  },
+  "expected": {
+    "error": "BEM-432",
+    "policy_revision": "6d75e64d4ef6a49187be76ff1bdb8418d82c92c4d4512555accd452ed65f2fa0"
+  }
+}

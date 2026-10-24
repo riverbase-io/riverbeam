@@ -1,0 +1,130 @@
+{
+  "name": "resume_workflow",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      },
+      "actions": [
+        {
+          "action_id": "6f1c2b3a-0000-4000-8000-000000000077",
+          "request_id": "6f1c2b3a-0000-4000-8000-000000000078",
+          "kind": "approval",
+          "status": "submitted",
+          "payload": {}
+        }
+      ]
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 8000,
+      "context_window_tokens": 8000
+    },
+    "history": [
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000001",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello there"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000002",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi! how can I help?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      }
+    ],
+    "memory": false
+  },
+  "expected": {
+    "policy_revision": "6d75e64d4ef6a49187be76ff1bdb8418d82c92c4d4512555accd452ed65f2fa0",
+    "enable": [
+      "instructions",
+      "profile",
+      "current",
+      "history",
+      "knowledge",
+      "facts",
+      "resources",
+      "workflow",
+      "tools"
+    ],
+    "decisions": [
+      {
+        "item_id": "source:ltm",
+        "source": "ltm",
+        "action": "dropped",
+        "reason": "disabled",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "source:history",
+        "source": "history",
+        "action": "dropped",
+        "reason": "unavailable",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "source:knowledge",
+        "source": "knowledge",
+        "action": "dropped",
+        "reason": "unavailable",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "workflow:resume",
+        "source": "workflow",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 7,
+        "content_hash": "4794951d7d2c7fe3",
+        "trust": "system"
+      }
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "text": "resume pending human action",
+        "tool_call_id": null,
+        "tool_calls": []
+      }
+    ],
+    "tool_schemas": [],
+    "input_tokens": 8,
+    "output_tokens": 2000,
+    "reserve_tokens": 64,
+    "window_tokens": 8000,
+    "counter_method": "estimated_conservative",
+    "cache_prefix_tokens": 0,
+    "selected_untrusted": [],
+    "tools": [],
+    "citations": []
+  }
+}

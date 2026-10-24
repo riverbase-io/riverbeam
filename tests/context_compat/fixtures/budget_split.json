@@ -1,0 +1,426 @@
+{
+  "name": "budget_split",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": "summarize our chat"
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      }
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 400,
+      "context_window_tokens": 400,
+      "max_output_tokens": 40
+    },
+    "spec": {
+      "instructions": "You are a helpful assistant.",
+      "token_budget": 120
+    },
+    "history": [
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000001",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello there"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000002",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi! how can I help?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000003",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "what is 2+2?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000004",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": ""
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_calls": [
+          {
+            "id": "call-1",
+            "name": "calculator",
+            "args": {
+              "expression": "2+2"
+            }
+          }
+        ]
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000005",
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_call_id": "call-1",
+        "tool_name": "calculator"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000006",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "2+2 is 4."
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000007",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "thanks, and the weather?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000008",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "I cannot check the weather."
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000009",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "summarize our chat"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa"
+      }
+    ],
+    "hits": [
+      {
+        "id": "chunk-1",
+        "text": "Paris is the capital of France.",
+        "score": 0.91,
+        "metadata": {
+          "collection": "geo",
+          "title": "France"
+        },
+        "document_id": "6f1c2b3a-0000-4000-8000-00000000d001",
+        "chunk_index": 2,
+        "source": "atlas.pdf"
+      },
+      {
+        "id": "chunk-2",
+        "text": "Berlin is the capital of Germany.",
+        "score": 0.5,
+        "metadata": {
+          "collection": "other"
+        }
+      }
+    ],
+    "tool_schemas": [
+      {
+        "name": "calculator",
+        "description": "Evaluate arithmetic.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expression"
+          ]
+        }
+      }
+    ],
+    "tool_names": [
+      "calculator"
+    ]
+  },
+  "expected": {
+    "policy_revision": "66b892b2b13371e81c6258a438bd6deb060518be173f8056db1d36076184bc6b",
+    "enable": [
+      "instructions",
+      "profile",
+      "current",
+      "history",
+      "knowledge",
+      "facts",
+      "resources",
+      "workflow",
+      "tools"
+    ],
+    "decisions": [
+      {
+        "item_id": "source:ltm",
+        "source": "ltm",
+        "action": "dropped",
+        "reason": "disabled",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "instructions",
+        "source": "instructions",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 7,
+        "content_hash": "75357d685f238b6a",
+        "trust": "developer"
+      },
+      {
+        "item_id": "current:6f1c2b3a-0000-4000-8000-0000000000aa",
+        "source": "current",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 5,
+        "content_hash": "19e768ca38f69d9c",
+        "trust": "user"
+      },
+      {
+        "item_id": "tools",
+        "source": "tools",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 44,
+        "content_hash": "f3bd67b3d1e603db",
+        "trust": "system"
+      },
+      {
+        "item_id": "knowledge:chunk-2",
+        "source": "knowledge",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 17,
+        "content_hash": "b352ac93687e8bc7",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "knowledge:chunk-1",
+        "source": "knowledge",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 17,
+        "content_hash": "e250aacfa1365407",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000007",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 6,
+        "content_hash": "1e8bfa328a8d19d6",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000008",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 7,
+        "content_hash": "95ebad52058db219",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000006",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "7228a7b0492b321c",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000003",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 3,
+        "content_hash": "61a3385003d9b9d3",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000004",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 18,
+        "content_hash": "472a016189636a6a",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000005",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 1,
+        "content_hash": "4b227777d4dd1fc6",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000001",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "12998c017066eb0d",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000002",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 5,
+        "content_hash": "11c3d46653b3dcc4",
+        "trust": "system"
+      }
+    ],
+    "messages": [
+      {
+        "role": "system",
+        "text": "You are a helpful assistant.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "[UNTRUSTED EVIDENCE cite:chunk-1] Paris is the capital of France.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "[UNTRUSTED EVIDENCE cite:chunk-2] Berlin is the capital of Germany.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "hello there",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "hi! how can I help?",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "2+2 is 4.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "thanks, and the weather?",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "I cannot check the weather.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "summarize our chat",
+        "tool_call_id": null,
+        "tool_calls": []
+      }
+    ],
+    "tool_schemas": [
+      {
+        "name": "calculator",
+        "description": "Evaluate arithmetic.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expression"
+          ]
+        }
+      }
+    ],
+    "input_tokens": 161,
+    "output_tokens": 40,
+    "reserve_tokens": 64,
+    "window_tokens": 400,
+    "counter_method": "exact",
+    "cache_prefix_tokens": 7,
+    "selected_untrusted": [
+      "knowledge:chunk-1",
+      "knowledge:chunk-2"
+    ],
+    "tools": [
+      "calculator"
+    ],
+    "citations": [
+      {
+        "document_id": "6f1c2b3a-0000-4000-8000-00000000d001",
+        "document_revision": null,
+        "chunk_id": "chunk-1",
+        "chunk_index": 2,
+        "source": "atlas.pdf",
+        "title": "France",
+        "score": 0.91,
+        "rerank_score": null,
+        "citation_id": "cite:chunk-1"
+      }
+    ]
+  }
+}

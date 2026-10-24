@@ -1,15 +1,13 @@
-//! Pluggable scoped memory for riverbeam.
+//! Session transcript and summaries for riverbeam.
 
-mod errors;
-#[allow(unused_imports)]
-pub(crate) use errors::*;
+#[allow(clippy::wildcard_imports)] // The error catalog (`beam_errors`).
+pub(crate) use beam_errors::*;
 
-mod backend;
-mod manager;
-mod scope;
-mod strategy;
+pub mod summary;
+pub mod transcript;
 
-pub use backend::{InMemoryBackend, MemoryBackend, MemoryItem};
-pub use manager::MemoryManager;
-pub use scope::MemoryScope;
-pub use strategy::{ContextStrategy, TokenLimitStrategy};
+pub use summary::{PgSummaryStore, SessionSummary, SummaryBook, SummaryStore};
+pub use transcript::{
+    build_transcript_store, CachedTranscriptStore, InMemoryTranscriptStore, LoadRange,
+    SqlTranscriptStore, TranscriptManager, TranscriptStore,
+};

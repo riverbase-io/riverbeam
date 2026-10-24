@@ -12,6 +12,19 @@ pub enum ModelProvider {
     Ollama,
     Groq,
     Nvidia,
+    Google,
+    Openrouter,
+    Bedrock,
+}
+
+/// Execution-time secret handle; model YAML never stores raw keys. Mirrors Python `CredentialRef`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CredentialRef {
+    pub name: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub env: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -29,13 +42,19 @@ pub struct ModelConfig {
     #[serde(default = "default_max_tokens")]
     pub max_tokens: u32,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub context_window_tokens: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max_output_tokens: Option<u32>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub api_key: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub credential_ref: Option<CredentialRef>,
     #[serde(default, skip_serializing_if = "is_empty_object")]
     pub extra: Value,
 }
 
 fn is_empty_object(v: &Value) -> bool {
-    v.is_object() && v.as_object().is_some_and(|m| m.is_empty())
+    v.is_null() || (v.is_object() && v.as_object().is_some_and(serde_json::Map::is_empty))
 }
 
 fn default_modalities() -> Vec<Modality> {

@@ -1,17 +1,17 @@
 //! Worker-side task dispatch for riverbeam.
 //!
-//! Worker RPC handlers:
-//! `invoke_agent`, `ingest_knowledge_document`, `delete_knowledge_document`,
-//! `remember_memory`, `forget_memory`. Phase 2 implements `invoke_agent`;
-//! the rest return `BEM-092` until their owning phases land.
-//!
-//! The transport binding (NATS via `riverbase_task`, or a Redis bridge for the
-//! dual-run topology) is intentionally left to the host process; this crate
-//! exposes the queue-name namespace and a JSON-in/JSON-out [`BeamWorker::handle_task`]
-//! so any consumer loop can drive it.
+//! [`BeamWorker::handle_task`] runs one named task (`invoke_agent`,
+//! `remember_memory`, `activate_revision`, …) with a JSON payload.
+//! [`QueueWorker`] feeds it from the durable work queue
+//! (`ref_beam.agent_task`): domain commands insert rows and emit
+//! hints, workers claim and run them.
 
-mod nats;
+mod local_bus;
+mod queue;
+pub mod rtc;
 mod worker;
 
-pub use nats::{NatsWorkerServer, DEFAULT_CONCURRENCY, DEFAULT_TASK_PREFIX};
+pub use local_bus::LocalBus;
+pub use queue::{QueueConfig, QueueWorker, CONTROL_TASKS};
+pub use rtc::{caller_channel, rtc_stream_enabled, RtcMirrorTransport};
 pub use worker::{BeamWorker, WorkerTask};

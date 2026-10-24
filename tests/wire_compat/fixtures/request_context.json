@@ -1,0 +1,23 @@
+{
+  "facts": [
+    {
+      "expiry": "2026-10-18T09:30:15.123456Z",
+      "key": "locale",
+      "sensitivity": "public",
+      "value": "vi-VN"
+    }
+  ],
+  "knowledge_mode": "tool",
+  "memory_mode": "session",
+  "profile_id": "profile-1",
+  "resources": [
+    {
+      "expiry": "2026-10-18T09:30:15.123456Z",
+      "kind": "resource",
+      "max_bytes": 4096,
+      "mime_type": "text/html",
+      "resolved_text": "hello",
+      "uri": "https://example.com/doc"
+    }
+  ]
+}

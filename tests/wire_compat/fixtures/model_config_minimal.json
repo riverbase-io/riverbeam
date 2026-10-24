@@ -1,0 +1,16 @@
+{
+  "api_key": null,
+  "capabilities": [],
+  "context_window_tokens": null,
+  "cost_per_1k_tokens": 0.0,
+  "credential_ref": null,
+  "extra": {},
+  "max_output_tokens": null,
+  "max_tokens": 4096,
+  "modalities": [
+    "text"
+  ],
+  "name": "local",
+  "provider": "ollama",
+  "provider_config": {}
+}

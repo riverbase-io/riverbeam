@@ -1,0 +1,76 @@
+[package]
+name = "showcase"
+description = "riverbeam showcases: real applications (loan desk, support desk, claims, incident desk, accounts payable) on one server"
+publish = false
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[[bin]]
+name = "showcase-server"
+path = "src/bin/server.rs"
+
+[[bin]]
+name = "showcase-worker"
+path = "src/bin/worker.rs"
+
+[[bin]]
+name = "showcase-mcp"
+path = "src/bin/mcp.rs"
+
+[features]
+default = ["rules"]
+audio = ["dep:beam_audio", "beam_audio/audio-http", "axum/ws"]
+# The security rules on river_reed. Without them (`--no-default-features`)
+# the server starts only with SECURITY_ENABLED=0.
+rules = ["beam_core/security-rules"]
+
+[dependencies]
+aide = { workspace = true }
+async-trait = { workspace = true }
+axum = { workspace = true }
+beam_audit = { workspace = true }
+beam_audio = { workspace = true, optional = true }
+beam_context = { workspace = true }
+beam_core = { workspace = true }
+beam_domain = { workspace = true }
+beam_env = { workspace = true }
+beam_evals = { workspace = true }
+beam_execution = { workspace = true }
+beam_gateway = { workspace = true }
+beam_knowledge = { workspace = true, features = ["postgres"] }
+beam_routing = { workspace = true }
+beam_runtime = { workspace = true }
+beam_sandbox = { workspace = true }
+beam_store = { workspace = true }
+beam_stream = { workspace = true }
+beam_telemetry = { workspace = true }
+beam_tools = { workspace = true }
+beam_types = { workspace = true }
+beam_usage = { workspace = true }
+beam_worker = { workspace = true }
+chrono = { workspace = true }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
+futures-util = { workspace = true }
+riverbase_core = { workspace = true }
+riverbase_http = { workspace = true, features = ["websocket"] }
+schemars = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread", "macros", "sync", "time", "net", "signal"] }
+tokio-stream = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+beam_routing = { workspace = true }
+beam_runtime = { workspace = true, features = ["testing"] }
+beam_store = { workspace = true, features = ["testing"] }
+tempfile = "3"
+tower = { version = "0.5", features = ["util"] }
+
+[lints]
+workspace = true

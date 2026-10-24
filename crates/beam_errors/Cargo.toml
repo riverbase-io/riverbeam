@@ -1,0 +1,13 @@
+[package]
+name = "beam_errors"
+description = "The riverbeam BEM-* error catalog"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+riverbase_core = { workspace = true }
+
+[lints]
+workspace = true

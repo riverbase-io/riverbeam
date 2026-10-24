@@ -1,0 +1,74 @@
+{
+  "actions": [
+    {
+      "action_id": "act-1",
+      "errors": [
+        "none"
+      ],
+      "kind": "beam.confirmation",
+      "lc_action_id": "lc-act-1",
+      "payload": {
+        "approved": true,
+        "comment": "ok"
+      },
+      "request_id": "req-1",
+      "responded_at": "2026-10-18T09:30:15.123456Z",
+      "responder_id": "user-1",
+      "status": "submitted"
+    }
+  ],
+  "agent_name": "agent-calculator",
+  "auth_context": {
+    "mcp_token": "mcp-token",
+    "org_id": "org-1",
+    "profile_id": "profile-1",
+    "user_id": "user-1"
+  },
+  "content": [
+    {
+      "metadata": {},
+      "text": "What is 2+2?",
+      "type": "text"
+    }
+  ],
+  "context": {
+    "facts": [
+      {
+        "expiry": "2026-10-18T09:30:15.123456Z",
+        "key": "locale",
+        "sensitivity": "public",
+        "value": "vi-VN"
+      }
+    ],
+    "knowledge_mode": "tool",
+    "memory_mode": "session",
+    "profile_id": "profile-1",
+    "resources": [
+      {
+        "expiry": "2026-10-18T09:30:15.123456Z",
+        "kind": "resource",
+        "max_bytes": 4096,
+        "mime_type": "text/html",
+        "resolved_text": "hello",
+        "uri": "https://example.com/doc"
+      }
+    ]
+  },
+  "execution_id": "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
+  "interaction_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  "metadata": {
+    "channel": "web"
+  },
+  "model_override": "chat.default",
+  "request_id": "6ba7b812-9dad-11d1-80b4-00c04fd430c8",
+  "run_id": "6ba7b813-9dad-11d1-80b4-00c04fd430c8",
+  "runtime_ref": {
+    "ref": {
+      "turn": 1
+    },
+    "runtime": "rig",
+    "runtime_version": "0.44.0"
+  },
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "stream": true
+}

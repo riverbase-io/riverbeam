@@ -1,12 +1,11 @@
 //! Path-jailed workspace + working-tree git. Hosts bind `root` and `protected_refs`.
 
-mod errors;
-#[allow(unused_imports)]
-pub(crate) use errors::*;
+#[allow(clippy::wildcard_imports)] // The error catalog (`beam_errors`).
+pub(crate) use beam_errors::*;
 
 mod git;
 mod jail;
 
-pub use riverbase_core::RiverbaseResult as SandboxResult;
 pub use git::WorkingTree;
 pub use jail::SandboxRoot;
+pub use riverbase_core::RiverbaseResult as SandboxResult;

@@ -1,20 +1,57 @@
 {
-  "content": [
+  "action_required": [
     {
-      "type": "text",
-      "text": "Echo: what is river-beam?"
+      "action_id": "act-1",
+      "kind": "beam.confirmation"
     }
   ],
-  "agent_name": "kb-assistant",
-  "model_used": "gpt-4o-mini",
-  "session_id": "5f8915eb-31eb-4f8a-9517-e2c15ce7bc41",
-  "request_id": "16d12ddc-651a-431d-997c-a756d5793ebf",
-  "interaction_id": "40744652-2720-4b10-86ee-7333c1be8165",
-  "token_usage": {
-    "prompt_tokens": 4,
-    "completion_tokens": 4,
-    "total_tokens": 8
+  "agent_name": "agent-calculator",
+  "citations": [
+    {
+      "document_id": "doc-1",
+      "id": "cite-1",
+      "score": 0.9
+    }
+  ],
+  "content": [
+    {
+      "metadata": {},
+      "text": "4",
+      "type": "text"
+    }
+  ],
+  "execution_id": "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
+  "interaction_id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  "interrupted": true,
+  "latency_ms": 42.25,
+  "metadata": {
+    "output": {
+      "answer": 4
+    }
   },
-  "latency_ms": 0.0,
-  "interrupted": false
+  "model_used": "gpt-4o-mini",
+  "request_id": "6ba7b812-9dad-11d1-80b4-00c04fd430c8",
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "token_usage": {
+    "completion_tokens": 2,
+    "prompt_tokens": 10,
+    "total_tokens": 12
+  },
+  "tool_calls": [
+    {
+      "args": {
+        "a": 2,
+        "b": 2
+      },
+      "latency_ms": 12.5,
+      "result": "4",
+      "result_step_id": "step-2",
+      "step_id": "step-1",
+      "tool_call_id": "call-1",
+      "tool_name": "calculator",
+      "usage_metadata": {
+        "input_tokens": 3
+      }
+    }
+  ]
 }

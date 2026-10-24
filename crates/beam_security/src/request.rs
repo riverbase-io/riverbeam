@@ -14,6 +14,9 @@ pub struct SecurityContext {
     pub user_id: Option<String>,
     #[serde(default)]
     pub interaction_id: Option<String>,
+    /// The invoke's session: its decisions are kept and deleted with it.
+    #[serde(default)]
+    pub session_id: Option<String>,
 }
 
 /// A stage-tagged security evaluation request (ports `SecurityRequest`).

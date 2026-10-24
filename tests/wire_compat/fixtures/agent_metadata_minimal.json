@@ -1,0 +1,15 @@
+{
+  "description": "",
+  "final_nodes": [],
+  "name": "agent-calculator",
+  "output_contract": null,
+  "output_modalities": [
+    "text"
+  ],
+  "supported_modalities": [
+    "text"
+  ],
+  "tags": [],
+  "tools": [],
+  "version": "1.0.0"
+}

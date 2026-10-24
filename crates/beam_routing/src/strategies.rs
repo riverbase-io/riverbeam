@@ -107,10 +107,9 @@ pub struct FallbackStrategy {
 }
 
 impl FallbackStrategy {
+    #[must_use]
     pub fn new(all_models: Vec<ModelConfig>) -> Self {
-        Self {
-            all_models,
-        }
+        Self { all_models }
     }
 }
 

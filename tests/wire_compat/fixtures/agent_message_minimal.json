@@ -1,0 +1,31 @@
+{
+  "content": [],
+  "execution_id": null,
+  "id": "6ba7b815-9dad-11d1-80b4-00c04fd430c8",
+  "interaction_id": null,
+  "is_delta": false,
+  "metadata": {
+    "actions": [],
+    "agent_name": null,
+    "lc_step_id": null,
+    "model_used": null,
+    "step_id": null,
+    "step_name": null,
+    "step_status": null,
+    "token_usage": null,
+    "tool_calls": []
+  },
+  "name": null,
+  "phase": "final",
+  "request_id": null,
+  "role": "ai",
+  "run_id": null,
+  "step_id": null,
+  "timestamp": "2026-10-18T09:30:15.123456Z",
+  "tool_args": null,
+  "tool_call_id": null,
+  "tool_calls": [],
+  "tool_name": null,
+  "tool_result": null,
+  "type": "message"
+}

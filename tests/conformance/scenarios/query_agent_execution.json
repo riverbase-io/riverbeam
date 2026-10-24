@@ -1,0 +1,13 @@
+{
+  "description": "`agent_execution.list` as a beam-user: the envelope, and only the caller's rows.",
+  "phase": "12",
+  "steps": [
+    {
+      "method": "GET",
+      "path": "/api/fluvius-beam/agent_execution.list?limit=5",
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      }
+    }
+  ]
+}

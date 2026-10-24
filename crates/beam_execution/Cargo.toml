@@ -1,0 +1,32 @@
+[package]
+name = "beam_execution"
+description = "Execution control plane for riverbeam: identity, idempotency, concurrency, leases, cancel, timeout, retry"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+beam_env = { workspace = true }
+async-trait = { workspace = true }
+beam_errors = { workspace = true }
+beam_store = { workspace = true }
+beam_types = { workspace = true }
+chrono = { workspace = true }
+riverbase_core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = "0.10"
+tokio = { workspace = true, features = ["sync", "time"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+beam_store = { workspace = true, features = ["testing"] }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
+futures-util = { workspace = true }
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "sync", "time"] }
+
+[lints]
+workspace = true

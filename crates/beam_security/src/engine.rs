@@ -45,6 +45,9 @@ impl SecurityEngine {
     ///
     /// Seeding happens synchronously (via a oneshot) so the resulting stage map
     /// is available immediately; the worker then serves evaluation jobs.
+    ///
+    /// # Panics
+    /// When the OS cannot spawn the worker thread.
     #[must_use]
     pub fn new() -> Self {
         let (tx, mut rx) = mpsc::unbounded_channel::<Job>();
@@ -54,24 +57,21 @@ impl SecurityEngine {
         let worker = std::thread::Builder::new()
             .name("beam-security-grl".to_string())
             .spawn(move || {
-                let rt = match tokio::runtime::Builder::new_current_thread().build() {
-                    Ok(rt) => rt,
-                    Err(_) => {
-                        drop(ready_tx);
-                        return;
-                    }
+                let Ok(rt) = tokio::runtime::Builder::new_current_thread().build() else {
+                    drop(ready_tx);
+                    return;
                 };
                 rt.block_on(async move {
                     let store = Arc::new(InMemoryRuleStore::new());
-                    let manager =
-                        RuleManager::new(store, EvaluatorRegistry::default(), CollectorRegistry::new());
+                    let manager = RuleManager::new(
+                        store,
+                        EvaluatorRegistry::default(),
+                        CollectorRegistry::new(),
+                    );
 
-                    let seeded = match seed::seed(&manager).await {
-                        Ok(s) => s,
-                        Err(_) => {
-                            drop(ready_tx);
-                            return;
-                        }
+                    let Ok(seeded) = seed::seed(&manager).await else {
+                        drop(ready_tx);
+                        return;
                     };
                     let _ = kb_tx.send(seeded.knowledge_base_id);
                     if ready_tx.send(seeded.rule_sets).is_err() {
@@ -111,7 +111,14 @@ impl SecurityEngine {
 
     /// Evaluate `facts` for `stage`, returning the coded narrations the rules
     /// produced. Passthrough / unrouted stages yield an empty narration set.
+    ///
+    /// # Errors
+    /// A message when the rules were not seeded, the worker is gone, or the
+    /// evaluation fails.
     pub async fn evaluate(&self, stage: SecurityStage, facts: Value) -> EvalResult {
+        if !self.ready {
+            return Err("security rules were not seeded".to_string());
+        }
         let Some(&(kb_id, rs_id)) = self.stage_rule_sets.get(&stage) else {
             return Ok(Vec::new());
         };
@@ -140,12 +147,16 @@ fn build_stage_map(
     kb_id: Uuid,
     rule_sets: &HashMap<&'static str, Uuid>,
 ) -> HashMap<SecurityStage, (Uuid, Uuid)> {
+    // Every stage has a route, as in Python `stages.ROUTES`.
     const STAGES: &[SecurityStage] = &[
         SecurityStage::BeforeInput,
+        SecurityStage::BeforeHitlResume,
         SecurityStage::BeforeContextInjection,
+        SecurityStage::BeforeLlm,
         SecurityStage::AfterLlm,
         SecurityStage::BeforeOutput,
         SecurityStage::BeforeTool,
+        SecurityStage::AfterTool,
         SecurityStage::BeforeMemoryWrite,
         SecurityStage::Runtime,
     ];
@@ -162,6 +173,12 @@ fn build_stage_map(
 
 /// Adapter: `{rule_name -> working_memory}` -> coded narrations.
 #[must_use]
+#[allow(clippy::implicit_hasher)]
 pub fn narrations_from_eval(results: &HashMap<String, Value>) -> Vec<RuleNarration> {
-    results.values().filter_map(narration_from_wm).collect()
+    // Rule declaration order, as Python's engine runs them.
+    let mut rows: Vec<(&String, &Value)> = results.iter().collect();
+    rows.sort_by_key(|(name, _)| grl::rule_order(name));
+    rows.into_iter()
+        .filter_map(|(_, wm)| narration_from_wm(wm))
+        .collect()
 }

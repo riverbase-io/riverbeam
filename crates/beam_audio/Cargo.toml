@@ -10,20 +10,28 @@ authors = { workspace = true }
 default = []
 # Native WebM/MP4 decode (WAV always; WebM header recognized).
 audio-decode = []
-# OpenAI-compatible HTTP speech-to-text.
-audio-http-stt = ["dep:reqwest", "dep:tokio"]
-audio-whisper = ["audio-http-stt"]
+# OpenAI-compatible HTTP speech sidecars (D8): `HttpStt` and `HttpTts`.
+audio-http = ["dep:reqwest"]
+audio-http-stt = ["audio-http"]
+audio-http-tts = ["audio-http"]
+audio-whisper = ["audio-http"]
 
 [dependencies]
+beam_env = { workspace = true }
 async-trait = { workspace = true }
+base64 = { workspace = true }
+beam_errors = { workspace = true }
+beam_types = { workspace = true }
+futures-util = { workspace = true }
 riverbase_core = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 reqwest = { workspace = true, optional = true, features = ["multipart"] }
-tokio = { workspace = true, optional = true }
+tokio = { workspace = true, features = ["rt", "macros", "sync", "time"] }
+tracing = { workspace = true }
 
 [dev-dependencies]
-tokio = { workspace = true, features = ["rt", "macros"] }
+tokio = { workspace = true, features = ["rt", "macros", "sync", "time", "test-util"] }
 
 [lints]
 workspace = true

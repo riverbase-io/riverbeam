@@ -1,27 +1,33 @@
-//! Command/query boundary between the API process and the worker.
+//! The beam domain: riverbase typed commands and queries (plans 006, 007).
 //!
-//! The `invoke` / `stream` / `resume` commands build an [`InvokeRequest`] and
-//! hand it to a [`BeamWorkerClient`] (the Redis/NATS RPC boundary). `request`
-//! is the synchronous round-trip used by `invoke`; `send` is fire-and-forget
-//! used by the streaming commands, whose chunks arrive over the SSE bridge.
+//! Commands are one `command_engine!` ([`commands`]): each runs as a typed
+//! handler on a [`BeamAggregate`] inside one database transaction and calls
+//! one aggregate method. Work for a worker (agent runs, memory, knowledge,
+//! revisions, operations) is queued as an `agent_task` row with a hint on
+//! the riverbase bus; nothing waits for a worker. Queries are one
+//! `query_resource!` per resource over its table's entity ([`query`]),
+//! filtered to the caller's rows. Both engines share one datastore, the beam
+//! entities ([`beam_store::entity`]).
 
+mod aggregate;
 mod authz;
 mod catalog;
-mod client;
+pub mod commands;
 mod domain;
-mod nats;
+pub mod local;
+pub mod query;
+pub mod reports;
 
+pub use aggregate::BeamAggregate;
 pub use authz::{
-    activity_for_command, build_beam_authorizer, command_activity, object_from_payload,
-    subject_from_payload, ActivityAuthorizer, ActivityRequest, BeamPolicyAuthorizer,
-    CasbinActivityAuthorizer, DomainActivity, BEAM_POLICY_CSV, BEAM_RESOURCE,
+    activity_for_command, beam_policy_csv, build_beam_authorizer, roles_may_query, roles_may_run,
+    ActivityAuthorizer, ActivityRequest, BeamPolicyAuthorizer, CasbinActivityAuthorizer,
+    DomainActivity, ADMIN_ROLE, BEAM_POLICY_CSV, BEAM_RESOURCE, USER_COMMANDS, USER_ROLE,
 };
+pub use beam_store::entity::ROOT_RESOURCES;
 pub use catalog::{AgentInfo, Catalog, ModelInfo, SessionInfo};
-pub use client::{BeamWorkerClient, LocalWorkerClient};
-pub use domain::{
-    BeamCommandEngine, BeamDomain, BeamDomainBundle, BeamQueryEngine, InvokePayload, ResumePayload,
-    StreamAck, BEAM_NAMESPACE,
-};
-pub use nats::{
-    decode_reply, encode_err, encode_ok, task_subject, NatsWorkerClient, DEFAULT_TASK_PREFIX,
-};
+pub use commands::BeamCommandEngine;
+pub use domain::{beam_namespace, BeamDomainBundle, BEAM_NAMESPACE};
+pub use local::{BeamSql, Caller, DomainStore, SessionRecord, UsageSummarySettings};
+pub use query::BeamQueryEngine;
+pub use reports::{set_reports, BeamReports, RiverBeamReports};

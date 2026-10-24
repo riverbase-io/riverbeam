@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use beam_types::StreamChunk;
 use tokio::sync::broadcast;
 
-use riverbase_core::RiverbaseResult;
 use crate::transport::{PublishedFrame, StreamTransport};
+use riverbase_core::RiverbaseResult;
 
 /// Fan-out transport backed by a Tokio broadcast channel.
 ///
@@ -68,6 +68,8 @@ mod tests {
             step_id: None,
             message_id: None,
             timestamp: None,
+            execution_id: None,
+            sequence: None,
         }
     }
 

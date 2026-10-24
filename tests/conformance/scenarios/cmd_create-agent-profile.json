@@ -1,0 +1,19 @@
+{
+  "description": "`create-agent-profile` for a fresh profile id as a beam-user.",
+  "phase": "12",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/fluvius-beam/create-agent-profile:post/agent_profile",
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      },
+      "body": {
+        "profile_id": "{uuid:profile}"
+      }
+    }
+  ],
+  "ignore": [
+    "body.data.**"
+  ]
+}

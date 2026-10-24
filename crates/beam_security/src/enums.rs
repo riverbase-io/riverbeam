@@ -67,4 +67,6 @@ pub enum ViolationType {
     RunLoopDetected,
     RunRecursionExceeded,
     SecurityViolation,
+    IdentityMissing,
+    IdentityPropagationFailed,
 }

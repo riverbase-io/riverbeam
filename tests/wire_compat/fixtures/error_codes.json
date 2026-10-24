@@ -1,0 +1,98 @@
+{
+  "AUT-003": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-400": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-401": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-402": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-403": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-404": {
+    "status": 404,
+    "title": "Not Found"
+  },
+  "BEM-410": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-411": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-412": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-422": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-423": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-424": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-425": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-426": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-427": {
+    "status": 400,
+    "title": "Bad Request"
+  },
+  "BEM-428": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-429": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-430": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-432": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-433": {
+    "status": 403,
+    "title": "Forbidden"
+  },
+  "BEM-434": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  },
+  "BEM-435": {
+    "status": 503,
+    "title": "Service Unavailable"
+  },
+  "FLR-001": {
+    "status": 500,
+    "title": "Internal Server Error"
+  },
+  "WEB-001": {
+    "status": 422,
+    "title": "Unprocessable Entity"
+  }
+}

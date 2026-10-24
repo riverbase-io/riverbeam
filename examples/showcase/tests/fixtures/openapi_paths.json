@@ -1,0 +1,515 @@
+{
+ "/api/api.info": [
+  "get"
+ ],
+ "/api/fluvius-beam/.usage": [
+  "get"
+ ],
+ "/api/fluvius-beam/activate-revision.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/activate-revision:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/add-evaluation-case.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/add-evaluation-case:post/agent_evaluation_dataset": [
+  "post"
+ ],
+ "/api/fluvius-beam/agent.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_action.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_action.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_action.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_context_manifest.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_context_manifest.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_context_manifest.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_dead_letter.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_dead_letter.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_dead_letter.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_result.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_result.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_result.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_run.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_run.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_evaluation_run.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_event.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_event.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_event.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_execution.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_execution.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_execution.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_feedback.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_feedback.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_feedback.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_interaction.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_interaction.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_interaction.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_chunk.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_chunk.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_chunk.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_document.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_document.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_knowledge_document.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_memory.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_memory.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_memory.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_message.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_message.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_message.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_profile.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_profile.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_profile.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_revision.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_revision.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_revision.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_run.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_run.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_run.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_security_decision.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_security_decision.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_security_decision.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_session.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_session.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_session.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_step.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_step.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_step.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_suggestion.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_suggestion.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_suggestion.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_task.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_task.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_task.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_plan.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_plan.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_plan.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_profile.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_profile.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/agent_usage_profile.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/assign-usage-plan.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/assign-usage-plan:exec/agent_usage_plan/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/cancel-execution.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/cancel-execution:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/create-agent-profile.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/create-agent-profile:post/agent_profile": [
+  "post"
+ ],
+ "/api/fluvius-beam/create-evaluation-dataset.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/create-evaluation-dataset:post/agent_evaluation_dataset": [
+  "post"
+ ],
+ "/api/fluvius-beam/delete-knowledge.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/delete-knowledge:exec/agent_knowledge_document/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/delete-my-agent-data.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/delete-my-agent-data:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/delete-user-agent-data.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/delete-user-agent-data:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/discard-dead-letter.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/discard-dead-letter:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/domain.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/edit-memory.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/edit-memory:exec/agent_memory/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/expire-memory.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/expire-memory:exec/agent_memory/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/forget-memory.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/forget-memory:exec/agent_memory/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/ingest-knowledge.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/ingest-knowledge:exec/agent_knowledge_document/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/invoke.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/invoke:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/mark-revision-validating.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/mark-revision-validating:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/model.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/model.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/model.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/place-legal-hold.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/place-legal-hold:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/reconcile-now.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/reconcile-now:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/reindex-knowledge.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/reindex-knowledge:exec/agent_knowledge_document/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/release-legal-hold.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/release-legal-hold:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remember-memory.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remember-memory:exec/agent_memory/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remove-agent-profile.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remove-agent-profile:exec/agent_profile/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remove-message.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remove-message:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remove-my-tool-rule.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remove-my-tool-rule:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remove-session.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remove-session:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/remove-tenant-tool-rule.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/remove-tenant-tool-rule:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/resume.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/resume:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/retire-revision.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/retire-revision:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/retry-dead-letter.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/retry-dead-letter:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/retry-execution.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/retry-execution:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/revoke-tool-grants.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/revoke-tool-grants:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/run-evaluation.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/run-evaluation:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/session-export.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/session-export.rept": [
+  "post"
+ ],
+ "/api/fluvius-beam/set-my-tool-rule.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/set-my-tool-rule:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/set-tenant-tool-rule.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/set-tenant-tool-rule:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/stream.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/stream:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/submit-agent-feedback.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/submit-agent-feedback:exec/agent/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/tool-policy-explanation.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/tool-policy-explanation.rept": [
+  "post"
+ ],
+ "/api/fluvius-beam/tool.item/{identifier}": [
+  "get"
+ ],
+ "/api/fluvius-beam/tool.list": [
+  "get"
+ ],
+ "/api/fluvius-beam/tool.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/update-agent-profile.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/update-agent-profile:exec/agent_profile/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/update-session.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/update-session:exec/agent_session/{identifier}": [
+  "post"
+ ],
+ "/api/fluvius-beam/usage-summary.meta": [
+  "get"
+ ],
+ "/api/fluvius-beam/usage-summary.rept": [
+  "post"
+ ],
+ "/api/health": [
+  "get"
+ ],
+ "/api/openapi.json": [
+  "get"
+ ],
+ "/api/ready": [
+  "get"
+ ],
+ "/api/rtc/default.info": [
+  "get"
+ ],
+ "/api/rtc/default.meta": [
+  "get"
+ ],
+ "/api/rtc/default~ssestream/{*channel}": [
+  "get"
+ ],
+ "/health/live": [
+  "get"
+ ],
+ "/health/ready": [
+  "get"
+ ]
+}

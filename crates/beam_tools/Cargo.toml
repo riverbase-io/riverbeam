@@ -1,0 +1,42 @@
+[package]
+name = "beam_tools"
+description = "Tool runtime for riverbeam: allowlist, idempotency, dry run, security stages, MCP, native tools"
+version = { workspace = true }
+edition = { workspace = true }
+license = { workspace = true }
+authors = { workspace = true }
+
+[dependencies]
+beam_env = { workspace = true }
+beam_errors = { workspace = true }
+beam_telemetry = { workspace = true }
+async-trait = { workspace = true }
+beam_knowledge = { workspace = true }
+beam_runtime = { workspace = true }
+beam_sandbox = { workspace = true }
+beam_security = { workspace = true }
+beam_store = { workspace = true }
+beam_types = { workspace = true }
+chrono = { workspace = true }
+
+jsonwebtoken = "9"
+reqwest = { workspace = true }
+rig-core = { version = "=0.44.0", default-features = false }
+riverbase_core = { workspace = true }
+# The official MCP SDK, at the major version rig-rmcp 0.44 uses; stdio servers.
+rmcp = { version = "=2.2.0", features = ["client", "transport-child-process"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = "0.10"
+tokio = { workspace = true, features = ["sync", "time", "process"] }
+tracing = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+axum = { workspace = true }
+beam_store = { workspace = true, features = ["testing"] }
+tempfile = "3"
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros", "net", "sync", "time"] }
+
+[lints]
+workspace = true

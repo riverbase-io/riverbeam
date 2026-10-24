@@ -48,7 +48,7 @@ pub(crate) fn empty_object() -> Value {
 }
 
 fn is_default_metadata(v: &Value) -> bool {
-    v.is_null() || (v.is_object() && v.as_object().is_some_and(|m| m.is_empty()))
+    v.is_null() || (v.is_object() && v.as_object().is_some_and(serde_json::Map::is_empty))
 }
 
 impl ContentPart {
@@ -59,11 +59,12 @@ impl ContentPart {
             url: None,
             data: None,
             mime_type: None,
-            metadata: Value::Object(Default::default()),
+            metadata: Value::Object(serde_json::Map::new()),
             media_id: None,
         }
     }
 
+    #[must_use]
     pub fn detected_modality(&self) -> Modality {
         match self.part_type {
             ContentPartType::Text | ContentPartType::Reasoning => Modality::Text,

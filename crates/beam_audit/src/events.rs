@@ -19,6 +19,31 @@ pub enum AuditAction {
     QuotaChecked,
     QuotaExceeded,
     SecurityEvent,
+    AgentPublished,
+    PolicyChanged,
+    ContextResourceAccessed,
+    MemoryWritten,
+    MemoryDeleted,
+    ToolApproval,
+    CredentialUsed,
+    OperatorRecovery,
+}
+
+impl AuditAction {
+    /// The Python value (`request_received`, ...).
+    #[must_use]
+    pub fn as_str(self) -> String {
+        serde_json::to_value(self)
+            .ok()
+            .and_then(|v| v.as_str().map(str::to_owned))
+            .unwrap_or_default()
+    }
+
+    /// The `auditaction` enum label (the Python member name).
+    #[must_use]
+    pub fn db_label(self) -> String {
+        self.as_str().to_uppercase()
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -31,11 +56,17 @@ pub struct AuditEvent {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub run_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution_id: Option<Uuid>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub trace_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub user_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub session_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model_used: Option<String>,
+    #[serde(default)]
+    pub modalities_used: Vec<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub token_usage: Option<TokenUsage>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -44,6 +75,10 @@ pub struct AuditEvent {
     pub status: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub input_preview: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub output_preview: Option<String>,
     #[serde(default, skip_serializing_if = "Value::is_null")]
     pub metadata: Value,
 }
@@ -60,13 +95,18 @@ impl AuditEvent {
             action,
             agent_name: None,
             run_id: None,
+            execution_id: None,
+            trace_id: None,
             user_id: None,
             session_id: None,
             model_used: None,
+            modalities_used: Vec::new(),
             token_usage: None,
             latency_ms: None,
             status: ok_status(),
             error: None,
+            input_preview: None,
+            output_preview: None,
             metadata: Value::Null,
         }
     }
@@ -92,6 +132,18 @@ impl AuditEvent {
     #[must_use]
     pub fn run_id(mut self, run_id: Option<Uuid>) -> Self {
         self.run_id = run_id;
+        self
+    }
+
+    #[must_use]
+    pub fn execution_id(mut self, execution_id: Option<Uuid>) -> Self {
+        self.execution_id = execution_id;
+        self
+    }
+
+    #[must_use]
+    pub fn trace_id(mut self, trace_id: Option<String>) -> Self {
+        self.trace_id = trace_id;
         self
     }
 

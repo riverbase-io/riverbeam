@@ -1,0 +1,351 @@
+{
+  "name": "facts_resources_sensitivity",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": "use my facts"
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      },
+      "context": {
+        "facts": [
+          {
+            "key": "tier",
+            "value": "gold"
+          },
+          {
+            "key": "limits",
+            "value": {
+              "max": 3,
+              "ok": true,
+              "note": null
+            }
+          },
+          {
+            "key": "old",
+            "value": 1,
+            "expiry": "2020-01-01T00:00:00Z"
+          },
+          {
+            "key": "secret",
+            "value": "s3",
+            "sensitivity": "restricted"
+          }
+        ],
+        "resources": [
+          {
+            "uri": "http://169.254.169.254/latest/meta-data/",
+            "kind": "url"
+          },
+          {
+            "uri": "https://docs.example/a",
+            "kind": "doc",
+            "resolved_text": "claimed doc body"
+          },
+          {
+            "uri": "file:///etc/passwd",
+            "kind": "file"
+          }
+        ]
+      }
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 8000,
+      "context_window_tokens": 8000
+    },
+    "spec": {
+      "max_sensitivity": "confidential",
+      "memory_backend": "ltm",
+      "collections": [
+        "geo"
+      ]
+    },
+    "history": [
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000001",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello there"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000002",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi! how can I help?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      }
+    ],
+    "hits": [
+      {
+        "id": "chunk-1",
+        "text": "Paris is the capital of France.",
+        "score": 0.91,
+        "metadata": {
+          "collection": "geo",
+          "title": "France"
+        },
+        "document_id": "6f1c2b3a-0000-4000-8000-00000000d001",
+        "chunk_index": 2,
+        "source": "atlas.pdf"
+      },
+      {
+        "id": "chunk-2",
+        "text": "Berlin is the capital of Germany.",
+        "score": 0.5,
+        "metadata": {
+          "collection": "other"
+        }
+      }
+    ],
+    "ltm_hits": [
+      {
+        "id": "m-1",
+        "text": "user prefers metric units",
+        "score": 0.75,
+        "metadata": {
+          "type": "preference",
+          "consent": true
+        }
+      }
+    ],
+    "summary": "Conversation summary (untrusted):\nFacts: hello there"
+  },
+  "expected": {
+    "policy_revision": "1d7e6d742df1ffb4a9d6af5755087a038571d675f4efd0a1a0943652eb4a8e6f",
+    "enable": [
+      "instructions",
+      "profile",
+      "current",
+      "history",
+      "knowledge",
+      "ltm",
+      "facts",
+      "resources",
+      "workflow",
+      "tools"
+    ],
+    "decisions": [
+      {
+        "item_id": "fact:old",
+        "source": "facts",
+        "action": "dropped",
+        "reason": "expired",
+        "tokens": 2,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "resource:url:0",
+        "source": "resources",
+        "action": "dropped",
+        "reason": "ssrf",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "resource:file:2",
+        "source": "resources",
+        "action": "dropped",
+        "reason": "ssrf",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "fact:secret",
+        "source": "facts",
+        "action": "dropped",
+        "reason": "sensitivity",
+        "tokens": 3,
+        "content_hash": "63bc9eae67aa72e5",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "current:6f1c2b3a-0000-4000-8000-0000000000aa",
+        "source": "current",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 3,
+        "content_hash": "a2a5645b367550ec",
+        "trust": "user"
+      },
+      {
+        "item_id": "summary",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 13,
+        "content_hash": "cb4945cb72d014aa",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "knowledge:chunk-1",
+        "source": "knowledge",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 17,
+        "content_hash": "e250aacfa1365407",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "ltm:m-1",
+        "source": "ltm",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 18,
+        "content_hash": "59f8d14d104de45b",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "fact:tier",
+        "source": "facts",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "66869e3917f4660a",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "fact:limits",
+        "source": "facts",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 11,
+        "content_hash": "b2f411e093349d68",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "resource:doc:1",
+        "source": "resources",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 4,
+        "content_hash": "5e329bd0d730dcac",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000001",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "12998c017066eb0d",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000002",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 5,
+        "content_hash": "11c3d46653b3dcc4",
+        "trust": "system"
+      }
+    ],
+    "messages": [
+      {
+        "role": "human",
+        "text": "[UNTRUSTED EVIDENCE cite:chunk-1] Paris is the capital of France.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "remembered claim (preference): user prefers metric units [score=0.75]",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "hello there",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "hi! how can I help?",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "Conversation summary (untrusted):\nFacts: hello there",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "limits={'max': 3, 'ok': True, 'note': None}",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "tier=gold",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "claimed doc body",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "use my facts",
+        "tool_call_id": null,
+        "tool_calls": []
+      }
+    ],
+    "tool_schemas": [],
+    "input_tokens": 120,
+    "output_tokens": 2000,
+    "reserve_tokens": 64,
+    "window_tokens": 8000,
+    "counter_method": "estimated_conservative",
+    "cache_prefix_tokens": 0,
+    "selected_untrusted": [
+      "summary",
+      "knowledge:chunk-1",
+      "ltm:m-1",
+      "fact:tier",
+      "fact:limits",
+      "resource:doc:1"
+    ],
+    "tools": [],
+    "citations": [
+      {
+        "document_id": "6f1c2b3a-0000-4000-8000-00000000d001",
+        "document_revision": null,
+        "chunk_id": "chunk-1",
+        "chunk_index": 2,
+        "source": "atlas.pdf",
+        "title": "France",
+        "score": 0.91,
+        "rerank_score": null,
+        "citation_id": "cite:chunk-1"
+      }
+    ]
+  }
+}

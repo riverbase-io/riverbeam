@@ -1,0 +1,279 @@
+{
+  "name": "knowledge_tool_mode_memory_off",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": "where is paris?"
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      },
+      "context": {
+        "knowledge_mode": "tool",
+        "memory_mode": "off"
+      }
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 8000,
+      "context_window_tokens": 8000
+    },
+    "history": [
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000001",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello there"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000002",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi! how can I help?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000003",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "what is 2+2?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000004",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": ""
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_calls": [
+          {
+            "id": "call-1",
+            "name": "calculator",
+            "args": {
+              "expression": "2+2"
+            }
+          }
+        ]
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000005",
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_call_id": "call-1",
+        "tool_name": "calculator"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000006",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "2+2 is 4."
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000007",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "thanks, and the weather?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000008",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "I cannot check the weather."
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000009",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "summarize our chat"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa"
+      }
+    ],
+    "hits": [
+      {
+        "id": "chunk-1",
+        "text": "Paris is the capital of France.",
+        "score": 0.91,
+        "metadata": {
+          "collection": "geo",
+          "title": "France"
+        },
+        "document_id": "6f1c2b3a-0000-4000-8000-00000000d001",
+        "chunk_index": 2,
+        "source": "atlas.pdf"
+      },
+      {
+        "id": "chunk-2",
+        "text": "Berlin is the capital of Germany.",
+        "score": 0.5,
+        "metadata": {
+          "collection": "other"
+        }
+      }
+    ],
+    "tool_schemas": [
+      {
+        "name": "calculator",
+        "description": "Evaluate arithmetic.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expression"
+          ]
+        }
+      }
+    ],
+    "tool_names": [
+      "calculator"
+    ]
+  },
+  "expected": {
+    "policy_revision": "c0016e74dcc1cc8b7aaaf8d61db7e17563bc5ad8c904010b7a9b464a1dc81f99",
+    "enable": [
+      "instructions",
+      "profile",
+      "current",
+      "facts",
+      "resources",
+      "workflow",
+      "tools"
+    ],
+    "decisions": [
+      {
+        "item_id": "source:history",
+        "source": "history",
+        "action": "dropped",
+        "reason": "disabled",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "source:knowledge",
+        "source": "knowledge",
+        "action": "dropped",
+        "reason": "tool_only",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "source:ltm",
+        "source": "ltm",
+        "action": "dropped",
+        "reason": "disabled",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "current:6f1c2b3a-0000-4000-8000-0000000000aa",
+        "source": "current",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 4,
+        "content_hash": "c922624b4b412b48",
+        "trust": "user"
+      },
+      {
+        "item_id": "tools",
+        "source": "tools",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 44,
+        "content_hash": "f3bd67b3d1e603db",
+        "trust": "system"
+      }
+    ],
+    "messages": [
+      {
+        "role": "human",
+        "text": "where is paris?",
+        "tool_call_id": null,
+        "tool_calls": []
+      }
+    ],
+    "tool_schemas": [
+      {
+        "name": "calculator",
+        "description": "Evaluate arithmetic.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "expression": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "expression"
+          ]
+        }
+      }
+    ],
+    "input_tokens": 52,
+    "output_tokens": 2000,
+    "reserve_tokens": 64,
+    "window_tokens": 8000,
+    "counter_method": "exact",
+    "cache_prefix_tokens": 0,
+    "selected_untrusted": [],
+    "tools": [
+      "calculator"
+    ],
+    "citations": []
+  }
+}

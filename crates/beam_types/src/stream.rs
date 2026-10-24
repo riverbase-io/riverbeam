@@ -9,9 +9,30 @@ pub enum StreamChunkType {
     Chunk,
     Done,
     Error,
-    Placeholder,
-    Thinking,
-    Tool,
+}
+
+impl StreamChunk {
+    /// A terminal `error` frame carrying `error` text and no ids.
+    #[must_use]
+    pub fn error_frame(error: impl Into<String>) -> Self {
+        Self {
+            chunk_type: StreamChunkType::Error,
+            data: None,
+            result: None,
+            error: Some(error.into()),
+            id: None,
+            agent_id: None,
+            agent_name: None,
+            session_id: None,
+            interaction_id: None,
+            execution_id: None,
+            run_id: None,
+            step_id: None,
+            message_id: None,
+            timestamp: None,
+            sequence: None,
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -35,6 +56,8 @@ pub struct StreamChunk {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interaction_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution_id: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub run_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub step_id: Option<String>,
@@ -42,4 +65,7 @@ pub struct StreamChunk {
     pub message_id: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
+    /// Monotonic durable sequence per execution (replay cursor).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub sequence: Option<i64>,
 }

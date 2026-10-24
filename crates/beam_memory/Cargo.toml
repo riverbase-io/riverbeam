@@ -1,6 +1,6 @@
 [package]
 name = "beam_memory"
-description = "Session memory backends and context strategies for riverbeam"
+description = "Session transcript and summaries for riverbeam"
 version = { workspace = true }
 edition = { workspace = true }
 license = { workspace = true }
@@ -8,14 +8,21 @@ authors = { workspace = true }
 
 [dependencies]
 async-trait = { workspace = true }
+beam_errors = { workspace = true }
+beam_store = { workspace = true }
 beam_types = { workspace = true }
+chrono = { workspace = true }
 riverbase_core = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+sha2 = "0.10"
 tokio = { workspace = true }
+tracing = { workspace = true }
 uuid = { workspace = true }
 
 [dev-dependencies]
+beam_store = { workspace = true, features = ["testing"] }
+futures-util = { workspace = true }
 tokio = { workspace = true, features = ["rt", "macros"] }
 uuid = { workspace = true }
 

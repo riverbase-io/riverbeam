@@ -1,21 +1,10 @@
-//! Agent registry and local runners.
+//! The agent registry: every agent's metadata. Agents run on a runtime
+//! (`beam_runtime`); the registry answers what exists and what it accepts
+//! (plan 021 D3).
 
-mod errors;
-#[allow(unused_imports)]
-pub(crate) use errors::*;
+#[allow(clippy::wildcard_imports)] // The error catalog (`beam_errors`).
+pub(crate) use beam_errors::*;
 
-mod completion;
-mod echo;
 mod registry;
-mod runner;
-mod sandbox_tools;
-mod skills;
-mod tool;
 
-pub use completion::{Completion, CompletionClient, EchoClient, OpenAiCompatible, PendingToolCall, ScriptedClient};
-pub use echo::EchoAgent;
-pub use registry::{human_message_from_input, terminal_result, Agent, AgentRegistry};
-pub use runner::RigAgentRunner;
-pub use sandbox_tools::{sandbox_tools, RememberTool};
-pub use skills::{builtin_skills, skill_by_name, Skill};
-pub use tool::{json_params, Tool, ToolSpec};
+pub use registry::{human_message_from_input, AgentRegistry};

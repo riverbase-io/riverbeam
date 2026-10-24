@@ -1,0 +1,21 @@
+{
+  "description": "Invoke command without the required content field is rejected by payload validation.",
+  "phase": "01",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/fluvius-beam/invoke:exec/agent/{agent_id:agent}",
+      "body": {
+        "agent_name": "agent",
+        "session_id": "{uuid:session}"
+      },
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      }
+    }
+  ],
+  "ignore": [
+    "body.detail",
+    "body.errdata.**"
+  ]
+}

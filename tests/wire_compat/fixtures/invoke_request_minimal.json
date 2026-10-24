@@ -1,12 +1,25 @@
 {
+  "actions": null,
   "agent_name": "agent-calculator",
+  "auth_context": null,
   "content": [
     {
+      "data": null,
+      "media_id": null,
+      "metadata": {},
+      "mime_type": null,
+      "text": "What is 2+2?",
       "type": "text",
-      "text": "What is 2+2?"
+      "url": null
     }
   ],
+  "context": null,
+  "execution_id": null,
+  "idempotency_key": null,
+  "interaction_id": null,
+  "metadata": {},
+  "model_override": null,
+  "request_id": null,
   "session_id": "550e8400-e29b-41d4-a716-446655440000",
-  "stream": false,
-  "metadata": {}
+  "stream": false
 }

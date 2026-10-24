@@ -13,7 +13,24 @@ pub enum WorkerTask {
     IngestKnowledgeDocument,
     DeleteKnowledgeDocument,
     RememberMemory,
+    EditMemory,
+    ExpireMemory,
     ForgetMemory,
+    CancelExecution,
+    RetryExecution,
+    // Operations.
+    ReconcileNow,
+    ListDeadLetters,
+    RetryDeadLetter,
+    DiscardDeadLetter,
+    DeleteUserAgentData,
+    // Revisions and evals.
+    MarkRevisionValidating,
+    ActivateRevision,
+    RetireRevision,
+    ListRevisions,
+    SubmitAgentFeedback,
+    RunEvaluation,
 }
 
 impl WorkerTask {
@@ -24,7 +41,22 @@ impl WorkerTask {
             Self::IngestKnowledgeDocument => "ingest_knowledge_document",
             Self::DeleteKnowledgeDocument => "delete_knowledge_document",
             Self::RememberMemory => "remember_memory",
+            Self::EditMemory => "edit_memory",
+            Self::ExpireMemory => "expire_memory",
             Self::ForgetMemory => "forget_memory",
+            Self::CancelExecution => "cancel_execution",
+            Self::RetryExecution => "retry_execution",
+            Self::ReconcileNow => "reconcile_now",
+            Self::ListDeadLetters => "list_dead_letters",
+            Self::RetryDeadLetter => "retry_dead_letter",
+            Self::DiscardDeadLetter => "discard_dead_letter",
+            Self::DeleteUserAgentData => "delete_user_agent_data",
+            Self::MarkRevisionValidating => "mark_revision_validating",
+            Self::ActivateRevision => "activate_revision",
+            Self::RetireRevision => "retire_revision",
+            Self::ListRevisions => "list_revisions",
+            Self::SubmitAgentFeedback => "submit_agent_feedback",
+            Self::RunEvaluation => "run_evaluation",
         }
     }
 }
@@ -38,23 +70,72 @@ impl FromStr for WorkerTask {
             "ingest_knowledge_document" => Ok(Self::IngestKnowledgeDocument),
             "delete_knowledge_document" => Ok(Self::DeleteKnowledgeDocument),
             "remember_memory" => Ok(Self::RememberMemory),
+            "edit_memory" => Ok(Self::EditMemory),
+            "expire_memory" => Ok(Self::ExpireMemory),
             "forget_memory" => Ok(Self::ForgetMemory),
+            "cancel_execution" => Ok(Self::CancelExecution),
+            "retry_execution" => Ok(Self::RetryExecution),
+            "reconcile_now" => Ok(Self::ReconcileNow),
+            "list_dead_letters" => Ok(Self::ListDeadLetters),
+            "retry_dead_letter" => Ok(Self::RetryDeadLetter),
+            "discard_dead_letter" => Ok(Self::DiscardDeadLetter),
+            "delete_user_agent_data" => Ok(Self::DeleteUserAgentData),
+            "mark_revision_validating" => Ok(Self::MarkRevisionValidating),
+            "activate_revision" => Ok(Self::ActivateRevision),
+            "retire_revision" => Ok(Self::RetireRevision),
+            "list_revisions" => Ok(Self::ListRevisions),
+            "submit_agent_feedback" => Ok(Self::SubmitAgentFeedback),
+            "run_evaluation" => Ok(Self::RunEvaluation),
             other => Err(beam_core::BEM_091.with_data(other.to_string())),
         }
     }
+}
+
+/// `payload[key]` as a UUID.
+fn uuid_field(payload: &Value, key: &str) -> RiverbaseResult<uuid::Uuid> {
+    payload
+        .get(key)
+        .and_then(Value::as_str)
+        .and_then(|s| uuid::Uuid::parse_str(s.trim()).ok())
+        .ok_or_else(|| beam_core::BEM_003.with_data(format!("{key} is required")))
+}
+
+/// `payload[key]` as a non-empty string.
+fn text_field(payload: &Value, key: &str) -> RiverbaseResult<String> {
+    payload
+        .get(key)
+        .and_then(Value::as_str)
+        .filter(|s| !s.trim().is_empty())
+        .map(str::to_owned)
+        .ok_or_else(|| beam_core::BEM_003.with_data(format!("{key} is required")))
+}
+
+fn to_json<T: serde::Serialize>(value: &T) -> RiverbaseResult<Value> {
+    serde_json::to_value(value).map_err(|e| beam_core::BEM_002.with_data(e.to_string()))
+}
+
+/// `payload["execution_id"]` as a UUID (`CancelAgentExecutionPayload`, `RetryAgentExecutionPayload`).
+fn execution_id(payload: &Value) -> RiverbaseResult<uuid::Uuid> {
+    uuid_field(payload, "execution_id")
 }
 
 /// Owns a [`RiverBeam`] instance and dispatches worker RPC tasks.
 pub struct BeamWorker {
     beam: Arc<RiverBeam>,
     queue_name: String,
+    /// Stops the outbox relay.
+    relay_stop: std::sync::Mutex<Option<tokio::sync::watch::Sender<bool>>>,
 }
 
 impl BeamWorker {
     #[must_use]
     pub fn new(beam: Arc<RiverBeam>) -> Self {
         let queue_name = beam.config().worker_namespace.clone();
-        Self { beam, queue_name }
+        Self {
+            beam,
+            queue_name,
+            relay_stop: std::sync::Mutex::new(None),
+        }
     }
 
     #[must_use]
@@ -68,24 +149,104 @@ impl BeamWorker {
         &self.queue_name
     }
 
-    /// Catalog check-in hook (registers agents/models in the store).
+    /// Catalog check-in hook (registers agents/models in the store), then
+    /// the outbox relay when the store is a database.
+    ///
+    /// # Errors
+    /// The store's errors from reconstructing revisions or the catalog check-in.
     pub async fn on_startup(&self) -> RiverbaseResult<()> {
+        // Python reconstructs revisions at startup (binds keep their stored ids).
+        self.beam.reconstruct_revisions().await?;
         self.beam.checkin_catalog().await?;
+        if self.beam.store().durable() {
+            self.start_outbox_relay();
+        }
         Ok(())
     }
 
-    /// Catalog check-out hook (Phase 6+ wires usage/audit shutdown).
+    /// Run the outbox relay in the background until shutdown. Idempotent.
+    pub fn start_outbox_relay(&self) {
+        let Ok(mut stop) = self.relay_stop.lock() else {
+            return;
+        };
+        if stop.is_some() {
+            return;
+        }
+        let (tx, rx) = tokio::sync::watch::channel(false);
+        let beam = Arc::clone(&self.beam);
+        let worker_id = format!("{}-{}", crate::queue::hostname(), std::process::id());
+        tokio::spawn(async move { beam.run_outbox_relay(&worker_id, rx).await });
+        *stop = Some(tx);
+    }
+
+    fn stop_outbox_relay(&self) {
+        if let Some(tx) = self.relay_stop.lock().ok().and_then(|mut s| s.take()) {
+            let _ = tx.send(true);
+        }
+    }
+
+    /// Drain in-flight invokes before shutdown.
+    ///
+    /// # Errors
+    /// None today; the `Result` keeps the lifecycle hook's shape.
     pub async fn on_shutdown(&self) -> RiverbaseResult<()> {
+        self.stop_outbox_relay();
+        self.beam
+            .executions()
+            .drain(std::time::Duration::from_secs(30))
+            .await;
         Ok(())
     }
 
     /// `invoke_agent` task — runs the full invoke pipeline.
+    ///
+    /// # Errors
+    /// The invoke pipeline's errors.
     pub async fn invoke_agent(&self, request: InvokeRequest) -> RiverbaseResult<Value> {
         self.beam.invoke(request).await
     }
 
+    /// Publish the terminal `error` frame of a queued run that failed before
+    /// its pipeline published one (concurrency conflict, drain, a bad
+    /// payload), so stream clients and the `/invoke` alias stop waiting.
+    /// Does nothing without a stream or without the run's ids.
+    pub async fn publish_run_failure(&self, payload: &Value, err: &RiverbaseError) {
+        let Some(stream) = self.beam.beam_stream() else {
+            return;
+        };
+        let text = |k: &str| payload.get(k).and_then(Value::as_str).map(str::to_owned);
+        let (Some(session), Some(request)) = (text("session_id"), text("request_id")) else {
+            return;
+        };
+        let mut frame = beam_types::StreamChunk::error_frame(
+            beam_core::public_errors::stream_error_text(err.clone()),
+        );
+        frame.session_id = Some(session.clone());
+        frame.execution_id = text("execution_id");
+        frame.agent_name = text("agent_name");
+        if let Err(e) = stream.publish_event(&session, &request, frame).await {
+            tracing::warn!(error = %e, "could not publish a failed run's error frame");
+        }
+    }
+
     /// Dispatch a task by name with a JSON payload (queue consumer entry point).
+    /// A payload's `org_id` scopes the task's store connections (optional RLS);
+    /// an invoke scopes itself by its caller's org.
+    ///
+    /// # Errors
+    /// `BEM-091` for an unknown task, and the task's own errors.
     pub async fn handle_task(&self, task: &str, payload: Value) -> RiverbaseResult<Value> {
+        let org = payload
+            .get("org_id")
+            .and_then(Value::as_str)
+            .map(str::to_owned);
+        beam_store::org_scope::with_org(org.as_deref(), Box::pin(self.dispatch(task, payload)))
+            .await
+    }
+
+    // One arm per worker task.
+    #[allow(clippy::too_many_lines)]
+    async fn dispatch(&self, task: &str, payload: Value) -> RiverbaseResult<Value> {
         let task = WorkerTask::from_str(task)?;
         match task {
             WorkerTask::InvokeAgent => {
@@ -99,8 +260,99 @@ impl BeamWorker {
             WorkerTask::DeleteKnowledgeDocument => {
                 self.beam.delete_knowledge_document(payload).await
             }
-            WorkerTask::RememberMemory | WorkerTask::ForgetMemory => {
-                Err(beam_core::BEM_092.with_data(task.as_str().to_string()))
+            WorkerTask::CancelExecution => {
+                self.beam.cancel_execution(execution_id(&payload)?).await
+            }
+            WorkerTask::RetryExecution => {
+                // Python returns the new attempt; the redispatched invoke result is included.
+                let id = execution_id(&payload)?;
+                let result = self.beam.retry_execution(id).await?;
+                Ok(serde_json::json!({
+                    "execution_id": id.to_string(),
+                    "status": "retrying",
+                    "result": result,
+                }))
+            }
+            // Long-term memory.
+            WorkerTask::RememberMemory => self.beam.remember_memory(payload).await,
+            WorkerTask::EditMemory => self.beam.edit_memory(payload).await,
+            WorkerTask::ExpireMemory => self.beam.expire_memory(payload).await,
+            WorkerTask::ForgetMemory => self.beam.forget_memory(payload).await,
+            WorkerTask::ReconcileNow => self.beam.reconcile_now().await,
+            WorkerTask::ListDeadLetters => self.beam.list_dead_letters().await,
+            WorkerTask::RetryDeadLetter => {
+                self.beam
+                    .retry_dead_letter(uuid_field(&payload, "letter_id")?)
+                    .await
+            }
+            WorkerTask::DiscardDeadLetter => {
+                self.beam
+                    .discard_dead_letter(uuid_field(&payload, "letter_id")?)
+                    .await
+            }
+            WorkerTask::DeleteUserAgentData => {
+                let user = payload
+                    .get("user_id")
+                    .and_then(Value::as_str)
+                    .filter(|u| !u.trim().is_empty())
+                    .ok_or_else(|| beam_core::BEM_003.with_data("user_id is required"))?;
+                self.beam.delete_user_agent_data(user.trim()).await
+            }
+            WorkerTask::MarkRevisionValidating => to_json(
+                &self
+                    .beam
+                    .mark_revision_validating(uuid_field(&payload, "revision_id")?)
+                    .await?,
+            ),
+            WorkerTask::ActivateRevision => {
+                // As primary: Python's restart makes each deploy's bind the
+                // primary, while here the stored traffic wins, so this is
+                // what moves new executions to the revision.
+                let row = self
+                    .beam
+                    .activate_revision(uuid_field(&payload, "revision_id")?, true, None)
+                    .await?;
+                to_json(&row)
+            }
+            WorkerTask::RetireRevision => to_json(
+                &self
+                    .beam
+                    .retire_revision(uuid_field(&payload, "revision_id")?)
+                    .await?,
+            ),
+            WorkerTask::ListRevisions => {
+                let rows = self
+                    .beam
+                    .list_revisions(&text_field(&payload, "agent_name")?)
+                    .await?;
+                Ok(serde_json::json!({ "revisions": rows }))
+            }
+            WorkerTask::SubmitAgentFeedback => {
+                let text = |k: &str| payload.get(k).and_then(Value::as_str).map(str::to_owned);
+                let rating = payload
+                    .get("rating")
+                    .and_then(Value::as_i64)
+                    .and_then(|r| i32::try_from(r).ok());
+                let row = self
+                    .beam
+                    .submit_feedback(
+                        uuid_field(&payload, "execution_id")?,
+                        text("thumb"),
+                        rating,
+                        text("comment"),
+                    )
+                    .await?;
+                to_json(&row)
+            }
+            WorkerTask::RunEvaluation => {
+                let run = self
+                    .beam
+                    .run_evaluation(
+                        uuid_field(&payload, "dataset_id")?,
+                        uuid_field(&payload, "agent_revision_id")?,
+                    )
+                    .await?;
+                to_json(&run)
             }
         }
     }
@@ -165,31 +417,129 @@ mod tests {
     async fn unknown_task_errors() {
         let beam = Arc::new(build_beam(None));
         let worker = BeamWorker::new(beam);
-        let err = worker
-            .handle_task("nope", Value::Null)
-            .await
-            .unwrap_err();
+        let err = worker.handle_task("nope", Value::Null).await.unwrap_err();
         assert_eq!(err.errcode.as_str(), "BEM-091");
     }
 
     #[tokio::test]
-    async fn unimplemented_task_returns_bem_092() {
-        let beam = Arc::new(build_beam(None));
-        let worker = BeamWorker::new(beam);
+    async fn memory_tasks_need_knowledge_then_round_trip() {
+        let worker = BeamWorker::new(Arc::new(build_beam(None)));
         let err = worker
             .handle_task("remember_memory", serde_json::json!({}))
             .await
             .unwrap_err();
-        assert_eq!(err.errcode.as_str(), "BEM-092");
+        assert_eq!(
+            err.errcode.as_str(),
+            "BEM-045",
+            "Python: KnowledgeManager is not configured"
+        );
+
+        let beam = beam_on(
+            RiverBeam::builder(BeamConfig::default()).knowledge(Arc::new(
+                beam_knowledge::KnowledgeManager::new(
+                    Arc::new(beam_knowledge::MockEmbedder::new(32)),
+                    Arc::new(beam_knowledge::InMemoryVectorStore::new()),
+                ),
+            )),
+        );
+        let worker = BeamWorker::new(Arc::new(beam));
+        let user = Uuid::new_v4().to_string();
+        let remembered = worker
+            .handle_task(
+                "remember_memory",
+                serde_json::json!({"user_id": user, "content": "likes tea"}),
+            )
+            .await
+            .unwrap();
+        let memory_id = remembered["memory_id"].as_str().unwrap().to_owned();
+        let edited = worker
+            .handle_task(
+                "edit_memory",
+                serde_json::json!({"memory_id": memory_id, "content": "likes coffee"}),
+            )
+            .await
+            .unwrap();
+        assert_eq!(edited["memory_id"], memory_id.as_str());
+        worker
+            .handle_task(
+                "expire_memory",
+                serde_json::json!({"memory_id": memory_id, "expires_at": "2020-01-01T00:00:00+00:00"}),
+            )
+            .await
+            .unwrap();
+        let forgotten = worker
+            .handle_task("forget_memory", serde_json::json!({"memory_id": memory_id}))
+            .await
+            .unwrap();
+        assert_eq!(forgotten["deleted"], 1);
     }
 
     fn build_beam(stream: Option<Arc<BeamStream>>) -> RiverBeam {
-        let mut beam = RiverBeam::new(BeamConfig::default());
-        if let Some(stream) = stream {
-            beam.set_stream(stream);
-        }
+        let builder = RiverBeam::builder(BeamConfig::default());
+        beam_on(match stream {
+            Some(stream) => builder.stream(stream),
+            None => builder,
+        })
+    }
+
+    /// `builder`'s beam, with the `demo` echo agent.
+    fn beam_on(builder: beam_core::RiverBeamBuilder) -> RiverBeam {
+        let beam = builder.build().unwrap();
         beam.register_echo_agent("demo");
         let _ = ContentPart::text("warm");
         beam
+    }
+
+    /// `mark-revision-validating`'s task: activation then needs a passing eval.
+    #[tokio::test]
+    async fn a_validating_revision_needs_a_passing_eval_to_activate() {
+        let beam = Arc::new(build_beam(None));
+        let worker = BeamWorker::new(Arc::clone(&beam));
+        worker
+            .handle_task(
+                "invoke_agent",
+                invoke_payload(Uuid::new_v4(), Uuid::new_v4(), false),
+            )
+            .await
+            .expect("the first run pins revision 1");
+        let spec = beam_types::AgentSpec {
+            version: "2.0.0".into(),
+            ..beam_types::AgentSpec::new("demo", "echo")
+        };
+        let snapshot = beam.compile_spec(&spec, None, false).expect("spec");
+        let draft = beam.revisions().record_bind(&snapshot).expect("draft");
+        let revision = serde_json::json!({ "revision_id": draft.id });
+
+        let marked = worker
+            .handle_task("mark_revision_validating", revision.clone())
+            .await
+            .expect("mark validating");
+        assert_eq!(marked["status"], "validating");
+        let refused = worker
+            .handle_task("activate_revision", revision)
+            .await
+            .expect_err("no eval run yet");
+        assert_eq!(refused.errcode.as_str(), "BEM-492");
+    }
+
+    #[tokio::test]
+    async fn execution_control_tasks_are_dispatched() {
+        let worker = BeamWorker::new(Arc::new(RiverBeam::new(BeamConfig::default())));
+        let missing = serde_json::json!({"execution_id": Uuid::new_v4().to_string()});
+        let err = worker
+            .handle_task("cancel_execution", missing.clone())
+            .await
+            .unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-377");
+        let err = worker
+            .handle_task("retry_execution", missing)
+            .await
+            .unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-377");
+        let err = worker
+            .handle_task("cancel_execution", serde_json::json!({}))
+            .await
+            .unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-003");
     }
 }

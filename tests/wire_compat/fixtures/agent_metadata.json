@@ -1,0 +1,26 @@
+{
+  "description": "Adds numbers",
+  "final_nodes": [
+    "respond"
+  ],
+  "name": "agent-calculator",
+  "output_contract": {
+    "required": [
+      "answer"
+    ]
+  },
+  "output_modalities": [
+    "text"
+  ],
+  "supported_modalities": [
+    "text",
+    "image"
+  ],
+  "tags": [
+    "math"
+  ],
+  "tools": [
+    "calculator"
+  ],
+  "version": "2.0.0"
+}

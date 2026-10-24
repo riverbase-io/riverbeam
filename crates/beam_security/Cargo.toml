@@ -6,9 +6,19 @@ edition = { workspace = true }
 license = { workspace = true }
 authors = { workspace = true }
 
+[features]
+default = ["rules"]
+# The rule engine (`SecurityManager`) on `river_reed`, a library outside
+# riverbase. Without it a beam must run with SECURITY_ENABLED off.
+rules = ["dep:river_reed"]
+# Decision persistence in Postgres (`PgSecurityStore`).
+postgres = ["dep:beam_store"]
+
 [dependencies]
 async-trait = { workspace = true }
-river_reed = { workspace = true }
+beam_store = { workspace = true, optional = true }
+tracing = { workspace = true }
+river_reed = { workspace = true, optional = true }
 regex = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -16,6 +26,10 @@ tokio = { workspace = true, features = ["rt", "sync"] }
 uuid = { workspace = true }
 
 [dev-dependencies]
+beam_store = { workspace = true, features = ["testing"] }
+riverbase_core = { workspace = true }
+diesel = { workspace = true }
+diesel-async = { workspace = true }
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
 
 [lints]

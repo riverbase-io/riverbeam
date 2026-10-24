@@ -11,8 +11,8 @@ use async_trait::async_trait;
 use beam_types::StreamChunk;
 use riverbase_core::transport::NatsMessageBus;
 
-use riverbase_core::RiverbaseResult;
 use crate::transport::StreamTransport;
+use riverbase_core::RiverbaseResult;
 
 /// Default NATS subject prefix for beam stream frames.
 pub const DEFAULT_STREAM_PREFIX: &str = "beam.stream";
@@ -114,7 +114,11 @@ mod tests {
             return;
         };
         let transport = NatsTransport::connect(&url).await.expect("connect nats");
-        let channel = format!("ws.channel.{}:{}", uuid::Uuid::new_v4(), uuid::Uuid::new_v4());
+        let channel = format!(
+            "ws.channel.{}:{}",
+            uuid::Uuid::new_v4(),
+            uuid::Uuid::new_v4()
+        );
         let mut sub = transport.subscribe(&channel).await.expect("subscribe");
 
         let frame = StreamChunk {
@@ -131,6 +135,8 @@ mod tests {
             step_id: None,
             message_id: None,
             timestamp: None,
+            execution_id: None,
+            sequence: None,
         };
         transport.publish(&channel, &frame).await.expect("publish");
 

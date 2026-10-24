@@ -1,0 +1,10 @@
+{
+ "/api/auth": "riverbase auth serves `/api/auth/` (trailing slash): riverbase work item",
+ "/api/auth/mcp-token": "riverbase_http has no MCP token route (DECIDE-12a)",
+ "/api/auth/profiles": "riverbase auth has no profile listing: riverbase work item",
+ "/api/auth/sign-up": "riverbase auth has no sign-up route: riverbase work item",
+ "/api/auth/switch-profile/{profile_id}": "riverbase auth has no profile switch: riverbase work item",
+ "/api/media/{file_id}": "media routes: riverbase work item",
+ "/api/media/{file_id}/download": "media routes: riverbase work item",
+ "/api/media:upload": "media routes: riverbase work item"
+}

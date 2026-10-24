@@ -24,25 +24,50 @@ fn message_to_violation(message: &str) -> Option<ViolationType> {
         ("secrets_redacted", ViolationType::OutputSecretDetected),
         ("secrets_detected", ViolationType::OutputSecretDetected),
         ("pii_detected", ViolationType::OutputPiiDetected),
-        ("unsafe_content_detected", ViolationType::OutputUnsafeContent),
+        (
+            "unsafe_content_detected",
+            ViolationType::OutputUnsafeContent,
+        ),
         ("rag_cross_tenant", ViolationType::RagTenantFilterViolation),
         ("rag_chunk_no_metadata", ViolationType::RagSensitiveDocument),
-        ("rag_sensitive_document", ViolationType::RagSensitiveDocument),
+        (
+            "rag_sensitive_document",
+            ViolationType::RagSensitiveDocument,
+        ),
         ("rag_injection_detected", ViolationType::InjectionRagChunk),
         ("tool_denied_global", ViolationType::UnauthorizedTool),
-        ("tool_denied_not_in_global_allowlist", ViolationType::UnauthorizedTool),
+        (
+            "tool_denied_not_in_global_allowlist",
+            ViolationType::UnauthorizedTool,
+        ),
         ("tool_denied_agent", ViolationType::UnauthorizedTool),
-        ("tool_denied_agent_not_allowed", ViolationType::UnauthorizedTool),
+        (
+            "tool_denied_agent_not_allowed",
+            ViolationType::UnauthorizedTool,
+        ),
         ("tool_denied_plan", ViolationType::UnauthorizedTool),
-        ("tool_denied_plan_not_allowed", ViolationType::UnauthorizedTool),
+        (
+            "tool_denied_plan_not_allowed",
+            ViolationType::UnauthorizedTool,
+        ),
         ("tool_hitl_required", ViolationType::HitlRequiredNotObtained),
         ("memory_cross_tenant", ViolationType::MemoryScopeViolation),
-        ("memory_poisoning_suspected", ViolationType::MemoryPoisoningSuspected),
+        (
+            "memory_poisoning_suspected",
+            ViolationType::MemoryPoisoningSuspected,
+        ),
         ("run_max_steps_exceeded", ViolationType::RunMaxStepsExceeded),
         ("run_timeout_exceeded", ViolationType::RunTimeoutExceeded),
-        ("run_token_budget_exceeded", ViolationType::RunTokenBudgetExceeded),
+        (
+            "run_token_budget_exceeded",
+            ViolationType::RunTokenBudgetExceeded,
+        ),
         ("run_loop_detected", ViolationType::RunLoopDetected),
-        ("run_recursion_exceeded", ViolationType::RunRecursionExceeded),
+        (
+            "run_recursion_exceeded",
+            ViolationType::RunRecursionExceeded,
+        ),
+        ("identity_missing", ViolationType::IdentityMissing),
     ];
     MAP.iter()
         .find(|(prefix, _)| message.contains(prefix))
@@ -101,7 +126,7 @@ pub fn verdict_from_narrations(
 
     // Stable sort by code descending (matches Python `sorted(..., reverse=True)`).
     let mut sorted: Vec<&RuleNarration> = narrations.iter().collect();
-    sorted.sort_by(|a, b| b.code.cmp(&a.code));
+    sorted.sort_by_key(|n| std::cmp::Reverse(n.code));
 
     let top = sorted[0];
     let action = code_to_action(top.code);

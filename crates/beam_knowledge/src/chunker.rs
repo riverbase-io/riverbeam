@@ -1,82 +1,247 @@
-use serde_json::json;
+//! Chunkers (Python `knowledge/chunkers.py`). Lengths are in code points, as
+//! Python's `len` counts them.
 
-use crate::types::Chunk;
+use crate::types::{Chunk, ParsedBlock};
 
-/// Splits text into chunks for embedding.
+pub const DEFAULT_CHUNK_SIZE: usize = 800;
+pub const DEFAULT_CHUNK_OVERLAP: usize = 120;
+
+/// Splits parsed blocks into chunks.
 pub trait Chunker: Send + Sync {
-    fn chunk(&self, text: &str) -> Vec<Chunk>;
+    fn chunk(&self, blocks: &[ParsedBlock]) -> Vec<Chunk>;
 }
 
-/// Paragraph-aware chunker with a soft character budget (ports the default
-/// recursive chunker behavior: split on blank lines, pack up to `max_chars`).
-pub struct SimpleChunker {
-    max_chars: usize,
+/// Python `str.isspace` (what `\s` and `strip()` match).
+fn py_space(c: char) -> bool {
+    c.is_whitespace() || ('\u{1c}'..='\u{1f}').contains(&c)
 }
 
-impl SimpleChunker {
-    #[must_use]
-    pub fn new(max_chars: usize) -> Self {
-        Self {
-            max_chars: max_chars.max(1),
-        }
-    }
+fn py_strip(s: &str) -> &str {
+    s.trim_matches(py_space)
 }
 
-impl Default for SimpleChunker {
-    fn default() -> Self {
-        Self::new(800)
-    }
+/// `max(1, len(text) // 4)`.
+#[must_use]
+pub fn approx_tokens(text: &str) -> usize {
+    (text.chars().count() / 4).max(1)
 }
 
-impl Chunker for SimpleChunker {
-    fn chunk(&self, text: &str) -> Vec<Chunk> {
-        let mut chunks = Vec::new();
-        let mut current = String::new();
-
-        let flush = |buf: &mut String, idx: &mut usize, out: &mut Vec<Chunk>| {
-            let trimmed = buf.trim();
-            if !trimmed.is_empty() {
-                out.push(Chunk {
-                    text: trimmed.to_string(),
-                    chunk_index: *idx,
-                    token_count: Some(trimmed.split_whitespace().count()),
-                    metadata: json!({}),
-                });
-                *idx += 1;
+/// `re.split(r"\n\s*\n", text)`: a break is a whitespace run from a newline
+/// to the last newline of that run.
+fn split_paragraphs(text: &str) -> Vec<String> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = Vec::new();
+    let mut start = 0;
+    let mut i = 0;
+    while i < chars.len() {
+        if chars[i] == '\n' {
+            let mut j = i + 1;
+            let mut last_newline = None;
+            while j < chars.len() && py_space(chars[j]) {
+                if chars[j] == '\n' {
+                    last_newline = Some(j);
+                }
+                j += 1;
             }
-            buf.clear();
-        };
-
-        let mut idx = 0;
-        for para in text.split("\n\n") {
-            let para = para.trim();
-            if para.is_empty() {
+            if let Some(end) = last_newline {
+                out.push(chars[start..i].iter().collect());
+                start = end + 1;
+                i = end + 1;
                 continue;
             }
-            if !current.is_empty() && current.len() + para.len() + 2 > self.max_chars {
-                flush(&mut current, &mut idx, &mut chunks);
+        }
+        i += 1;
+    }
+    out.push(chars[start..].iter().collect());
+    out
+}
+
+/// `re.split(r"(?<=[.!?])\s+", text)`.
+fn split_sentences(text: &str) -> Vec<String> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = Vec::new();
+    let mut start = 0;
+    let mut i = 0;
+    while i < chars.len() {
+        if py_space(chars[i]) && i > 0 && matches!(chars[i - 1], '.' | '!' | '?') {
+            let mut j = i;
+            while j < chars.len() && py_space(chars[j]) {
+                j += 1;
             }
-            if para.len() > self.max_chars {
-                // Hard-split oversized paragraphs on the char budget.
-                flush(&mut current, &mut idx, &mut chunks);
-                let mut start = 0;
-                let bytes: Vec<char> = para.chars().collect();
-                while start < bytes.len() {
-                    let end = (start + self.max_chars).min(bytes.len());
-                    let slice: String = bytes[start..end].iter().collect();
-                    let mut buf = slice;
-                    flush(&mut buf, &mut idx, &mut chunks);
-                    start = end;
+            out.push(chars[start..i].iter().collect());
+            start = j;
+            i = j;
+            continue;
+        }
+        i += 1;
+    }
+    out.push(chars[start..].iter().collect());
+    out
+}
+
+/// Paragraph, then sentence, then a hard cut, with
+/// `chunk_overlap` tokens (4 characters each) shared between hard-cut windows.
+#[derive(Debug, Clone, Copy)]
+pub struct RecursiveChunker {
+    size: usize,
+    overlap: usize,
+}
+
+impl RecursiveChunker {
+    /// # Panics
+    /// When `chunk_overlap >= chunk_size` (Python raises `ValueError`).
+    #[must_use]
+    pub fn new(chunk_size: usize, chunk_overlap: usize) -> Self {
+        assert!(
+            chunk_overlap < chunk_size,
+            "chunk_overlap must be < chunk_size"
+        );
+        Self {
+            size: chunk_size,
+            overlap: chunk_overlap,
+        }
+    }
+
+    fn split(text: &str, size: usize) -> Vec<String> {
+        if text.is_empty() {
+            return Vec::new();
+        }
+        if approx_tokens(text) <= size {
+            return vec![text.to_owned()];
+        }
+        let mut out = Vec::new();
+        for para in split_paragraphs(text) {
+            if approx_tokens(&para) <= size {
+                out.push(para);
+                continue;
+            }
+            let mut buf = String::new();
+            for sent in split_sentences(&para) {
+                let joined = format!("{buf} {sent}");
+                if approx_tokens(&joined) <= size {
+                    py_strip(&joined).clone_into(&mut buf);
+                } else {
+                    if !buf.is_empty() {
+                        out.push(std::mem::take(&mut buf));
+                    }
+                    buf = sent;
                 }
-            } else {
-                if !current.is_empty() {
-                    current.push_str("\n\n");
-                }
-                current.push_str(para);
+            }
+            if !buf.is_empty() {
+                out.push(buf);
             }
         }
-        flush(&mut current, &mut idx, &mut chunks);
-        chunks
+        out
+    }
+
+    fn pack(text: &str, size: usize, overlap: usize) -> Vec<String> {
+        let (char_size, char_overlap) = (size * 4, overlap * 4);
+        let chars: Vec<char> = text.chars().collect();
+        if chars.len() <= char_size {
+            return vec![text.to_owned()];
+        }
+        let mut out = Vec::new();
+        let mut start = 0;
+        while start < chars.len() {
+            let end = (start + char_size).min(chars.len());
+            out.push(chars[start..end].iter().collect());
+            if end >= chars.len() {
+                break;
+            }
+            start = end - char_overlap;
+        }
+        out
+    }
+}
+
+impl Default for RecursiveChunker {
+    fn default() -> Self {
+        Self::new(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP)
+    }
+}
+
+impl Chunker for RecursiveChunker {
+    fn chunk(&self, blocks: &[ParsedBlock]) -> Vec<Chunk> {
+        let mut out = Vec::new();
+        for block in blocks {
+            for piece in Self::split(&block.text, self.size) {
+                for text in Self::pack(&piece, self.size, self.overlap) {
+                    let text = py_strip(&text);
+                    if text.is_empty() {
+                        continue;
+                    }
+                    out.push(Chunk {
+                        text: text.to_owned(),
+                        chunk_index: out.len(),
+                        token_count: Some(approx_tokens(text)),
+                        metadata: block.metadata.clone(),
+                    });
+                }
+            }
+        }
+        out
+    }
+}
+
+/// Fixed windows of `cl100k_base` tokens.
+#[derive(Debug, Clone, Copy)]
+pub struct TokenChunker {
+    size: usize,
+    overlap: usize,
+}
+
+impl TokenChunker {
+    /// # Panics
+    /// When `chunk_overlap >= chunk_size`.
+    #[must_use]
+    pub fn new(chunk_size: usize, chunk_overlap: usize) -> Self {
+        assert!(
+            chunk_overlap < chunk_size,
+            "chunk_overlap must be < chunk_size"
+        );
+        Self {
+            size: chunk_size,
+            overlap: chunk_overlap,
+        }
+    }
+}
+
+impl Default for TokenChunker {
+    fn default() -> Self {
+        Self::new(DEFAULT_CHUNK_SIZE, DEFAULT_CHUNK_OVERLAP)
+    }
+}
+
+impl Chunker for TokenChunker {
+    fn chunk(&self, blocks: &[ParsedBlock]) -> Vec<Chunk> {
+        let bpe = tiktoken_rs::cl100k_base_singleton();
+        let mut out = Vec::new();
+        for block in blocks {
+            let tokens = bpe.encode_ordinary(&block.text);
+            let mut start = 0;
+            while start < tokens.len() {
+                let end = (start + self.size).min(tokens.len());
+                let window = &tokens[start..end];
+                // Python decodes with `errors="replace"`: a window may cut a
+                // multi-byte character.
+                let bytes = bpe.decode_bytes(window).unwrap_or_default();
+                let text = String::from_utf8_lossy(&bytes);
+                let text = py_strip(&text);
+                if !text.is_empty() {
+                    out.push(Chunk {
+                        text: text.to_owned(),
+                        chunk_index: out.len(),
+                        token_count: Some(window.len()),
+                        metadata: block.metadata.clone(),
+                    });
+                }
+                if end >= tokens.len() {
+                    break;
+                }
+                start = end - self.overlap;
+            }
+        }
+        out
     }
 }
 
@@ -85,12 +250,24 @@ mod tests {
     use super::*;
 
     #[test]
-    fn chunks_paragraphs_within_budget() {
-        let chunker = SimpleChunker::new(40);
-        let text = "first paragraph here.\n\nsecond paragraph also here.\n\nthird.";
-        let chunks = chunker.chunk(text);
-        assert!(chunks.len() >= 2);
-        assert_eq!(chunks[0].chunk_index, 0);
-        assert!(chunks.iter().all(|c| !c.text.is_empty()));
+    fn splitters_match_python_regexes() {
+        // re.split(r"\n\s*\n", "a\n \n\nb\nc\n\n  d")
+        assert_eq!(
+            split_paragraphs("a\n \n\nb\nc\n\n  d"),
+            ["a", "b\nc", "  d"]
+        );
+        // re.split(r"(?<=[.!?])\s+", "One. Two!  Three? four.five")
+        assert_eq!(
+            split_sentences("One. Two!  Three? four.five"),
+            ["One.", "Two!", "Three?", "four.five"]
+        );
+    }
+
+    #[test]
+    fn short_text_is_one_chunk() {
+        let chunks = RecursiveChunker::default().chunk(&[ParsedBlock::new("  hello world  ")]);
+        assert_eq!(chunks.len(), 1);
+        assert_eq!(chunks[0].text, "hello world");
+        assert_eq!(chunks[0].token_count, Some(2));
     }
 }

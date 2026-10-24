@@ -1,7 +1,7 @@
 use std::path::Path;
 
-use riverbase_core::RiverbaseResult;
 use git2::{IndexAddOption, Repository, Signature, StatusOptions};
+use riverbase_core::RiverbaseResult;
 
 use crate::jail::SandboxRoot;
 
@@ -26,6 +26,10 @@ impl WorkingTree {
         &self.sandbox
     }
 
+    /// Create a repository at the sandbox root.
+    ///
+    /// # Errors
+    /// `BEM-320` when git cannot create it.
     pub fn init(&self) -> RiverbaseResult<Repository> {
         let repo = Repository::init(self.sandbox.path())
             .map_err(|e| crate::BEM_320.with_data(e.to_string()))?;
@@ -33,10 +37,14 @@ impl WorkingTree {
     }
 
     fn open(&self) -> RiverbaseResult<Repository> {
-        Repository::open(self.sandbox.path())
-            .map_err(|e| crate::BEM_321.with_data(e.to_string()))
+        Repository::open(self.sandbox.path()).map_err(|e| crate::BEM_321.with_data(e.to_string()))
     }
 
+    /// Paths with changes, untracked files included.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-322` when the status
+    /// cannot be read.
     pub fn status(&self) -> RiverbaseResult<Vec<String>> {
         let repo = self.open()?;
         let mut opts = StatusOptions::new();
@@ -52,6 +60,10 @@ impl WorkingTree {
             .collect())
     }
 
+    /// The working tree and index against `HEAD` (or the empty tree), as a patch.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-323` when diffing fails.
     pub fn diff(&self) -> RiverbaseResult<String> {
         let repo = self.open()?;
         let mut opts = git2::DiffOptions::new();
@@ -78,6 +90,11 @@ impl WorkingTree {
         Ok(buf)
     }
 
+    /// The summaries of the last `limit` commits on `HEAD`, newest first.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-324` when walking the
+    /// history fails.
     pub fn log(&self, limit: usize) -> RiverbaseResult<Vec<String>> {
         let repo = self.open()?;
         let mut revwalk = repo
@@ -98,18 +115,16 @@ impl WorkingTree {
             let commit = repo
                 .find_commit(oid.map_err(|e| crate::BEM_324.with_data(e.to_string()))?)
                 .map_err(|e| crate::BEM_324.with_data(e.to_string()))?;
-            out.push(
-                commit
-                    .summary()
-                    .ok()
-                    .flatten()
-                    .unwrap_or("")
-                    .to_string(),
-            );
+            out.push(commit.summary().ok().flatten().unwrap_or("").to_string());
         }
         Ok(out)
     }
 
+    /// Stage `rel` (everything for `""` or `"."`).
+    ///
+    /// # Errors
+    /// [`SandboxRoot::resolve`]'s errors, `BEM-321` when the repository cannot be
+    /// opened, `BEM-325` when staging fails.
     pub fn add(&self, rel: &str) -> RiverbaseResult<()> {
         let _ = self.sandbox.resolve(rel)?;
         let repo = self.open()?;
@@ -131,6 +146,10 @@ impl WorkingTree {
         Ok(())
     }
 
+    /// Commit the index on `HEAD` and return the new commit id.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-326` when committing fails.
     pub fn commit(&self, message: &str) -> RiverbaseResult<String> {
         let repo = self.open()?;
         let mut index = repo
@@ -155,6 +174,10 @@ impl WorkingTree {
         Ok(oid.to_string())
     }
 
+    /// The short name of `HEAD`.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-327` without a `HEAD`.
     pub fn current_branch(&self) -> RiverbaseResult<String> {
         let repo = self.open()?;
         let head = repo
@@ -171,6 +194,11 @@ impl WorkingTree {
     }
 
     /// Push `refname` (current branch if None) to `origin`. Protected refs are denied.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-328` for a protected
+    /// ref, `BEM-329` without an `origin`, `BEM-330` when the push fails, and
+    /// [`Self::current_branch`]'s errors.
     pub fn push(&self, refname: Option<&str>) -> RiverbaseResult<()> {
         let repo = self.open()?;
         let branch = match refname {
@@ -190,6 +218,11 @@ impl WorkingTree {
         Ok(())
     }
 
+    /// Point `origin` at `url`, adding it when missing.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-331` when the remote
+    /// cannot be set.
     pub fn add_origin(&self, url: &str) -> RiverbaseResult<()> {
         let repo = self.open()?;
         match repo.find_remote("origin") {
@@ -205,6 +238,11 @@ impl WorkingTree {
         Ok(())
     }
 
+    /// Check out `name`, first branching it from `HEAD` when `create`.
+    ///
+    /// # Errors
+    /// `BEM-321` when the repository cannot be opened, `BEM-332` when the branch
+    /// cannot be resolved or checked out.
     pub fn checkout_branch(&self, name: &str, create: bool) -> RiverbaseResult<()> {
         if self.is_protected(name) && create {
             // creating a branch named main is fine; pushing it is not
@@ -242,10 +280,7 @@ mod tests {
     fn tree(protected: &[&str]) -> (tempfile::TempDir, WorkingTree) {
         let dir = tempdir().unwrap();
         let sb = SandboxRoot::new(dir.path()).unwrap();
-        let wt = WorkingTree::new(
-            sb,
-            protected.iter().map(|s| (*s).to_string()).collect(),
-        );
+        let wt = WorkingTree::new(sb, protected.iter().map(|s| (*s).to_string()).collect());
         wt.init().unwrap();
         (dir, wt)
     }
@@ -285,7 +320,8 @@ mod tests {
         wt.add("f.md").unwrap();
         wt.commit("init").unwrap();
         wt.checkout_branch("change-1", true).unwrap();
-        wt.add_origin(&format!("file://{}", bare.display())).unwrap();
+        wt.add_origin(&format!("file://{}", bare.display()))
+            .unwrap();
         wt.push(Some("change-1")).unwrap();
         let bare_repo = git2::Repository::open(&bare).unwrap();
         assert!(bare_repo.find_reference("refs/heads/change-1").is_ok());

@@ -1,0 +1,35 @@
+# The outside services the showcases call through MCP (MCP_SERVERS_CONFIG_PATH).
+# `just showcase-mcp` runs every stub. Tools register as <server>__<tool>;
+# each showcase hands its agents only its own servers' tools.
+servers:
+  # Loan desk: the pricing engine and the credit bureau.
+  - name: rates
+    transport: http
+    url: http://127.0.0.1:9310/rates/mcp
+    allow: [get_rate_sheet]
+
+  - name: credit
+    transport: http
+    url: http://127.0.0.1:9310/credit/mcp
+    # The bureau key comes from the worker's environment, never this file.
+    headers_env:
+      x-bureau-key: LOAN_DESK_BUREAU_KEY
+    allow: [pull_report]
+
+  # Support desk: the store's order system.
+  - name: orders
+    transport: http
+    url: http://127.0.0.1:9310/orders/mcp
+    allow: [get_order, track_shipment, list_orders]
+
+  # Incident desk: monitoring (alerts, metrics, deploys).
+  - name: monitoring
+    transport: http
+    url: http://127.0.0.1:9310/monitoring/mcp
+    allow: [get_alerts, query_metrics, recent_deploys]
+
+  # Accounts payable: the ERP's purchase orders and goods receipts.
+  - name: erp
+    transport: http
+    url: http://127.0.0.1:9310/erp/mcp
+    allow: [get_purchase_order, get_goods_receipt, get_vendor]

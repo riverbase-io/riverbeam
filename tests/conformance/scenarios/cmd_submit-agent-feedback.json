@@ -1,0 +1,18 @@
+{
+  "description": "`submit-agent-feedback` with an empty payload as a beam-user: payload validation or authorization.",
+  "phase": "12",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/fluvius-beam/submit-agent-feedback:exec/agent/{uuid:target}",
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      },
+      "body": {}
+    }
+  ],
+  "ignore": [
+    "body.detail",
+    "body.errdata.**"
+  ]
+}

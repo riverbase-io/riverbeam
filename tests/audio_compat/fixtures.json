@@ -1,0 +1,1036 @@
+{
+ "constants": {
+  "max_audio_chunk_bytes": 262144,
+  "max_audio_buffer_bytes": 8388608,
+  "min_utterance_bytes": 4096,
+  "heartbeat_interval_sec": 15.0,
+  "heartbeat_timeout_sec": 45.0,
+  "max_msg_per_sec": 100
+ },
+ "transitions": [
+  {
+   "from": "IDLE",
+   "to": "LISTENING",
+   "allowed": true
+  },
+  {
+   "from": "IDLE",
+   "to": "PROCESSING",
+   "allowed": false
+  },
+  {
+   "from": "IDLE",
+   "to": "SPEAKING",
+   "allowed": false
+  },
+  {
+   "from": "LISTENING",
+   "to": "IDLE",
+   "allowed": true
+  },
+  {
+   "from": "LISTENING",
+   "to": "PROCESSING",
+   "allowed": true
+  },
+  {
+   "from": "LISTENING",
+   "to": "SPEAKING",
+   "allowed": false
+  },
+  {
+   "from": "PROCESSING",
+   "to": "IDLE",
+   "allowed": true
+  },
+  {
+   "from": "PROCESSING",
+   "to": "LISTENING",
+   "allowed": true
+  },
+  {
+   "from": "PROCESSING",
+   "to": "SPEAKING",
+   "allowed": true
+  },
+  {
+   "from": "SPEAKING",
+   "to": "IDLE",
+   "allowed": true
+  },
+  {
+   "from": "SPEAKING",
+   "to": "LISTENING",
+   "allowed": true
+  },
+  {
+   "from": "SPEAKING",
+   "to": "PROCESSING",
+   "allowed": false
+  }
+ ],
+ "transcript": "hello there",
+ "wav_bytes": 13,
+ "scenarios": {
+  "turn": {
+   "hang": false,
+   "timeout": null,
+   "inbound": [
+    {
+     "bytes": 4096
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "PROCESSING"
+    },
+    {
+     "type": "text",
+     "text": "Transcribing…",
+     "seq": 1,
+     "final": false,
+     "phase": "stt"
+    },
+    {
+     "type": "text",
+     "text": "hello there",
+     "seq": 1,
+     "final": false,
+     "phase": "user_transcript"
+    },
+    {
+     "type": "text",
+     "text": "Thinking…",
+     "seq": 1,
+     "final": false,
+     "phase": "llm"
+    },
+    {
+     "type": "text",
+     "text": "Echo: hello there",
+     "seq": 1,
+     "final": true,
+     "phase": "assistant"
+    },
+    {
+     "type": "state",
+     "state": "SPEAKING"
+    },
+    {
+     "type": "audio_start",
+     "seq": 1,
+     "format": "audio/wav"
+    },
+    {
+     "$bytes": 13
+    },
+    {
+     "type": "audio_end",
+     "seq": 1
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    }
+   ]
+  },
+  "controls": {
+   "hang": false,
+   "timeout": null,
+   "inbound": [
+    {
+     "text": "not json"
+    },
+    {
+     "text": "{\"type\": \"bogus\"}"
+    },
+    {
+     "text": "[1, 2]"
+    },
+    {
+     "text": "{\"type\": \"pong\"}"
+    },
+    {
+     "text": "{\"type\": \"start\"}"
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    },
+    {
+     "bytes": 16
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    },
+    {
+     "text": "{\"type\": \"audio_chunk\"}"
+    },
+    {
+     "text": "{\"type\": \"audio_chunk\", \"data\": \"%%%\"}"
+    },
+    {
+     "text": "{\"type\": \"audio_chunk\", \"data\": \"\"}"
+    },
+    {
+     "bytes": 262145
+    },
+    {
+     "text": "{\"type\": \"stop\"}"
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    },
+    {
+     "text": "{\"type\": \"stop\"}"
+    },
+    {
+     "text": "{\"type\": \"start\"}"
+    },
+    {
+     "text": "{\"type\": \"interrupt\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "error",
+     "error": "invalid_control_message"
+    },
+    {
+     "type": "error",
+     "error": "invalid_control_message"
+    },
+    {
+     "type": "error",
+     "error": "invalid_control_message"
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "error",
+     "error": "audio_too_short"
+    },
+    {
+     "type": "error",
+     "error": "audio_too_short"
+    },
+    {
+     "type": "error",
+     "error": "invalid_audio_chunk"
+    },
+    {
+     "type": "error",
+     "error": "invalid_audio_chunk"
+    },
+    {
+     "type": "error",
+     "error": "audio_chunk_too_large"
+    },
+    {
+     "type": "state",
+     "state": "IDLE"
+    },
+    {
+     "type": "error",
+     "error": "invalid_state_for_end_of_speech"
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "audio_end",
+     "seq": 1
+    }
+   ]
+  },
+  "base64_turn": {
+   "hang": false,
+   "timeout": null,
+   "inbound": [
+    {
+     "text": "{\"type\": \"audio_chunk\", \"data\": \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==\"}"
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\", \"extra\": 1}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "PROCESSING"
+    },
+    {
+     "type": "text",
+     "text": "Transcribing…",
+     "seq": 1,
+     "final": false,
+     "phase": "stt"
+    },
+    {
+     "type": "text",
+     "text": "hello there",
+     "seq": 1,
+     "final": false,
+     "phase": "user_transcript"
+    },
+    {
+     "type": "text",
+     "text": "Thinking…",
+     "seq": 1,
+     "final": false,
+     "phase": "llm"
+    },
+    {
+     "type": "text",
+     "text": "Echo: hello there",
+     "seq": 1,
+     "final": true,
+     "phase": "assistant"
+    },
+    {
+     "type": "state",
+     "state": "SPEAKING"
+    },
+    {
+     "type": "audio_start",
+     "seq": 1,
+     "format": "audio/wav"
+    },
+    {
+     "$bytes": 13
+    },
+    {
+     "type": "audio_end",
+     "seq": 1
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    }
+   ]
+  },
+  "interrupt_mid_turn": {
+   "hang": true,
+   "timeout": null,
+   "inbound": [
+    {
+     "bytes": 4096
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    },
+    {
+     "text": "{\"type\": \"interrupt\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "PROCESSING"
+    },
+    {
+     "type": "text",
+     "text": "Transcribing…",
+     "seq": 1,
+     "final": false,
+     "phase": "stt"
+    },
+    {
+     "type": "text",
+     "text": "hello there",
+     "seq": 1,
+     "final": false,
+     "phase": "user_transcript"
+    },
+    {
+     "type": "text",
+     "text": "Thinking…",
+     "seq": 1,
+     "final": false,
+     "phase": "llm"
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "audio_end",
+     "seq": 2
+    }
+   ]
+  },
+  "stop_mid_turn": {
+   "hang": true,
+   "timeout": null,
+   "inbound": [
+    {
+     "bytes": 4096
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    },
+    {
+     "text": "{\"type\": \"stop\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "PROCESSING"
+    },
+    {
+     "type": "text",
+     "text": "Transcribing…",
+     "seq": 1,
+     "final": false,
+     "phase": "stt"
+    },
+    {
+     "type": "text",
+     "text": "hello there",
+     "seq": 1,
+     "final": false,
+     "phase": "user_transcript"
+    },
+    {
+     "type": "text",
+     "text": "Thinking…",
+     "seq": 1,
+     "final": false,
+     "phase": "llm"
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "IDLE"
+    }
+   ]
+  },
+  "timeout": {
+   "hang": true,
+   "timeout": 0.02,
+   "inbound": [
+    {
+     "bytes": 4096
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "state",
+     "state": "PROCESSING"
+    },
+    {
+     "type": "text",
+     "text": "Transcribing…",
+     "seq": 1,
+     "final": false,
+     "phase": "stt"
+    },
+    {
+     "type": "text",
+     "text": "hello there",
+     "seq": 1,
+     "final": false,
+     "phase": "user_transcript"
+    },
+    {
+     "type": "text",
+     "text": "Thinking…",
+     "seq": 1,
+     "final": false,
+     "phase": "llm"
+    },
+    {
+     "type": "error",
+     "error": "audio_pipeline_timeout"
+    },
+    {
+     "type": "state",
+     "state": "LISTENING"
+    }
+   ]
+  },
+  "rate_limit": {
+   "hang": false,
+   "timeout": null,
+   "inbound": [
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    },
+    {
+     "text": "{\"type\": \"pong\"}",
+     "burst": true
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "error",
+     "error": "rate_limit_exceeded"
+    },
+    {
+     "$close": 4429,
+     "reason": "Too many messages"
+    }
+   ]
+  },
+  "overflow": {
+   "hang": false,
+   "timeout": null,
+   "inbound": [
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 262144
+    },
+    {
+     "bytes": 1
+    },
+    {
+     "text": "{\"type\": \"end_of_speech\"}"
+    }
+   ],
+   "outbound": [
+    {
+     "type": "state",
+     "state": "LISTENING"
+    },
+    {
+     "type": "error",
+     "error": "audio_buffer_overflow"
+    },
+    {
+     "type": "error",
+     "error": "audio_too_short"
+    }
+   ]
+  }
+ }
+}

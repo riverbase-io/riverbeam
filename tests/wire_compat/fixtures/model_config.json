@@ -1,0 +1,27 @@
+{
+  "capabilities": [
+    "tools",
+    "vision"
+  ],
+  "context_window_tokens": 128000,
+  "cost_per_1k_tokens": 0.15,
+  "credential_ref": {
+    "env": "OPENROUTER_API_KEY",
+    "name": "openrouter",
+    "provider": "env"
+  },
+  "extra": {
+    "temperature": 0.2
+  },
+  "max_output_tokens": 4096,
+  "max_tokens": 8192,
+  "modalities": [
+    "text",
+    "image"
+  ],
+  "name": "gpt-4o-mini",
+  "provider": "openrouter",
+  "provider_config": {
+    "base_url": "https://openrouter.ai/api/v1"
+  }
+}

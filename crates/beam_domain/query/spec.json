@@ -1,0 +1,1349 @@
+{
+ "_doc": "Beam query resources: scripts/gen_query_resources.py turns this and the live ref_beam schema into crates/beam_store/src/entity/*.rs (the entities) and crates/beam_domain/src/query/resources/*.rs (the query resources), and with --migration the entity-shape SQL of migration 0005 (folded into crates/beam_store/migrations/0012_baseline). Ownership: Open, User, UserOrg, Session, SessionOrg, Execution, Private, Admin. include_all exposes every other column too. default_order (optional): the list order, as field.asc / field.desc; without it, newest first by _created (or created_at), then id. write: true makes the entity writable (plan 013): upsert_from_json inserts or patches a row by _id (\"_insert\": true insert only, \"_update\": true update only). query: false makes an entity only (plan 014): no query resource, ownership Internal. tenant_migration (query: false entries): the migration that gives the table `_tenant` (--tenant-migration).",
+ "resources": [
+  {
+   "name": "agent",
+   "title": "Agents",
+   "ownership": "Open",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "description",
+     "label": "Description",
+     "preset": "String"
+    },
+    {
+     "column": "supported_modalities",
+     "label": "Supported modalities",
+     "preset": "Array"
+    },
+    {
+     "column": "output_modalities",
+     "label": "Output modalities",
+     "preset": "Array"
+    },
+    {
+     "column": "tags",
+     "label": "Tags",
+     "preset": "Array"
+    },
+    {
+     "column": "version",
+     "label": "Version",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "active_revision_id",
+     "label": "Active revision ID",
+     "preset": "String"
+    }
+   ]
+  },
+  {
+   "name": "agent_revision",
+   "title": "Agent revisions",
+   "ownership": "Open",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_name",
+     "label": "Agent name",
+     "preset": "String"
+    },
+    {
+     "column": "version",
+     "label": "Version",
+     "preset": "String"
+    },
+    {
+     "column": "revision_hash",
+     "label": "Revision hash",
+     "preset": "String"
+    },
+    {
+     "column": "runtime_name",
+     "label": "Runtime name",
+     "preset": "String"
+    },
+    {
+     "column": "runtime_adapter_version",
+     "label": "Runtime adapter version",
+     "preset": "String"
+    },
+    {
+     "column": "runtime_library_version",
+     "label": "Runtime library version",
+     "preset": "String"
+    },
+    {
+     "column": "build_id",
+     "label": "Build ID",
+     "preset": "String"
+    },
+    {
+     "column": "toolset_revision",
+     "label": "Toolset revision",
+     "preset": "String"
+    },
+    {
+     "column": "beam_version",
+     "label": "Beam version",
+     "preset": "String"
+    },
+    {
+     "column": "application_build_id",
+     "label": "Application build ID",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "compatibility_policy",
+     "label": "Compatibility policy",
+     "preset": "String"
+    },
+    {
+     "column": "created_at",
+     "label": "Created at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "activated_at",
+     "label": "Activated at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "retired_at",
+     "label": "Retired at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "model",
+   "title": "Models",
+   "ownership": "Open",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "provider",
+     "label": "Provider",
+     "preset": "String"
+    },
+    {
+     "column": "modalities",
+     "label": "Modalities",
+     "preset": "Array"
+    },
+    {
+     "column": "capabilities",
+     "label": "Capabilities",
+     "preset": "Array"
+    },
+    {
+     "column": "cost_per_1k_tokens",
+     "label": "Cost / 1k tokens",
+     "preset": "Number"
+    },
+    {
+     "column": "max_tokens",
+     "label": "Max tokens",
+     "preset": "Integer"
+    },
+    {
+     "column": "provider_config",
+     "label": "Provider config",
+     "preset": "Json"
+    },
+    {
+     "column": "extra",
+     "label": "Extra",
+     "preset": "Json"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    }
+   ]
+  },
+  {
+   "name": "tool",
+   "title": "Tools",
+   "ownership": "Open",
+   "include_all": true,
+   "fields": [
+    {
+     "column": "tool_name",
+     "label": "Tool name",
+     "preset": "String"
+    },
+    {
+     "column": "tool_description",
+     "label": "Description",
+     "preset": "String"
+    },
+    {
+     "column": "tool_type",
+     "label": "Tool type",
+     "preset": "String"
+    },
+    {
+     "column": "tool_parameters",
+     "label": "Parameters schema",
+     "preset": "Json"
+    },
+    {
+     "column": "tool_output",
+     "label": "Output schema",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_session",
+   "title": "Agent sessions",
+   "ownership": "UserOrg",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "profile_id",
+     "label": "Profile ID",
+     "preset": "String"
+    },
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "resource",
+     "label": "Resource Type",
+     "preset": "String"
+    },
+    {
+     "column": "resource_id",
+     "label": "Resource ID",
+     "preset": "String"
+    },
+    {
+     "column": "last_active_at",
+     "label": "Last active at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_execution",
+   "title": "Agent executions",
+   "ownership": "SessionOrg",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_revision_id",
+     "label": "Agent revision ID",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "runtime_name",
+     "label": "Runtime name",
+     "preset": "String"
+    },
+    {
+     "column": "runtime_ref",
+     "label": "Runtime ref",
+     "preset": "Json"
+    },
+    {
+     "column": "current_attempt",
+     "label": "Current attempt",
+     "preset": "Integer"
+    },
+    {
+     "column": "timeout_at",
+     "label": "Timeout at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "cancelled_at",
+     "label": "Cancelled at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "failed_at",
+     "label": "Failed at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "last_error_code",
+     "label": "Last error code",
+     "preset": "String"
+    },
+    {
+     "column": "created_at",
+     "label": "Created at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "started_at",
+     "label": "Started at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "completed_at",
+     "label": "Completed at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_interaction",
+   "title": "Agent interactions",
+   "ownership": "Session",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_name",
+     "label": "Agent name",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "started_at",
+     "label": "Started at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "ended_at",
+     "label": "Ended at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_run",
+   "title": "Agent runs",
+   "ownership": "Session",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "interaction_id",
+     "label": "Interaction ID",
+     "preset": "String"
+    },
+    {
+     "column": "execution_id",
+     "label": "Execution ID",
+     "preset": "String"
+    },
+    {
+     "column": "attempt_no",
+     "label": "Attempt number",
+     "preset": "Integer"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_name",
+     "label": "Agent name",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "worker_id",
+     "label": "Worker id",
+     "preset": "String"
+    },
+    {
+     "column": "lease_id",
+     "label": "Lease id",
+     "preset": "String"
+    },
+    {
+     "column": "lease_expires_at",
+     "label": "Lease expires at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "started_at",
+     "label": "Started at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "ended_at",
+     "label": "Ended at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_step",
+   "title": "Agent steps",
+   "ownership": "Session",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "interaction_id",
+     "label": "Interaction ID",
+     "preset": "String"
+    },
+    {
+     "column": "run_id",
+     "label": "Run ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "input",
+     "label": "Input",
+     "preset": "Json"
+    },
+    {
+     "column": "result",
+     "label": "Result",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_message",
+   "title": "Agent messages",
+   "ownership": "Session",
+   "include_all": true,
+   "write": true,
+   "default_order": [
+    "timestamp.asc",
+    "sequence.asc",
+    "id.asc"
+   ],
+   "fields": [
+    {
+     "column": "sequence",
+     "label": "Sequence",
+     "preset": "Integer"
+    },
+    {
+     "column": "role",
+     "label": "Role",
+     "preset": "String"
+    },
+    {
+     "column": "type",
+     "label": "Message type",
+     "preset": "String"
+    },
+    {
+     "column": "content",
+     "label": "Content",
+     "preset": "Json"
+    },
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "tool_call_id",
+     "label": "Tool call ID",
+     "preset": "String"
+    },
+    {
+     "column": "tool_name",
+     "label": "Tool name",
+     "preset": "String"
+    },
+    {
+     "column": "tool_args",
+     "label": "Tool args",
+     "preset": "Json"
+    },
+    {
+     "column": "tool_result",
+     "label": "Tool result",
+     "preset": "Json"
+    },
+    {
+     "column": "tool_calls",
+     "label": "Tool calls",
+     "preset": "Json"
+    },
+    {
+     "column": "phase",
+     "label": "Message phase",
+     "preset": "String"
+    },
+    {
+     "column": "metadata_json",
+     "label": "Message metadata",
+     "preset": "Json"
+    },
+    {
+     "column": "timestamp",
+     "label": "Timestamp",
+     "preset": "Datetime"
+    },
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "interaction_id",
+     "label": "Interaction ID",
+     "preset": "String"
+    },
+    {
+     "column": "run_id",
+     "label": "Agent run id",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "step_id",
+     "label": "Agent step id",
+     "preset": "String"
+    },
+    {
+     "column": "request_id",
+     "label": "Request correlation id",
+     "preset": "String"
+    }
+   ]
+  },
+  {
+   "name": "agent_action",
+   "title": "Agent actions",
+   "ownership": "Session",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "interaction_id",
+     "label": "Interaction ID",
+     "preset": "String"
+    },
+    {
+     "column": "run_id",
+     "label": "Run ID",
+     "preset": "String"
+    },
+    {
+     "column": "step_id",
+     "label": "Step ID",
+     "preset": "String"
+    },
+    {
+     "column": "message_id",
+     "label": "Message ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "type",
+     "label": "Action type",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "lc_action_id",
+     "label": "LangGraph action ID",
+     "preset": "String"
+    },
+    {
+     "column": "payload",
+     "label": "Payload",
+     "preset": "Json"
+    },
+    {
+     "column": "result",
+     "label": "Result",
+     "preset": "Json"
+    },
+    {
+     "column": "resolved_at",
+     "label": "Resolved at",
+     "preset": "Datetime"
+    }
+   ],
+   "txt_migration": "0012"
+  },
+  {
+   "name": "agent_profile",
+   "title": "Agent profiles",
+   "ownership": "User",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "profile_id",
+     "label": "Profile ID",
+     "preset": "String"
+    },
+    {
+     "column": "role",
+     "label": "Role",
+     "preset": "String"
+    },
+    {
+     "column": "rules",
+     "label": "Personalized rules",
+     "preset": "Json"
+    },
+    {
+     "column": "metadata_json",
+     "label": "Metadata",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_suggestion",
+   "title": "Agent suggestions",
+   "ownership": "Session",
+   "include_all": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "type",
+     "label": "Suggestion type",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "payload",
+     "label": "Payload",
+     "preset": "Json"
+    },
+    {
+     "column": "created_at",
+     "label": "Created at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "resolved_at",
+     "label": "Resolved at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "interaction_id",
+     "label": "Interaction ID",
+     "preset": "String"
+    }
+   ]
+  },
+  {
+   "name": "agent_usage_plan",
+   "title": "Usage plans",
+   "ownership": "Open",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "name",
+     "label": "Name",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "overage_policy",
+     "label": "Overage policy",
+     "preset": "String"
+    },
+    {
+     "column": "limit_max_requests_per_day",
+     "label": "Max requests / day",
+     "preset": "Integer"
+    },
+    {
+     "column": "limit_max_tokens_per_day",
+     "label": "Max tokens / day",
+     "preset": "Integer"
+    },
+    {
+     "column": "limit_max_tokens_per_request",
+     "label": "Max tokens / request",
+     "preset": "Integer"
+    },
+    {
+     "column": "limit_allowed_agents",
+     "label": "Allowed agents",
+     "preset": "Array"
+    },
+    {
+     "column": "limit_allowed_modalities",
+     "label": "Allowed modalities",
+     "preset": "Array"
+    },
+    {
+     "column": "limit_allowed_models",
+     "label": "Allowed models",
+     "preset": "Array"
+    }
+   ]
+  },
+  {
+   "name": "agent_usage_profile",
+   "title": "Usage profiles",
+   "ownership": "User",
+   "include_all": true,
+   "fields": [
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "plan_id",
+     "label": "Plan ID",
+     "preset": "String"
+    },
+    {
+     "column": "plan_key",
+     "label": "Plan key",
+     "preset": "String"
+    },
+    {
+     "column": "active",
+     "label": "Active",
+     "preset": "Boolean"
+    }
+   ]
+  },
+  {
+   "name": "agent_knowledge_document",
+   "title": "Knowledge documents",
+   "ownership": "UserOrg",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "scope",
+     "label": "Scope",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "title",
+     "label": "Title",
+     "preset": "String"
+    },
+    {
+     "column": "source",
+     "label": "Source",
+     "preset": "String"
+    },
+    {
+     "column": "type",
+     "label": "Type",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "chunk_count",
+     "label": "Chunk count",
+     "preset": "Integer"
+    },
+    {
+     "column": "embedder_name",
+     "label": "Embedder name",
+     "preset": "String"
+    },
+    {
+     "column": "content_hash",
+     "label": "Content hash",
+     "preset": "String"
+    },
+    {
+     "column": "metadata_json",
+     "label": "Metadata",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_knowledge_chunk",
+   "title": "Knowledge chunks",
+   "ownership": "UserOrg",
+   "include_all": false,
+   "fields": [
+    {
+     "column": "document_id",
+     "label": "Document ID",
+     "preset": "String"
+    },
+    {
+     "column": "scope",
+     "label": "Scope",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "source",
+     "label": "Source",
+     "preset": "String"
+    },
+    {
+     "column": "chunk_index",
+     "label": "Chunk index",
+     "preset": "Integer"
+    },
+    {
+     "column": "token_count",
+     "label": "Token count",
+     "preset": "Integer"
+    },
+    {
+     "column": "content_hash",
+     "label": "Content hash",
+     "preset": "String"
+    },
+    {
+     "column": "content",
+     "label": "Content",
+     "preset": "String"
+    },
+    {
+     "column": "metadata_json",
+     "label": "Metadata",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_memory",
+   "title": "Agent memories",
+   "ownership": "UserOrg",
+   "include_all": false,
+   "fields": [
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_id",
+     "label": "Agent ID",
+     "preset": "String"
+    },
+    {
+     "column": "type",
+     "label": "Memory type",
+     "preset": "String"
+    },
+    {
+     "column": "content",
+     "label": "Content",
+     "preset": "String"
+    },
+    {
+     "column": "embedder_name",
+     "label": "Embedder name",
+     "preset": "String"
+    },
+    {
+     "column": "metadata_json",
+     "label": "Metadata",
+     "preset": "Json"
+    },
+    {
+     "column": "importance",
+     "label": "Importance",
+     "preset": "Integer"
+    },
+    {
+     "column": "last_accessed_at",
+     "label": "Last accessed at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "expires_at",
+     "label": "Expires at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "version",
+     "label": "Version",
+     "preset": "Integer"
+    }
+   ]
+  },
+  {
+   "name": "agent_event",
+   "title": "Agent events",
+   "ownership": "UserOrg",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "session_id",
+     "label": "Session ID",
+     "preset": "String"
+    },
+    {
+     "column": "run_id",
+     "label": "Run ID",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    }
+   ]
+  },
+  {
+   "name": "agent_evaluation_run",
+   "title": "Evaluation runs",
+   "ownership": "Open",
+   "include_all": true,
+   "fields": [
+    {
+     "column": "dataset_id",
+     "label": "Dataset ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_revision_id",
+     "label": "Agent revision ID",
+     "preset": "String"
+    },
+    {
+     "column": "passed",
+     "label": "Passed",
+     "preset": "Boolean"
+    },
+    {
+     "column": "created_at",
+     "label": "Created at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_evaluation_result",
+   "title": "Evaluation results",
+   "ownership": "Open",
+   "include_all": true,
+   "fields": [
+    {
+     "column": "run_id",
+     "label": "Run ID",
+     "preset": "String"
+    },
+    {
+     "column": "case_id",
+     "label": "Case ID",
+     "preset": "String"
+    },
+    {
+     "column": "passed",
+     "label": "Passed",
+     "preset": "Boolean"
+    },
+    {
+     "column": "score",
+     "label": "Score",
+     "preset": "Number"
+    },
+    {
+     "column": "details",
+     "label": "Details",
+     "preset": "Json"
+    }
+   ]
+  },
+  {
+   "name": "agent_feedback",
+   "title": "Agent feedback",
+   "ownership": "Execution",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "execution_id",
+     "label": "Execution ID",
+     "preset": "String"
+    },
+    {
+     "column": "agent_revision_id",
+     "label": "Agent revision ID",
+     "preset": "String"
+    },
+    {
+     "column": "rating",
+     "label": "Rating",
+     "preset": "Integer"
+    },
+    {
+     "column": "thumb",
+     "label": "Thumb",
+     "preset": "String"
+    },
+    {
+     "column": "comment",
+     "label": "Comment",
+     "preset": "String"
+    },
+    {
+     "column": "created_at",
+     "label": "Created at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_task",
+   "title": "Queued work",
+   "ownership": "Private",
+   "include_all": false,
+   "write": true,
+   "fields": [
+    {
+     "column": "task",
+     "label": "Task",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "retryable",
+     "label": "Retryable",
+     "preset": "Boolean"
+    },
+    {
+     "column": "attempt_count",
+     "label": "Attempts",
+     "preset": "Integer"
+    },
+    {
+     "column": "max_attempts",
+     "label": "Max attempts",
+     "preset": "Integer"
+    },
+    {
+     "column": "next_attempt_at",
+     "label": "Next attempt at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "started_at",
+     "label": "Started at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "finished_at",
+     "label": "Finished at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "result",
+     "label": "Result",
+     "preset": "Json"
+    },
+    {
+     "column": "error",
+     "label": "Error",
+     "preset": "Json"
+    },
+    {
+     "column": "user_id",
+     "label": "User ID",
+     "preset": "String"
+    },
+    {
+     "column": "org_id",
+     "label": "Org ID",
+     "preset": "String"
+    },
+    {
+     "column": "execution_id",
+     "label": "Execution ID",
+     "preset": "String"
+    },
+    {
+     "column": "_created",
+     "label": "Created at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_dead_letter",
+   "title": "Dead letters",
+   "ownership": "Admin",
+   "include_all": true,
+   "write": true,
+   "fields": [
+    {
+     "column": "task_name",
+     "label": "Task",
+     "preset": "String"
+    },
+    {
+     "column": "status",
+     "label": "Status",
+     "preset": "String"
+    },
+    {
+     "column": "error",
+     "label": "Error",
+     "preset": "String"
+    },
+    {
+     "column": "error_code",
+     "label": "Error code",
+     "preset": "String"
+    },
+    {
+     "column": "attempts",
+     "label": "Attempts",
+     "preset": "Integer"
+    },
+    {
+     "column": "execution_id",
+     "label": "Execution ID",
+     "preset": "String"
+    },
+    {
+     "column": "next_attempt_at",
+     "label": "Next attempt at",
+     "preset": "Datetime"
+    },
+    {
+     "column": "org_id",
+     "label": "Org ID",
+     "preset": "String"
+    },
+    {
+     "column": "_created",
+     "label": "Created at",
+     "preset": "Datetime"
+    }
+   ]
+  },
+  {
+   "name": "agent_context_manifest",
+   "title": "Context manifests",
+   "ownership": "Execution",
+   "include_all": true,
+   "write": true,
+   "tenant_migration": "0007",
+   "fields": [],
+   "migration": "0011"
+  },
+  {
+   "name": "agent_security_decision",
+   "title": "Security decisions",
+   "ownership": "Execution",
+   "include_all": true,
+   "write": false,
+   "migration": "0011",
+   "fields": []
+  },
+  {
+   "name": "agent_execution_event",
+   "title": "Execution events",
+   "ownership": "Internal",
+   "include_all": true,
+   "query": false,
+   "write": true,
+   "tenant_migration": "0007",
+   "fields": []
+  },
+  {
+   "name": "agent_outbox_event",
+   "title": "Outbox events",
+   "ownership": "Internal",
+   "include_all": true,
+   "query": false,
+   "write": true,
+   "tenant_migration": "0007",
+   "fields": []
+  },
+  {
+   "name": "agent_usage_event",
+   "title": "Usage events",
+   "ownership": "Internal",
+   "include_all": true,
+   "query": false,
+   "write": true,
+   "tenant_migration": "0008",
+   "fields": []
+  },
+  {
+   "name": "agent_cost_event",
+   "title": "Cost events",
+   "ownership": "Internal",
+   "include_all": true,
+   "query": false,
+   "write": true,
+   "tenant_migration": "0008",
+   "fields": []
+  }
+ ]
+}

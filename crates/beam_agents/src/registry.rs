@@ -1,91 +1,59 @@
 use std::collections::{HashMap, HashSet};
-use std::sync::{Arc, RwLock};
+use std::sync::{PoisonError, RwLock};
 
-use async_trait::async_trait;
-use beam_types::{
-    AgentContext, AgentInput, AgentMetadata, AgentResult, Modality, StreamChunk, StreamChunkType,
-};
+use beam_types::{AgentInput, AgentMetadata, Modality};
 
 use riverbase_core::RiverbaseResult;
 
-#[async_trait]
-pub trait Agent: Send + Sync {
-    fn metadata(&self) -> AgentMetadata;
-    async fn stream(
-        &self,
-        input: &AgentInput,
-        context: &AgentContext,
-    ) -> RiverbaseResult<Vec<StreamChunk>>;
-    async fn health_check(&self) -> bool {
-        true
-    }
-}
-
+/// Registered agents' metadata by name.
+#[derive(Default)]
 pub struct AgentRegistry {
-    agents: RwLock<HashMap<String, Arc<dyn Agent>>>,
-}
-
-impl Default for AgentRegistry {
-    fn default() -> Self {
-        Self::new()
-    }
+    agents: RwLock<HashMap<String, AgentMetadata>>,
 }
 
 impl AgentRegistry {
+    #[must_use]
     pub fn new() -> Self {
-        Self {
-            agents: RwLock::new(HashMap::new()),
-        }
+        Self::default()
     }
 
-    pub fn register(&self, agent: Arc<dyn Agent>) {
-        let name = agent.metadata().name.clone();
-        let mut guard = self.agents.write().expect("agent registry lock");
-        guard.insert(name, agent);
+    /// Register `metadata` under its name, replacing any agent of that name.
+    pub fn register(&self, metadata: AgentMetadata) {
+        // A writer that panicked left whole entries: the map is still usable.
+        let mut agents = self.agents.write().unwrap_or_else(PoisonError::into_inner);
+        agents.insert(metadata.name.clone(), metadata);
     }
 
+    fn find(&self, name: &str) -> Option<AgentMetadata> {
+        let agents = self.agents.read().unwrap_or_else(PoisonError::into_inner);
+        agents.get(name).cloned()
+    }
+
+    /// The metadata of agent `name`.
+    ///
+    /// # Errors
+    /// `BEM-020` for an unknown agent.
     pub fn get_metadata(&self, name: &str) -> RiverbaseResult<AgentMetadata> {
-        let guard = self.agents.read().expect("agent registry lock");
-        guard
-            .get(name)
-            .map(|a| a.metadata())
+        self.find(name)
             .ok_or_else(|| crate::BEM_020.with_data(name.to_string()))
     }
 
-    /// Run an agent and return its raw stream frames (modality-validated).
-    pub async fn dispatch_frames(
-        &self,
-        agent_name: &str,
-        input: &AgentInput,
-        context: &AgentContext,
-    ) -> RiverbaseResult<Vec<StreamChunk>> {
-        let agent = {
-            let guard = self.agents.read().expect("agent registry lock");
-            let meta = guard
-                .get(agent_name)
-                .map(|a| a.metadata())
-                .ok_or_else(|| crate::BEM_021.with_data(agent_name.to_string()))?;
-            validate_modalities(&meta, input)?;
-            guard.get(agent_name).cloned()
-        };
-        let agent = agent.expect("agent exists after lookup");
-        agent.stream(input, context).await
+    /// Fail unless `agent_name` is registered and supports `input`'s modalities.
+    ///
+    /// # Errors
+    /// `BEM-021` for an unknown agent; `BEM-040` for an unsupported modality.
+    pub fn validate_input(&self, agent_name: &str, input: &AgentInput) -> RiverbaseResult<()> {
+        let metadata = self
+            .find(agent_name)
+            .ok_or_else(|| crate::BEM_021.with_data(agent_name.to_string()))?;
+        validate_modalities(&metadata, input)
     }
 
-    /// Run an agent and reduce its stream to the terminal [`AgentResult`].
-    pub async fn dispatch_stream(
-        &self,
-        agent_name: &str,
-        input: &AgentInput,
-        context: &AgentContext,
-    ) -> RiverbaseResult<AgentResult> {
-        let chunks = self.dispatch_frames(agent_name, input, context).await?;
-        terminal_result(chunks)
-    }
-
+    /// Every registered agent's metadata.
+    #[must_use]
     pub fn list_agents(&self) -> Vec<AgentMetadata> {
-        let guard = self.agents.read().expect("agent registry lock");
-        guard.values().map(|a| a.metadata()).collect()
+        let agents = self.agents.read().unwrap_or_else(PoisonError::into_inner);
+        agents.values().cloned().collect()
     }
 }
 
@@ -103,29 +71,7 @@ fn validate_modalities(metadata: &AgentMetadata, input: &AgentInput) -> Riverbas
     }
 }
 
-/// Reduce a finished agent stream to its terminal [`AgentResult`].
-pub fn terminal_result(chunks: Vec<StreamChunk>) -> RiverbaseResult<AgentResult> {
-    let mut final_result = None;
-    for chunk in chunks {
-        match chunk.chunk_type {
-            StreamChunkType::Done => {
-                final_result = chunk.result;
-                break;
-            }
-            StreamChunkType::Error => {
-                return Err(crate::BEM_087.with_data(chunk.error.unwrap_or_else(|| "stream error".into())));
-            }
-            StreamChunkType::Chunk
-            | StreamChunkType::Placeholder
-            | StreamChunkType::Thinking
-            | StreamChunkType::Tool => {}
-        }
-    }
-    final_result.ok_or_else(|| {
-        crate::BEM_086.raise()
-    })
-}
-
+#[must_use]
 pub fn human_message_from_input(input: &AgentInput) -> beam_types::AgentMessage {
     use beam_types::{AgentMessageRole, AgentMessageType};
     beam_types::AgentMessage {
@@ -133,5 +79,66 @@ pub fn human_message_from_input(input: &AgentInput) -> beam_types::AgentMessage 
         msg_type: AgentMessageType::Message,
         content: input.content.clone(),
         ..Default::default()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use beam_types::{AgentInput, AgentMetadata, ContentPart, ContentPartType, Modality};
+
+    use super::AgentRegistry;
+
+    fn text_agent(name: &str) -> AgentMetadata {
+        AgentMetadata {
+            name: name.into(),
+            description: String::new(),
+            supported_modalities: vec![Modality::Text],
+            output_modalities: vec![Modality::Text],
+            tags: vec![],
+            version: "1.0.0".into(),
+            final_nodes: Vec::new(),
+            output_contract: None,
+            tools: Vec::new(),
+        }
+    }
+
+    fn image_input() -> AgentInput {
+        let mut input = AgentInput::text("look");
+        input.content.push(ContentPart {
+            part_type: ContentPartType::ImageUrl,
+            text: None,
+            url: Some("https://example.com/a.png".into()),
+            ..ContentPart::text("")
+        });
+        input
+    }
+
+    #[test]
+    fn registered_agents_are_listed_and_replaced_by_name() {
+        let registry = AgentRegistry::new();
+        registry.register(text_agent("a"));
+        registry.register(text_agent("b"));
+        let mut replaced = text_agent("a");
+        replaced.version = "2.0.0".into();
+        registry.register(replaced);
+        let mut names: Vec<String> = registry.list_agents().into_iter().map(|m| m.name).collect();
+        names.sort();
+        assert_eq!(names, ["a", "b"]);
+        assert_eq!(registry.get_metadata("a").expect("a").version, "2.0.0");
+        let err = registry.get_metadata("missing").unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-020");
+    }
+
+    #[test]
+    fn unknown_agents_and_unsupported_modalities_are_refused() {
+        let registry = AgentRegistry::new();
+        registry.register(text_agent("echo"));
+        let text = AgentInput::text("hi");
+        let err = registry.validate_input("missing", &text).unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-021");
+        // The agent takes text only.
+        let err = registry.validate_input("echo", &image_input()).unwrap_err();
+        assert_eq!(err.errcode.as_str(), "BEM-040");
+        assert!(registry.validate_input("echo", &text).is_ok());
     }
 }

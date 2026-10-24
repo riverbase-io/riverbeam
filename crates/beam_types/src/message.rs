@@ -45,7 +45,7 @@ pub struct AgentMessage {
     pub id: Uuid,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
-    #[serde(default = "utc_now")]
+    #[serde(default = "utc_now", deserialize_with = "crate::time::datetime")]
     pub timestamp: DateTime<Utc>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub run_id: Option<Uuid>,
@@ -53,6 +53,8 @@ pub struct AgentMessage {
     pub request_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub interaction_id: Option<Uuid>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub step_id: Option<Uuid>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -90,7 +92,29 @@ fn utc_now() -> DateTime<Utc> {
 }
 
 fn empty_metadata() -> Value {
-    Value::Object(Default::default())
+    Value::Object(serde_json::Map::new())
+}
+
+impl AgentMessage {
+    /// The non-empty text parts joined by spaces.
+    #[must_use]
+    pub fn text_content(&self) -> String {
+        self.content
+            .iter()
+            .filter_map(|p| p.text.as_deref().filter(|t| !t.is_empty()))
+            .collect::<Vec<_>>()
+            .join(" ")
+    }
+
+    /// Python `Message.text(role, text)`.
+    #[must_use]
+    pub fn text(role: AgentMessageRole, text: impl Into<String>) -> Self {
+        Self {
+            role,
+            content: vec![ContentPart::text(text)],
+            ..Self::default()
+        }
+    }
 }
 
 impl Default for AgentMessage {
@@ -105,6 +129,7 @@ impl Default for AgentMessage {
             run_id: None,
             request_id: None,
             interaction_id: None,
+            execution_id: None,
             step_id: None,
             tool_call_id: None,
             tool_name: None,

@@ -1,0 +1,23 @@
+{
+  "description": "`delete-user-agent-data` with an empty payload as a beam-user: payload validation or authorization.",
+  "phase": "12",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/fluvius-beam/delete-user-agent-data:exec/agent_session/{uuid:target}",
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      },
+      "body": {}
+    }
+  ],
+  "ignore": [
+    "body.detail",
+    "body.errdata.**"
+  ],
+  "rust_differs": {
+    "reason": "ALLOWLIST: stricter Casbin (Python policy_required=False)",
+    "status": 403,
+    "errcode": "AUT-003"
+  }
+}

@@ -8,5 +8,7 @@ mod logger;
 mod sink;
 
 pub use events::{AuditAction, AuditEvent};
-pub use logger::AuditLogger;
-pub use sink::{AuditSink, InMemorySink, StdoutSink};
+pub use logger::{apply_preview_privacy, build_audit_sinks, AuditLogger, AUDIT_SINK_KEYS};
+#[cfg(feature = "postgres")]
+pub use sink::SqlSink;
+pub use sink::{AuditSink, FileSink, InMemorySink, StdoutSink};

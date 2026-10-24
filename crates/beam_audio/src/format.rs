@@ -4,6 +4,7 @@ use riverbase_core::RiverbaseResult;
 ///
 /// Encode without a `wave` or numpy dependency.
 #[must_use]
+#[allow(clippy::cast_possible_truncation)] // WAV sizes are u32; samples are clamped first.
 pub fn pcm_f32_to_wav_bytes(pcm: &[f32], sample_rate: u32) -> Vec<u8> {
     let num_samples = pcm.len();
     let data_len = num_samples * 2; // 16-bit mono
@@ -35,6 +36,9 @@ pub fn pcm_f32_to_wav_bytes(pcm: &[f32], sample_rate: u32) -> Vec<u8> {
 
 /// Parse a 16-bit PCM mono WAV produced by [`pcm_f32_to_wav_bytes`] back into
 /// float32 samples (used by tests + the mock STT path).
+///
+/// # Errors
+/// `BEM-350` without a RIFF/WAVE header, `BEM-351` without a `data` chunk.
 pub fn parse_wav_pcm_f32(bytes: &[u8]) -> RiverbaseResult<(Vec<f32>, u32)> {
     if bytes.len() < 44 || &bytes[0..4] != b"RIFF" || &bytes[8..12] != b"WAVE" {
         return Err(crate::BEM_350.raise());
@@ -44,9 +48,12 @@ pub fn parse_wav_pcm_f32(bytes: &[u8]) -> RiverbaseResult<(Vec<f32>, u32)> {
     let mut pos = 12;
     while pos + 8 <= bytes.len() {
         let chunk_id = &bytes[pos..pos + 4];
-        let chunk_size =
-            u32::from_le_bytes([bytes[pos + 4], bytes[pos + 5], bytes[pos + 6], bytes[pos + 7]])
-                as usize;
+        let chunk_size = u32::from_le_bytes([
+            bytes[pos + 4],
+            bytes[pos + 5],
+            bytes[pos + 6],
+            bytes[pos + 7],
+        ]) as usize;
         let body = pos + 8;
         if chunk_id == b"data" {
             let end = (body + chunk_size).min(bytes.len());
@@ -63,6 +70,11 @@ pub fn parse_wav_pcm_f32(bytes: &[u8]) -> RiverbaseResult<(Vec<f32>, u32)> {
 
 /// Linear resample to `to_hz` (nearest sample). Used to land on 16 kHz PCM.
 #[must_use]
+#[allow(
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss
+)] // Sample indices.
 pub fn resample_pcm(pcm: &[f32], from_hz: u32, to_hz: u32) -> Vec<f32> {
     if from_hz == 0 || from_hz == to_hz || pcm.is_empty() {
         return pcm.to_vec();
@@ -80,6 +92,10 @@ pub fn resample_pcm(pcm: &[f32], from_hz: u32, to_hz: u32) -> Vec<f32> {
 ///
 /// WAV is always supported. With `audio-decode`, a WebM/MP4 header is recognized
 /// (host may swap in a native decoder); without a native crate it returns a decode error.
+///
+/// # Errors
+/// `BEM-352` for `WebM` without a native decoder, `BEM-353` for anything else
+/// that is not WAV.
 pub fn decode_to_pcm_16k(bytes: &[u8]) -> RiverbaseResult<Vec<f32>> {
     if let Ok((pcm, rate)) = parse_wav_pcm_f32(bytes) {
         return Ok(resample_pcm(&pcm, rate, 16_000));

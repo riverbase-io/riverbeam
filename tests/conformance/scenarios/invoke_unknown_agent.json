@@ -1,0 +1,27 @@
+{
+  "description": "Invoke command for an agent that is not registered returns the public not-found error.",
+  "phase": "01",
+  "steps": [
+    {
+      "method": "POST",
+      "path": "/api/fluvius-beam/invoke:exec/agent/{agent_id:no-such-agent}",
+      "body": {
+        "agent_name": "no-such-agent",
+        "session_id": "{uuid:session}",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello"
+          }
+        ]
+      },
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      }
+    }
+  ],
+  "ignore": [
+    "body.detail",
+    "body.errdata.**"
+  ]
+}

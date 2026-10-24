@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[allow(clippy::module_inception)] // `lib.rs` declares the file; this wraps the cfg.
 mod tests {
     use super::super::*;
     use serde_json::json;
@@ -18,6 +19,10 @@ mod tests {
             stream: false,
             actions: None,
             auth_context: None,
+            context: None,
+            execution_id: None,
+            idempotency_key: None,
+            client: None,
         };
         let json = serde_json::to_value(&req).unwrap();
         let back: InvokeRequest = serde_json::from_value(json).unwrap();
@@ -33,6 +38,32 @@ mod tests {
         });
         let ctx: InvokeAuthContext = serde_json::from_value(raw).unwrap();
         assert_eq!(ctx.org_id.as_deref(), Some("org-9"));
+    }
+
+    #[test]
+    fn client_capabilities_and_tool_action_types_match_rc8_json() {
+        let req: InvokeRequest = serde_json::from_value(json!({
+            "agent_name": "loan",
+            "content": [{"type": "text", "text": "hi"}],
+            "session_id": "550e8400-e29b-41d4-a716-446655440000",
+            "client": {"client_id": "tab-1", "tools": ["request_input"]}
+        }))
+        .unwrap();
+        let client = req.client.unwrap();
+        assert_eq!(client.kind, "web");
+        assert!(client.runs("request_input") && !client.runs("fill_form_fields"));
+        assert_eq!(
+            serde_json::to_value(ActionType::ToolApproval).unwrap(),
+            json!("tool_approval")
+        );
+        assert_eq!(
+            serde_json::to_value(ActionType::ClientTool).unwrap(),
+            json!("client_tool")
+        );
+        assert_eq!(
+            serde_json::to_value(ActionType::Confirmation).unwrap(),
+            json!("confirmation")
+        );
     }
 
     #[test]
@@ -62,6 +93,8 @@ mod tests {
                 latency_ms: None,
                 interrupted: false,
                 action_required: None,
+                citations: Vec::new(),
+                execution_id: None,
             }),
             error: None,
             id: None,
@@ -73,6 +106,8 @@ mod tests {
             step_id: None,
             message_id: None,
             timestamp: None,
+            execution_id: None,
+            sequence: None,
         };
         let v = serde_json::to_value(&chunk).unwrap();
         assert_eq!(v.get("type").and_then(|t| t.as_str()), Some("done"));

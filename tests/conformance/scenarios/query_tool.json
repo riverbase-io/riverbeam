@@ -1,0 +1,18 @@
+{
+  "description": "`tool.list` as a beam-user: the envelope (catalog rows differ by deployment).",
+  "phase": "12",
+  "steps": [
+    {
+      "method": "GET",
+      "path": "/api/fluvius-beam/tool.list?limit=5",
+      "headers": {
+        "authorization": "{env:BEAM_CONFORMANCE_AUTH}"
+      }
+    }
+  ],
+  "ignore": [
+    "body.data.**",
+    "body.meta.pagination.total",
+    "body.meta.pagination.pages"
+  ]
+}

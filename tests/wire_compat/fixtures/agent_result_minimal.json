@@ -1,0 +1,26 @@
+{
+  "action_required": null,
+  "agent_name": "a",
+  "citations": [],
+  "content": [
+    {
+      "data": null,
+      "media_id": null,
+      "metadata": {},
+      "mime_type": null,
+      "text": "4",
+      "type": "text",
+      "url": null
+    }
+  ],
+  "execution_id": null,
+  "interaction_id": null,
+  "interrupted": false,
+  "latency_ms": null,
+  "metadata": {},
+  "model_used": null,
+  "request_id": null,
+  "session_id": null,
+  "token_usage": null,
+  "tool_calls": []
+}

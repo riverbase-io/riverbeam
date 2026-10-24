@@ -40,9 +40,10 @@ impl Default for InMemoryRuleStore {
 }
 
 fn lock(store: &InMemoryRuleStore) -> RuleResult<std::sync::MutexGuard<'_, Inner>> {
-    store.inner.lock().map_err(|e| {
-        RuleError::storage("RUL-500", "in-memory rule store poisoned", e.to_string())
-    })
+    store
+        .inner
+        .lock()
+        .map_err(|e| RuleError::storage("RUL-500", "in-memory rule store poisoned", e.to_string()))
 }
 
 #[async_trait]
@@ -53,11 +54,9 @@ impl RuleStore for InMemoryRuleStore {
         Ok(kb)
     }
     async fn get_knowledge_base(&self, id: Uuid) -> RuleResult<KnowledgeBase> {
-        lock(self)?
-            .kbs
-            .get(&id)
-            .cloned()
-            .ok_or_else(|| RuleError::not_found("RUL-404", "knowledge_base not found", id.to_string()))
+        lock(self)?.kbs.get(&id).cloned().ok_or_else(|| {
+            RuleError::not_found("RUL-404", "knowledge_base not found", id.to_string())
+        })
     }
     async fn list_knowledge_bases(&self) -> RuleResult<Vec<KnowledgeBase>> {
         Ok(lock(self)?.kbs.values().cloned().collect())

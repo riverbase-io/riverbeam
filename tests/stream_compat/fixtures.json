@@ -1,0 +1,369 @@
+{
+ "durable": [
+  {
+   "frame": {
+    "type": "done",
+    "result": {}
+   },
+   "expected": "done"
+  },
+  {
+   "frame": {
+    "type": "done",
+    "result": {
+     "interrupted": true
+    }
+   },
+   "expected": "interrupted"
+  },
+  {
+   "frame": {
+    "type": "done",
+    "result": {
+     "interrupted": 0
+    }
+   },
+   "expected": "done"
+  },
+  {
+   "frame": {
+    "type": "done"
+   },
+   "expected": "done"
+  },
+  {
+   "frame": {
+    "type": "started"
+   },
+   "expected": "started"
+  },
+  {
+   "frame": {
+    "type": "error",
+    "error": "x"
+   },
+   "expected": "error"
+  },
+  {
+   "frame": {
+    "type": "cancelled"
+   },
+   "expected": "cancelled"
+  },
+  {
+   "frame": {
+    "type": "timed_out"
+   },
+   "expected": "timed_out"
+  },
+  {
+   "frame": {
+    "type": "interrupted"
+   },
+   "expected": "interrupted"
+  },
+  {
+   "frame": {
+    "type": "tool_approval"
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk"
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": null
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": "text"
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "message"
+    }
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "message",
+     "is_delta": true
+    }
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "action"
+    }
+   },
+   "expected": "interrupted"
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "action_result"
+    }
+   },
+   "expected": "tool_approval"
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "tool_result"
+    }
+   },
+   "expected": "tool_result"
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "tool_result",
+     "is_delta": 1
+    }
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "chunk",
+    "data": {
+     "type": "step"
+    }
+   },
+   "expected": null
+  },
+  {
+   "frame": {
+    "type": "state"
+   },
+   "expected": null
+  },
+  {
+   "frame": {},
+   "expected": null
+  }
+ ],
+ "channels": [
+  {
+   "channel": "ws.channel.0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a:9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "expected": [
+    "0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a",
+    "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+   ]
+  },
+  {
+   "channel": "ws.channel.0B7E4C1A-3D2F-4E8A-9C6B-1F2E3D4C5B6A:9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "expected": [
+    "0B7E4C1A-3D2F-4E8A-9C6B-1F2E3D4C5B6A",
+    "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+   ]
+  },
+  {
+   "channel": "ws.channel.0b7e4c1a3d2f4e8a9c6b1f2e3d4c5b6a:9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "expected": null
+  },
+  {
+   "channel": "ws.channel.0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a",
+   "expected": null
+  },
+  {
+   "channel": "other.0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a:9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "expected": null
+  },
+  {
+   "channel": "ws.channel.0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a:9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d:extra",
+   "expected": null
+  },
+  {
+   "channel": "ws.channel.not-a-uuid:also-not",
+   "expected": null
+  }
+ ],
+ "replays": [
+  {
+   "execution_id": "exec-1",
+   "status": "RUNNING",
+   "events": [
+    {
+     "_id": "evt-3",
+     "sequence": 3,
+     "event_type": "tool_result",
+     "payload": {
+      "type": "chunk",
+      "data": null,
+      "execution_id": "exec-1"
+     }
+    },
+    {
+     "_id": "evt-1",
+     "sequence": 1,
+     "event_type": "started",
+     "payload": {
+      "type": "started"
+     }
+    },
+    {
+     "_id": "evt-2",
+     "sequence": 2,
+     "event_type": "tool_result",
+     "payload": {}
+    },
+    {
+     "_id": "evt-4",
+     "sequence": 4,
+     "event_type": "interrupted",
+     "payload": {
+      "type": "done",
+      "result": {
+       "interrupted": true
+      },
+      "sequence": 99
+     }
+    }
+   ],
+   "messages": [],
+   "after_sequence": 1,
+   "session_id": "0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a",
+   "request_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "frames": [
+    {
+     "type": "state",
+     "status": "running",
+     "execution_id": "exec-1"
+    },
+    {
+     "type": "tool_result",
+     "sequence": 2,
+     "id": "evt-2",
+     "execution_id": "exec-1"
+    },
+    {
+     "type": "chunk",
+     "data": null,
+     "execution_id": "exec-1",
+     "sequence": 3,
+     "id": "evt-3"
+    },
+    {
+     "type": "done",
+     "result": {
+      "interrupted": true
+     },
+     "sequence": 4,
+     "id": "evt-4",
+     "execution_id": "exec-1"
+    },
+    {
+     "type": "live",
+     "execution_id": "exec-1",
+     "session_id": "0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a",
+     "request_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d"
+    }
+   ],
+   "terminal": false,
+   "sse": ": beam-replay\nid: \nevent: beam.stream\ndata: {\"type\": \"state\", \"status\": \"running\", \"execution_id\": \"exec-1\"}\n\nid: evt-2\nevent: beam.stream\ndata: {\"type\": \"tool_result\", \"sequence\": 2, \"id\": \"evt-2\", \"execution_id\": \"exec-1\"}\n\nid: evt-3\nevent: beam.stream\ndata: {\"type\": \"chunk\", \"data\": null, \"execution_id\": \"exec-1\", \"sequence\": 3, \"id\": \"evt-3\"}\n\nid: evt-4\nevent: beam.stream\ndata: {\"type\": \"done\", \"result\": {\"interrupted\": true}, \"sequence\": 4, \"id\": \"evt-4\", \"execution_id\": \"exec-1\"}\n\nid: \nevent: beam.stream\ndata: {\"type\": \"live\", \"execution_id\": \"exec-1\", \"session_id\": \"0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a\", \"request_id\": \"9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d\"}\n\n"
+  },
+  {
+   "execution_id": "exec-2",
+   "status": "completed",
+   "events": [
+    {
+     "_id": "evt-1",
+     "sequence": 1,
+     "event_type": "done",
+     "payload": {
+      "type": "done",
+      "result": {
+       "content": "h\u00e9llo \u2713"
+      },
+      "id": "old"
+     }
+    }
+   ],
+   "messages": [
+    {
+     "role": "human",
+     "content": "q",
+     "sequence": 1
+    },
+    {
+     "role": "ai",
+     "content": "first",
+     "sequence": 2
+    },
+    {
+     "role": "ai",
+     "content": "final \u2713",
+     "sequence": 3
+    }
+   ],
+   "after_sequence": 0,
+   "session_id": null,
+   "request_id": null,
+   "frames": [
+    {
+     "type": "state",
+     "status": "completed",
+     "execution_id": "exec-2"
+    },
+    {
+     "type": "message",
+     "role": "ai",
+     "content": "final \u2713",
+     "sequence": 3,
+     "execution_id": "exec-2"
+    },
+    {
+     "type": "done",
+     "result": {
+      "content": "h\u00e9llo \u2713"
+     },
+     "id": "evt-1",
+     "sequence": 1,
+     "execution_id": "exec-2"
+    }
+   ],
+   "terminal": true,
+   "sse": ": beam-replay\nid: \nevent: beam.stream\ndata: {\"type\": \"state\", \"status\": \"completed\", \"execution_id\": \"exec-2\"}\n\nid: 3\nevent: beam.stream\ndata: {\"type\": \"message\", \"role\": \"ai\", \"content\": \"final \\u2713\", \"sequence\": 3, \"execution_id\": \"exec-2\"}\n\nid: evt-1\nevent: beam.stream\ndata: {\"type\": \"done\", \"result\": {\"content\": \"h\\u00e9llo \\u2713\"}, \"id\": \"evt-1\", \"sequence\": 1, \"execution_id\": \"exec-2\"}\n\nevent: done\ndata: {\"type\": \"done\"}\n\n"
+  },
+  {
+   "execution_id": "exec-3",
+   "status": "failed",
+   "events": [],
+   "messages": [],
+   "after_sequence": 7,
+   "session_id": "0b7e4c1a-3d2f-4e8a-9c6b-1f2e3d4c5b6a",
+   "request_id": "9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d",
+   "frames": [
+    {
+     "type": "state",
+     "status": "failed",
+     "execution_id": "exec-3"
+    }
+   ],
+   "terminal": true,
+   "sse": ": beam-replay\nid: \nevent: beam.stream\ndata: {\"type\": \"state\", \"status\": \"failed\", \"execution_id\": \"exec-3\"}\n\nevent: done\ndata: {\"type\": \"done\"}\n\n"
+  }
+ ]
+}

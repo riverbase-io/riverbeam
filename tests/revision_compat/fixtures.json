@@ -1,0 +1,8198 @@
+{
+ "specs": [
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "62ba8381a02942b43f62b8980421dfa11468021902eb98d7b7e3b94b7f696d8e",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "version": "2.0.0",
+    "description": "Helps ✓",
+    "tags": [
+     "a",
+     "b"
+    ]
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "2.0.0",
+    "description": "Helps ✓",
+    "tags": [
+     "a",
+     "b"
+    ],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "79701f2f19047bfe94e8521236dca93614286b1bea954f02352292661aaede51",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "prompt": {
+     "instructions": "Be brief. Ünïcode ✓"
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "Be brief. Ünïcode ✓",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "2193269745b91969285bd7ebe7491db40ffc12c5af47025bd3364555bf164c43",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": "495ce0b4e3ed71831bef10a72f2fad72c30a3dda18017806820edb14983775c3",
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "prompt": {
+     "instructions": "x",
+     "revision": "p-7"
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "x",
+     "revision": "p-7"
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "e84a1dc08bc25068b3904deab4741ab57c02b6a67740b1abef78561c41adb1ba",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": "p-7",
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "tools": {
+     "allowlist": [
+      "search",
+      "calc"
+     ],
+     "dry_run": true
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [
+      "search",
+      "calc"
+     ],
+     "dry_run": true,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "552c3a6d2bf3e16aaf324df7a43bee64983f5892baf3f43d681f4eeba76b16f2",
+   "toolset_revision": "f32e2ec205229df0b6c7a1bc4e64ce58b630b55582f2770b71f2c57b3b30519b",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "tools": {
+     "allowlist": [
+      "search"
+     ],
+     "revision": "tools-3"
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [
+      "search"
+     ],
+     "dry_run": false,
+     "revision": "tools-3"
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "b7c37b83ab64e15dc36af2764282ce225af25e858801be54d4a3d07e73de6e6f",
+   "toolset_revision": "tools-3",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "model": {
+     "name": "gpt-4o",
+     "provider": "openai",
+     "credential_ref": {
+      "name": "openai"
+     }
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": "gpt-4o",
+     "provider": "openai",
+     "route": null,
+     "credential_ref": {
+      "name": "openai",
+      "provider": null,
+      "env": null
+     },
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "01cedd02616c2bf286a43347936947ea94fb7709c2c753f90385ea4879f8d03b",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": "gpt-4o",
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "model": {
+     "name": "m",
+     "credential_ref": {
+      "name": "c",
+      "provider": "p",
+      "env": "E"
+     }
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": "m",
+     "provider": null,
+     "route": null,
+     "credential_ref": {
+      "name": "c",
+      "provider": "p",
+      "env": "E"
+     },
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "c2b7f53fa13a939673d68fdb9ecae6a75657e0db91f5995592ebd0d1713110d7",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": "m",
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "schemas": {
+     "input_schema": {
+      "type": "object",
+      "required": [
+       "q"
+      ],
+      "properties": {
+       "q": {
+        "type": "string"
+       }
+      }
+     },
+     "output_schema": {
+      "type": "object",
+      "required": [
+       "answer"
+      ],
+      "x": 1.5
+     }
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": {
+      "type": "object",
+      "required": [
+       "q"
+      ],
+      "properties": {
+       "q": {
+        "type": "string"
+       }
+      }
+     },
+     "output_schema": {
+      "type": "object",
+      "required": [
+       "answer"
+      ],
+      "x": 1.5
+     }
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "ae94c56d54c88d3478bf9a9129f95606338b1140b4053f1e3a5a267da3a23d1b",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": "f6a7df916a5c0aba8b22d0dde009dcffc865c224d2a63a728c2792e2662b5a1e",
+   "output_schema_hash": "be7fc04ff4ce980e2d1e05c9c46cfbd35728a907220fa2fda14f88e5c3701d81"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "context": {
+     "providers": [
+      "history",
+      "knowledge"
+     ],
+     "token_budget": 4000,
+     "max_sensitivity": "internal",
+     "source_failure": {
+      "knowledge": "fail_closed"
+     }
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [
+      "history",
+      "knowledge"
+     ],
+     "token_budget": 4000,
+     "max_sensitivity": "internal",
+     "source_failure": {
+      "knowledge": "fail_closed"
+     },
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "efeb5f1393c8ed776d048bb539b0f81b9261ffa6d1ef8425e73f65ef926504bd",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "memory": {
+     "backend": "session_and_long_term"
+    },
+    "knowledge": {
+     "collections": [
+      "docs"
+     ],
+     "mode": "tool"
+    },
+    "tools": {
+     "allowlist": [
+      "knowledge_search"
+     ]
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session_and_long_term",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [
+      "docs"
+     ],
+     "mode": "tool",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [
+      "knowledge_search"
+     ],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "66421c6bd21ae1ecb496093a557d2411117abc56851f61d351a881dafa1c9dcc",
+   "toolset_revision": "1408988fe67ccd178d17b63c5dacbea042a5c392bad082e5323d899c0beb371e",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d31d1c945b1c55dca20578bf901dd9e970549e87f2cef5233f0229e9d6b70f06",
+   "knowledge_policy_revision": "da310ebe16ff8f5bd35b18bfb35054f199ba5247bfd7d8501068192f81150fb9",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "security": {
+     "revision": "sec-1"
+    },
+    "execution": {
+     "timeout_s": 60,
+     "max_steps": 5,
+     "compatibility": "compatible"
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": false,
+     "require_cancellation": false,
+     "require_checkpointing": false,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": "sec-1"
+    },
+    "execution": {
+     "timeout_s": 60,
+     "max_steps": 5,
+     "compatibility": "compatible"
+    }
+   },
+   "revision_hash": "5fba6455b67935c40210628ae4135223b5fd25c32db5bbf8ee105b0782d1320f",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "sec-1",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig",
+     "require_resume": true,
+     "require_checkpointing": true
+    }
+   },
+   "dump": {
+    "schema_version": "1",
+    "name": "helper",
+    "version": "1.0.0",
+    "description": "",
+    "tags": [],
+    "runtime": {
+     "name": "rig",
+     "require_streaming": false,
+     "require_resume": true,
+     "require_cancellation": false,
+     "require_checkpointing": true,
+     "require_structured_output": false,
+     "require_native_tools": false
+    },
+    "prompt": {
+     "instructions": "",
+     "revision": null
+    },
+    "schemas": {
+     "input_schema": null,
+     "output_schema": null
+    },
+    "model": {
+     "name": null,
+     "provider": null,
+     "route": null,
+     "credential_ref": null,
+     "revision": null
+    },
+    "context": {
+     "providers": [],
+     "token_budget": null,
+     "max_sensitivity": "restricted",
+     "source_failure": {},
+     "promote_ltm_trust": false,
+     "resource_schemes": [
+      "https",
+      "http"
+     ],
+     "resource_hosts": [],
+     "max_resource_bytes": 1000000
+    },
+    "memory": {
+     "backend": "session",
+     "revision": null
+    },
+    "knowledge": {
+     "collections": [],
+     "mode": "auto",
+     "revision": null
+    },
+    "tools": {
+     "allowlist": [],
+     "dry_run": false,
+     "revision": null
+    },
+    "security": {
+     "enforce": true,
+     "isolation": "org",
+     "revision": null
+    },
+    "execution": {
+     "timeout_s": null,
+     "max_steps": null,
+     "compatibility": "strict"
+    }
+   },
+   "revision_hash": "509a6065d15211281f5d4af51fec434287e58706e0be866a04fb39cace76bf1b",
+   "toolset_revision": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+   "prompt_revision": null,
+   "model_policy_revision": null,
+   "security_policy_revision": "c935e23ba718251d4a1ec5e7b01bd7be18baa1f3201b3df4dc6d882ba63d080d",
+   "memory_policy_revision": "d5461976b5816d1dc15681b53c9092e39e195fe29a5bec3800357954485d102c",
+   "knowledge_policy_revision": "94eb0824b9f3362608982c82e1ce669c5c1a7b28f23acfdbabdb8d22304bddba",
+   "input_schema_hash": null,
+   "output_schema_hash": null
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig",
+     "require_resume": true
+    }
+   },
+   "error": "[400] BEM-400: resume requires checkpointing"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "context": {
+     "providers": [
+      "nope"
+     ]
+    }
+   },
+   "error": "[400] BEM-400: unknown context provider: nope"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "knowledge": {
+     "mode": "weird"
+    }
+   },
+   "error": "[400] BEM-400: unsupported knowledge mode: weird"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "memory": {
+     "backend": "redis"
+    }
+   },
+   "error": "[400] BEM-400: unsupported memory backend: redis"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "knowledge": {
+     "mode": "tool"
+    }
+   },
+   "error": "[400] BEM-400: knowledge mode tool requires knowledge_search"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "knowledge": {
+     "mode": "off"
+    },
+    "context": {
+     "providers": [
+      "knowledge"
+     ]
+    }
+   },
+   "error": "[400] BEM-400: knowledge provider contradicts knowledge mode off"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "security": {
+     "enforce": false
+    }
+   },
+   "error": "[400] BEM-400: fail-open security is not supported"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "security": {
+     "isolation": "user"
+    }
+   },
+   "error": "[400] BEM-400: unsupported isolation: user"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "execution": {
+     "timeout_s": 0
+    }
+   },
+   "error": "[400] BEM-400: timeout_s must be positive"
+  },
+  {
+   "spec": {
+    "name": "helper",
+    "runtime": {
+     "name": "rig"
+    },
+    "execution": {
+     "max_steps": -1
+    }
+   },
+   "error": "[400] BEM-400: max_steps must be positive"
+  }
+ ],
+ "revision_hashes": [
+  {
+   "args": [
+    "a",
+    "1.0.0",
+    "langgraph",
+    null
+   ],
+   "kwargs": {},
+   "expected": "2905588930477517bbfa7dbc92186d77a1e4ab7489c31a14fb8452663492e7b2"
+  },
+  {
+   "args": [
+    "a",
+    "1.0.0",
+    "rig",
+    "build-9"
+   ],
+   "kwargs": {
+    "toolset_revision": "t",
+    "prompt_revision": "p"
+   },
+   "expected": "ac74ba08894cfe0d9bb721374721fc3fe40882f1e296d63268035099a7f48ca6"
+  },
+  {
+   "args": [
+    "ü",
+    "2",
+    "rig",
+    null
+   ],
+   "kwargs": {
+    "model_policy_revision": "m",
+    "security_policy_revision": "s"
+   },
+   "expected": "ddafc6714d848093c9a2731b463f4a7fe47b54ac2df80cec8aa546f88f16a5a2"
+  }
+ ],
+ "canary": [
+  {
+   "ids": [
+    "00000000-0000-0000-0000-00000b786543",
+    "00000000-0000-0000-0000-00000b78c430",
+    "00000000-0000-0000-0000-00000b79231d",
+    "00000000-0000-0000-0000-00000b79820a",
+    "00000000-0000-0000-0000-00000b79e0f7",
+    "00000000-0000-0000-0000-00000b7a3fe4",
+    "00000000-0000-0000-0000-00000b7a9ed1",
+    "00000000-0000-0000-0000-00000b7afdbe",
+    "00000000-0000-0000-0000-00000b7b5cab",
+    "00000000-0000-0000-0000-00000b7bbb98",
+    "00000000-0000-0000-0000-00000b7c1a85",
+    "00000000-0000-0000-0000-00000b7c7972",
+    "00000000-0000-0000-0000-00000b7cd85f",
+    "00000000-0000-0000-0000-00000b7d374c",
+    "00000000-0000-0000-0000-00000b7d9639",
+    "00000000-0000-0000-0000-00000b7df526",
+    "00000000-0000-0000-0000-00000b7e5413",
+    "00000000-0000-0000-0000-00000b7eb300",
+    "00000000-0000-0000-0000-00000b7f11ed",
+    "00000000-0000-0000-0000-00000b7f70da",
+    "00000000-0000-0000-0000-00000b7fcfc7",
+    "00000000-0000-0000-0000-00000b802eb4",
+    "00000000-0000-0000-0000-00000b808da1",
+    "00000000-0000-0000-0000-00000b80ec8e",
+    "00000000-0000-0000-0000-00000b814b7b",
+    "00000000-0000-0000-0000-00000b81aa68",
+    "00000000-0000-0000-0000-00000b820955",
+    "00000000-0000-0000-0000-00000b826842",
+    "00000000-0000-0000-0000-00000b82c72f",
+    "00000000-0000-0000-0000-00000b83261c",
+    "00000000-0000-0000-0000-00000b838509",
+    "00000000-0000-0000-0000-00000b83e3f6",
+    "00000000-0000-0000-0000-00000b8442e3",
+    "00000000-0000-0000-0000-00000b84a1d0",
+    "00000000-0000-0000-0000-00000b8500bd",
+    "00000000-0000-0000-0000-00000b855faa",
+    "00000000-0000-0000-0000-00000b85be97",
+    "00000000-0000-0000-0000-00000b861d84",
+    "00000000-0000-0000-0000-00000b867c71",
+    "00000000-0000-0000-0000-00000b86db5e",
+    "00000000-0000-0000-0000-00000b873a4b",
+    "00000000-0000-0000-0000-00000b879938",
+    "00000000-0000-0000-0000-00000b87f825",
+    "00000000-0000-0000-0000-00000b885712",
+    "00000000-0000-0000-0000-00000b88b5ff",
+    "00000000-0000-0000-0000-00000b8914ec",
+    "00000000-0000-0000-0000-00000b8973d9",
+    "00000000-0000-0000-0000-00000b89d2c6",
+    "00000000-0000-0000-0000-00000b8a31b3",
+    "00000000-0000-0000-0000-00000b8a90a0",
+    "00000000-0000-0000-0000-00000b8aef8d",
+    "00000000-0000-0000-0000-00000b8b4e7a",
+    "00000000-0000-0000-0000-00000b8bad67",
+    "00000000-0000-0000-0000-00000b8c0c54",
+    "00000000-0000-0000-0000-00000b8c6b41",
+    "00000000-0000-0000-0000-00000b8cca2e",
+    "00000000-0000-0000-0000-00000b8d291b",
+    "00000000-0000-0000-0000-00000b8d8808",
+    "00000000-0000-0000-0000-00000b8de6f5",
+    "00000000-0000-0000-0000-00000b8e45e2",
+    "00000000-0000-0000-0000-00000b8ea4cf",
+    "00000000-0000-0000-0000-00000b8f03bc",
+    "00000000-0000-0000-0000-00000b8f62a9",
+    "00000000-0000-0000-0000-00000b8fc196",
+    "00000000-0000-0000-0000-00000b902083",
+    "00000000-0000-0000-0000-00000b907f70",
+    "00000000-0000-0000-0000-00000b90de5d",
+    "00000000-0000-0000-0000-00000b913d4a",
+    "00000000-0000-0000-0000-00000b919c37",
+    "00000000-0000-0000-0000-00000b91fb24",
+    "00000000-0000-0000-0000-00000b925a11",
+    "00000000-0000-0000-0000-00000b92b8fe",
+    "00000000-0000-0000-0000-00000b9317eb",
+    "00000000-0000-0000-0000-00000b9376d8",
+    "00000000-0000-0000-0000-00000b93d5c5",
+    "00000000-0000-0000-0000-00000b9434b2",
+    "00000000-0000-0000-0000-00000b94939f",
+    "00000000-0000-0000-0000-00000b94f28c",
+    "00000000-0000-0000-0000-00000b955179",
+    "00000000-0000-0000-0000-00000b95b066",
+    "00000000-0000-0000-0000-00000b960f53",
+    "00000000-0000-0000-0000-00000b966e40",
+    "00000000-0000-0000-0000-00000b96cd2d",
+    "00000000-0000-0000-0000-00000b972c1a",
+    "00000000-0000-0000-0000-00000b978b07",
+    "00000000-0000-0000-0000-00000b97e9f4",
+    "00000000-0000-0000-0000-00000b9848e1",
+    "00000000-0000-0000-0000-00000b98a7ce",
+    "00000000-0000-0000-0000-00000b9906bb",
+    "00000000-0000-0000-0000-00000b9965a8",
+    "00000000-0000-0000-0000-00000b99c495",
+    "00000000-0000-0000-0000-00000b9a2382",
+    "00000000-0000-0000-0000-00000b9a826f",
+    "00000000-0000-0000-0000-00000b9ae15c",
+    "00000000-0000-0000-0000-00000b9b4049",
+    "00000000-0000-0000-0000-00000b9b9f36",
+    "00000000-0000-0000-0000-00000b9bfe23",
+    "00000000-0000-0000-0000-00000b9c5d10",
+    "00000000-0000-0000-0000-00000b9cbbfd",
+    "00000000-0000-0000-0000-00000b9d1aea",
+    "00000000-0000-0000-0000-00000b9d79d7",
+    "00000000-0000-0000-0000-00000b9dd8c4",
+    "00000000-0000-0000-0000-00000b9e37b1",
+    "00000000-0000-0000-0000-00000b9e969e",
+    "00000000-0000-0000-0000-00000b9ef58b",
+    "00000000-0000-0000-0000-00000b9f5478",
+    "00000000-0000-0000-0000-00000b9fb365",
+    "00000000-0000-0000-0000-00000ba01252",
+    "00000000-0000-0000-0000-00000ba0713f",
+    "00000000-0000-0000-0000-00000ba0d02c",
+    "00000000-0000-0000-0000-00000ba12f19",
+    "00000000-0000-0000-0000-00000ba18e06",
+    "00000000-0000-0000-0000-00000ba1ecf3",
+    "00000000-0000-0000-0000-00000ba24be0",
+    "00000000-0000-0000-0000-00000ba2aacd",
+    "00000000-0000-0000-0000-00000ba309ba",
+    "00000000-0000-0000-0000-00000ba368a7",
+    "00000000-0000-0000-0000-00000ba3c794",
+    "00000000-0000-0000-0000-00000ba42681",
+    "00000000-0000-0000-0000-00000ba4856e",
+    "00000000-0000-0000-0000-00000ba4e45b",
+    "00000000-0000-0000-0000-00000ba54348",
+    "00000000-0000-0000-0000-00000ba5a235",
+    "00000000-0000-0000-0000-00000ba60122",
+    "00000000-0000-0000-0000-00000ba6600f",
+    "00000000-0000-0000-0000-00000ba6befc",
+    "00000000-0000-0000-0000-00000ba71de9",
+    "00000000-0000-0000-0000-00000ba77cd6",
+    "00000000-0000-0000-0000-00000ba7dbc3",
+    "00000000-0000-0000-0000-00000ba83ab0",
+    "00000000-0000-0000-0000-00000ba8999d",
+    "00000000-0000-0000-0000-00000ba8f88a",
+    "00000000-0000-0000-0000-00000ba95777",
+    "00000000-0000-0000-0000-00000ba9b664",
+    "00000000-0000-0000-0000-00000baa1551",
+    "00000000-0000-0000-0000-00000baa743e",
+    "00000000-0000-0000-0000-00000baad32b",
+    "00000000-0000-0000-0000-00000bab3218",
+    "00000000-0000-0000-0000-00000bab9105",
+    "00000000-0000-0000-0000-00000babeff2",
+    "00000000-0000-0000-0000-00000bac4edf",
+    "00000000-0000-0000-0000-00000bacadcc",
+    "00000000-0000-0000-0000-00000bad0cb9",
+    "00000000-0000-0000-0000-00000bad6ba6",
+    "00000000-0000-0000-0000-00000badca93",
+    "00000000-0000-0000-0000-00000bae2980",
+    "00000000-0000-0000-0000-00000bae886d",
+    "00000000-0000-0000-0000-00000baee75a",
+    "00000000-0000-0000-0000-00000baf4647",
+    "00000000-0000-0000-0000-00000bafa534",
+    "00000000-0000-0000-0000-00000bb00421",
+    "00000000-0000-0000-0000-00000bb0630e",
+    "00000000-0000-0000-0000-00000bb0c1fb",
+    "00000000-0000-0000-0000-00000bb120e8",
+    "00000000-0000-0000-0000-00000bb17fd5",
+    "00000000-0000-0000-0000-00000bb1dec2",
+    "00000000-0000-0000-0000-00000bb23daf",
+    "00000000-0000-0000-0000-00000bb29c9c",
+    "00000000-0000-0000-0000-00000bb2fb89",
+    "00000000-0000-0000-0000-00000bb35a76",
+    "00000000-0000-0000-0000-00000bb3b963",
+    "00000000-0000-0000-0000-00000bb41850",
+    "00000000-0000-0000-0000-00000bb4773d",
+    "00000000-0000-0000-0000-00000bb4d62a",
+    "00000000-0000-0000-0000-00000bb53517",
+    "00000000-0000-0000-0000-00000bb59404",
+    "00000000-0000-0000-0000-00000bb5f2f1",
+    "00000000-0000-0000-0000-00000bb651de",
+    "00000000-0000-0000-0000-00000bb6b0cb",
+    "00000000-0000-0000-0000-00000bb70fb8",
+    "00000000-0000-0000-0000-00000bb76ea5",
+    "00000000-0000-0000-0000-00000bb7cd92",
+    "00000000-0000-0000-0000-00000bb82c7f",
+    "00000000-0000-0000-0000-00000bb88b6c",
+    "00000000-0000-0000-0000-00000bb8ea59",
+    "00000000-0000-0000-0000-00000bb94946",
+    "00000000-0000-0000-0000-00000bb9a833",
+    "00000000-0000-0000-0000-00000bba0720",
+    "00000000-0000-0000-0000-00000bba660d",
+    "00000000-0000-0000-0000-00000bbac4fa",
+    "00000000-0000-0000-0000-00000bbb23e7",
+    "00000000-0000-0000-0000-00000bbb82d4",
+    "00000000-0000-0000-0000-00000bbbe1c1",
+    "00000000-0000-0000-0000-00000bbc40ae",
+    "00000000-0000-0000-0000-00000bbc9f9b",
+    "00000000-0000-0000-0000-00000bbcfe88",
+    "00000000-0000-0000-0000-00000bbd5d75",
+    "00000000-0000-0000-0000-00000bbdbc62",
+    "00000000-0000-0000-0000-00000bbe1b4f",
+    "00000000-0000-0000-0000-00000bbe7a3c",
+    "00000000-0000-0000-0000-00000bbed929",
+    "00000000-0000-0000-0000-00000bbf3816",
+    "00000000-0000-0000-0000-00000bbf9703",
+    "00000000-0000-0000-0000-00000bbff5f0",
+    "00000000-0000-0000-0000-00000bc054dd",
+    "00000000-0000-0000-0000-00000bc0b3ca",
+    "00000000-0000-0000-0000-00000bc112b7",
+    "00000000-0000-0000-0000-00000bc171a4",
+    "00000000-0000-0000-0000-00000bc1d091",
+    "00000000-0000-0000-0000-00000bc22f7e"
+   ],
+   "splits": [
+    {
+     "percent": 0,
+     "picks": [
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary"
+     ]
+    },
+    {
+     "percent": 1,
+     "picks": [
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary"
+     ]
+    },
+    {
+     "percent": 20,
+     "picks": [
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary"
+     ]
+    },
+    {
+     "percent": 50,
+     "picks": [
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary"
+     ]
+    },
+    {
+     "percent": 99,
+     "picks": [
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "primary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary"
+     ]
+    },
+    {
+     "percent": 100,
+     "picks": [
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary",
+      "canary"
+     ]
+    }
+   ]
+  }
+ ],
+ "transitions": [
+  {
+   "from": "draft",
+   "to": "draft",
+   "ok": false
+  },
+  {
+   "from": "draft",
+   "to": "validating",
+   "ok": true
+  },
+  {
+   "from": "draft",
+   "to": "active",
+   "ok": true
+  },
+  {
+   "from": "draft",
+   "to": "deprecated",
+   "ok": false
+  },
+  {
+   "from": "draft",
+   "to": "retired",
+   "ok": false
+  },
+  {
+   "from": "validating",
+   "to": "draft",
+   "ok": true
+  },
+  {
+   "from": "validating",
+   "to": "validating",
+   "ok": false
+  },
+  {
+   "from": "validating",
+   "to": "active",
+   "ok": true
+  },
+  {
+   "from": "validating",
+   "to": "deprecated",
+   "ok": false
+  },
+  {
+   "from": "validating",
+   "to": "retired",
+   "ok": false
+  },
+  {
+   "from": "active",
+   "to": "draft",
+   "ok": false
+  },
+  {
+   "from": "active",
+   "to": "validating",
+   "ok": false
+  },
+  {
+   "from": "active",
+   "to": "active",
+   "ok": false
+  },
+  {
+   "from": "active",
+   "to": "deprecated",
+   "ok": true
+  },
+  {
+   "from": "active",
+   "to": "retired",
+   "ok": false
+  },
+  {
+   "from": "deprecated",
+   "to": "draft",
+   "ok": false
+  },
+  {
+   "from": "deprecated",
+   "to": "validating",
+   "ok": false
+  },
+  {
+   "from": "deprecated",
+   "to": "active",
+   "ok": false
+  },
+  {
+   "from": "deprecated",
+   "to": "deprecated",
+   "ok": false
+  },
+  {
+   "from": "deprecated",
+   "to": "retired",
+   "ok": true
+  },
+  {
+   "from": "retired",
+   "to": "draft",
+   "ok": false
+  },
+  {
+   "from": "retired",
+   "to": "validating",
+   "ok": false
+  },
+  {
+   "from": "retired",
+   "to": "active",
+   "ok": false
+  },
+  {
+   "from": "retired",
+   "to": "deprecated",
+   "ok": false
+  },
+  {
+   "from": "retired",
+   "to": "retired",
+   "ok": false
+  }
+ ],
+ "may_resume": [
+  {
+   "policy": "strict",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_same": true,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_same": false,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": true,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_same": false,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": false,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": true,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": false,
+   "compatible_with_pinned": false,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": true,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_same": false,
+   "compatible_with_pinned": true,
+   "compatible_given": true,
+   "ok": true
+  }
+ ],
+ "checkpoint": [
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "strict",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": false
+  },
+  {
+   "policy": "compatible",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": false
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": null,
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "1",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": null,
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "1",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": null,
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": null,
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "x",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": null,
+   "ok": true
+  },
+  {
+   "policy": "migratable",
+   "pinned_adapter": "2",
+   "deployed_adapter": "2",
+   "pinned_library": "x",
+   "deployed_library": "y",
+   "compatible": [
+    "1"
+   ],
+   "ok": true
+  }
+ ],
+ "evaluators": [
+  {
+   "expected": {
+    "text": "ok"
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "it is ok",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "text": "ok"
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "nope",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": false,
+     "score": 0.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": false,
+     "score": 0.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "json": {
+     "a": 1
+    }
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\"a\": 1, \"b\": 2}",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "json": {
+     "a": 1
+    }
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "not json",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "reason": "not_json"
+     }
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "json": {
+     "a": 2
+    }
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "{\"a\": 1}",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": false,
+     "score": 0.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "sources": [
+     "s1",
+     "s2"
+    ]
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": [
+     {
+      "id": "s1"
+     }
+    ]
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cited": [
+       "s1"
+      ]
+     }
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "sources": [
+     "s1"
+    ]
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": [
+     {
+      "source": "s9"
+     }
+    ]
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "cited": [
+       "s9"
+      ]
+     }
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "sources": [
+     "s1"
+    ]
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "cited": []
+     }
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "tools": [
+     "a",
+     "b"
+    ]
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [
+     {
+      "tool_name": "a",
+      "args": {},
+      "tool_call_id": null,
+      "result": null,
+      "latency_ms": null,
+      "usage_metadata": null,
+      "step_id": null,
+      "result_step_id": null
+     },
+     {
+      "tool_name": "b",
+      "args": {},
+      "tool_call_id": null,
+      "result": null,
+      "latency_ms": null,
+      "usage_metadata": null,
+      "step_id": null,
+      "result_step_id": null
+     }
+    ],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "used": [
+       "a",
+       "b"
+      ]
+     }
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": {
+    "tools": [
+     "a",
+     "b"
+    ]
+   },
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [
+     {
+      "tool_name": "b",
+      "args": {},
+      "tool_call_id": null,
+      "result": null,
+      "latency_ms": null,
+      "usage_metadata": null,
+      "step_id": null,
+      "result_step_id": null
+     },
+     {
+      "tool_name": "a",
+      "args": {},
+      "tool_call_id": null,
+      "result": null,
+      "latency_ms": null,
+      "usage_metadata": null,
+      "step_id": null,
+      "result_step_id": null
+     }
+    ],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "used": [
+       "b",
+       "a"
+      ]
+     }
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "my api_key = 123",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": false,
+     "score": 0.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "token sk-ABCDEFGH12345",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": false,
+     "score": 0.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "all",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     },
+     {
+      "type": "text",
+      "text": "good",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": 499.5,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 499.5
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": 700.0,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "latency_ms": 700.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": {
+     "prompt_tokens": 1000,
+     "completion_tokens": 2000,
+     "total_tokens": 3000
+    },
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.14
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": {
+     "prompt_tokens": 10000,
+     "completion_tokens": 20000,
+     "total_tokens": 30000
+    },
+    "tool_calls": [],
+    "metadata": {},
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "cost": 1.4
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {
+     "cost": 2.5
+    },
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "cost": 2.5
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.0
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {
+     "manifest": {
+      "window_tokens": 1000,
+      "input_tokens": 950
+     }
+    },
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": false,
+     "score": 0.0,
+     "details": {
+      "ratio": 0.95
+     }
+    }
+   }
+  },
+  {
+   "expected": null,
+   "result": {
+    "content": [
+     {
+      "type": "text",
+      "text": "x",
+      "url": null,
+      "data": null,
+      "mime_type": null,
+      "metadata": {},
+      "media_id": null
+     }
+    ],
+    "agent_name": "a",
+    "model_used": null,
+    "session_id": null,
+    "request_id": null,
+    "interaction_id": null,
+    "execution_id": null,
+    "token_usage": null,
+    "tool_calls": [],
+    "metadata": {
+     "manifest": {
+      "window_tokens": 1000,
+      "input_tokens": 100
+     }
+    },
+    "latency_ms": null,
+    "interrupted": false,
+    "action_required": null,
+    "citations": []
+   },
+   "scores": {
+    "exact_match": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "task_quality": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "structured_output": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "citation_faithfulness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "tool_correctness": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "safety": {
+     "passed": true,
+     "score": 1.0,
+     "details": {}
+    },
+    "latency": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "latency_ms": 0.0
+     }
+    },
+    "cost": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "cost": 0.0
+     }
+    },
+    "context_utilization": {
+     "passed": true,
+     "score": 1.0,
+     "details": {
+      "ratio": 0.1
+     }
+    }
+   }
+  }
+ ]
+}

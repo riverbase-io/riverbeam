@@ -1,0 +1,10 @@
+{
+  "description": "Process liveness probe.",
+  "phase": "01",
+  "steps": [
+    {
+      "method": "GET",
+      "path": "/health/live"
+    }
+  ]
+}

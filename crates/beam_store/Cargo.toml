@@ -7,17 +7,28 @@ license = { workspace = true }
 authors = { workspace = true }
 
 [dependencies]
+beam_env = { workspace = true }
+beam_errors = { workspace = true }
+tokio = { workspace = true, features = ["rt", "sync"] }
 async-trait = { workspace = true }
 beam_types = { workspace = true }
 chrono = { workspace = true }
 diesel = { workspace = true }
 diesel-async = { workspace = true }
+diesel_migrations = { workspace = true }
 riverbase_core = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+tracing = { workspace = true }
 uuid = { workspace = true, features = ["v4", "v5", "serde"] }
 
+[features]
+# `testdb` (test databases), for tests only (plan 017).
+testing = []
+
 [dev-dependencies]
+# This crate's integration tests use `testdb`.
+beam_store = { path = ".", features = ["testing"] }
 tokio = { workspace = true, features = ["rt", "macros", "sync"] }
 
 [lints]

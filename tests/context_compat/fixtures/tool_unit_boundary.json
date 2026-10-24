@@ -1,0 +1,242 @@
+{
+  "name": "tool_unit_boundary",
+  "input": {
+    "agent_input": {
+      "content": [
+        {
+          "type": "text",
+          "text": "next"
+        }
+      ],
+      "session_id": "6f1c2b3a-0000-4000-8000-000000000001",
+      "run_id": "6f1c2b3a-0000-4000-8000-0000000000aa",
+      "agent_name": "agent-demo",
+      "auth_context": {
+        "user_id": "u-1",
+        "org_id": "org-1"
+      }
+    },
+    "model": {
+      "name": "gpt-4o-mini",
+      "provider": "openai",
+      "max_tokens": 1000,
+      "context_window_tokens": 1000,
+      "max_output_tokens": 100
+    },
+    "spec": {
+      "token_budget": 20
+    },
+    "history": [
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000001",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "hello there"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000002",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "hi! how can I help?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000003",
+        "role": "human",
+        "content": [
+          {
+            "type": "text",
+            "text": "what is 2+2?"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000004",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": ""
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_calls": [
+          {
+            "id": "call-1",
+            "name": "calculator",
+            "args": {
+              "expression": "2+2"
+            }
+          }
+        ]
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000005",
+        "role": "tool",
+        "content": [
+          {
+            "type": "text",
+            "text": "4"
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb",
+        "tool_call_id": "call-1",
+        "tool_name": "calculator"
+      },
+      {
+        "id": "6f1c2b3a-0000-4000-8000-000000000006",
+        "role": "ai",
+        "content": [
+          {
+            "type": "text",
+            "text": "2+2 is 4."
+          }
+        ],
+        "run_id": "6f1c2b3a-0000-4000-8000-0000000000bb"
+      }
+    ]
+  },
+  "expected": {
+    "policy_revision": "e9ebce3f5e2731d1f8d23037a4e3a9ba8eeaf312636be2f13e18a54c7345f8bb",
+    "enable": [
+      "instructions",
+      "profile",
+      "current",
+      "history",
+      "knowledge",
+      "facts",
+      "resources",
+      "workflow",
+      "tools"
+    ],
+    "decisions": [
+      {
+        "item_id": "source:ltm",
+        "source": "ltm",
+        "action": "dropped",
+        "reason": "disabled",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "source:knowledge",
+        "source": "knowledge",
+        "action": "dropped",
+        "reason": "unavailable",
+        "tokens": 0,
+        "content_hash": "0000000000000000",
+        "trust": "untrusted"
+      },
+      {
+        "item_id": "current:6f1c2b3a-0000-4000-8000-0000000000aa",
+        "source": "current",
+        "action": "selected",
+        "reason": "required",
+        "tokens": 1,
+        "content_hash": "c6c1c9a9c8543f1e",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000006",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "7228a7b0492b321c",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000003",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 3,
+        "content_hash": "61a3385003d9b9d3",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000004",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 18,
+        "content_hash": "472a016189636a6a",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000005",
+        "source": "history",
+        "action": "dropped",
+        "reason": "budget",
+        "tokens": 1,
+        "content_hash": "4b227777d4dd1fc6",
+        "trust": "system"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000001",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 3,
+        "content_hash": "12998c017066eb0d",
+        "trust": "user"
+      },
+      {
+        "item_id": "history:6f1c2b3a-0000-4000-8000-000000000002",
+        "source": "history",
+        "action": "selected",
+        "reason": "optional",
+        "tokens": 5,
+        "content_hash": "11c3d46653b3dcc4",
+        "trust": "system"
+      }
+    ],
+    "messages": [
+      {
+        "role": "human",
+        "text": "hello there",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "hi! how can I help?",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "ai",
+        "text": "2+2 is 4.",
+        "tool_call_id": null,
+        "tool_calls": []
+      },
+      {
+        "role": "human",
+        "text": "next",
+        "tool_call_id": null,
+        "tool_calls": []
+      }
+    ],
+    "tool_schemas": [],
+    "input_tokens": 33,
+    "output_tokens": 100,
+    "reserve_tokens": 64,
+    "window_tokens": 1000,
+    "counter_method": "estimated_conservative",
+    "cache_prefix_tokens": 0,
+    "selected_untrusted": [],
+    "tools": [],
+    "citations": []
+  }
+}

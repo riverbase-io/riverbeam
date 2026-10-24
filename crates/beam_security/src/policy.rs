@@ -8,10 +8,27 @@ pub struct ToolPolicy {
     pub hitl_required: bool,
 }
 
-#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+/// Approval is on by default; `auto_approve_tools` are
+/// names or `fnmatch` globs that skip it.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct HitlConfig {
-    #[serde(default)]
+    #[serde(default = "yes")]
     pub enabled: bool,
+    #[serde(default)]
+    pub auto_approve_tools: Vec<String>,
+}
+
+fn yes() -> bool {
+    true
+}
+
+impl Default for HitlConfig {
+    fn default() -> Self {
+        Self {
+            enabled: true,
+            auto_approve_tools: Vec::new(),
+        }
+    }
 }
 
 /// Tenant/agent security policy (ports `SecurityPolicy`).

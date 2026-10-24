@@ -1,28 +1,48 @@
-//! Persistence façade for the execution hierarchy and catalog.
+//! Persistence façade for the beam catalog and execution hierarchy.
 //!
-//! `ensure_session`, `create_interaction`/`complete_interaction`,
-//! `create_run`/`complete_run`, message persistence, HITL `agent_action` rows,
-//! and catalog check-in. [`BeamStore`] is the trait the invoke pipeline calls.
+//! The schema is fluvius-beam's (`tests/schema/python_ref_beam.sql`, plan 005
+//! D5), created by the explicit migrations in [`migrate`]. The store is split
+//! into facets like Python's `BeamStoreManager`: [`CatalogStore`] and
+//! [`ExecutionStore`]; [`BeamStore`] is every facet the invoke pipeline uses.
 //!
-//! [`PgBeamStore`] is the production backend: an async-Diesel store over
-//! `riverbase_core`'s connection pool, targeting the `ref_beam` schema in
-//! `migrations/0001_beam_schema.sql`.
-//! [`InMemoryStore`] is retained only as a hermetic fixture for unit-testing the
-//! invoke pipeline without a database.
+//! [`PgBeamStore`] is the production backend over `riverbase_core`'s async
+//! Diesel pool. [`InMemoryStore`] is a hermetic fixture for unit tests.
 
-mod errors;
-#[allow(unused_imports)]
-pub(crate) use errors::*;
+#[allow(clippy::wildcard_imports)] // The error catalog (`beam_errors`).
+pub(crate) use beam_errors::*;
 
+mod db;
+pub mod entity;
+#[cfg(test)]
+mod fixtures;
+mod holds;
 mod memory;
+pub mod migrate;
+pub mod ops;
+pub mod org_scope;
 mod pg;
+mod pg_ops;
+pub mod repo;
 mod rows;
+mod schema;
+pub mod session_summary;
 mod store;
+pub mod tasks;
+#[cfg(any(test, feature = "testing"))]
+pub mod testdb;
+pub mod tool_policy;
 
+pub use db::{Checkout, Db, DbError, DbResult, Site};
 pub use memory::InMemoryStore;
+pub use ops::{InMemoryOps, LegalHoldStore, LegalHolds, OpsStore, PgLegalHolds, RetentionStore};
 pub use pg::PgBeamStore;
+pub use pg_ops::PgOpsStore;
+pub use repo::tasks::Tasks;
 pub use rows::{
-    ActionRow, ActionStatus, AgentRow, InteractionRow, InteractionStatus, MessageRow, ModelRow,
-    RunRow, RunStatus, SessionRow,
+    ActionRow, ActionStatus, ActionType, AgentRow, AgentStatus, DbEnum, InteractionRow,
+    InteractionStatus, ManifestRow, MessagePhase, MessageRole, MessageRow, MessageType, ModelRow,
+    ModelStatus, PlanRow, RunRow, RunStatus, SessionRow, StepRow, StepStatus,
 };
-pub use store::{agent_id_for, BeamStore, StoreResult};
+pub use schema::{SchemaName, DEFAULT_SCHEMA, SCHEMA_ENV};
+pub use store::{agent_id_for, BeamStore, CatalogStore, ExecutionStore, MessagePage, StoreResult};
+pub use tool_policy::{PgToolPolicy, ToolGrantStore, ToolGrants, ToolRuleStore, ToolRules};

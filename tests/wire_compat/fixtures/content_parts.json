@@ -1,0 +1,51 @@
+[
+  {
+    "metadata": {},
+    "text": "What is 2+2?",
+    "type": "text"
+  },
+  {
+    "metadata": {},
+    "mime_type": "image/png",
+    "type": "image_url",
+    "url": "https://example.com/cat.png"
+  },
+  {
+    "data": "aGVsbG8=",
+    "metadata": {},
+    "mime_type": "image/jpeg",
+    "type": "image_base64"
+  },
+  {
+    "data": "UklGRg==",
+    "metadata": {},
+    "mime_type": "audio/wav",
+    "type": "audio"
+  },
+  {
+    "metadata": {},
+    "mime_type": "video/mp4",
+    "type": "video",
+    "url": "https://example.com/clip.mp4"
+  },
+  {
+    "metadata": {},
+    "mime_type": "application/pdf",
+    "type": "file",
+    "url": "https://example.com/a.pdf"
+  },
+  {
+    "media_id": "6ba7b816-9dad-11d1-80b4-00c04fd430c8",
+    "metadata": {
+      "modality": "image",
+      "name": "chart.png"
+    },
+    "mime_type": "image/png",
+    "type": "media_ref"
+  },
+  {
+    "metadata": {},
+    "text": "Add the two numbers.",
+    "type": "reasoning"
+  }
+]
