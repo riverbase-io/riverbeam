@@ -2,6 +2,8 @@ use serde::{Deserialize, Serialize};
 
 pub const ALLOW_CODE: i32 = 200;
 pub const FLAG_CODE: i32 = 300;
+/// Allowed with the flagged spans masked (`SecurityAction::Mask`).
+pub const MASK_CODE: i32 = 320;
 pub const HITL_CODE: i32 = 350;
 pub const BLOCK_CODE: i32 = 400;
 pub const REJECT_CODE: i32 = 450;

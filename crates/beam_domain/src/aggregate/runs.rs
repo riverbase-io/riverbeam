@@ -6,7 +6,7 @@
 //! the run's `execution_id`: a new id for a new run, the interrupted
 //! execution's for a resume. A worker runs it and streams its frames.
 
-use beam_store::tasks::{NewTask, INVOKE_TASK};
+use beam_store::tasks::{NewTask, WorkerTask};
 use beam_types::{
     ActionResponseEnvelope, ClientCapabilities, ContentPart, InvokeAuthContext, InvokeRequest,
     RequestContext,
@@ -390,7 +390,7 @@ impl BeamAggregate {
 
         let task = NewTask {
             execution_id: Some(execution_id),
-            ..NewTask::new(INVOKE_TASK, serialize_request(request)?)
+            ..NewTask::of(WorkerTask::InvokeAgent, serialize_request(request)?)
         };
         let task_id = self.enqueue(task).await?;
         Ok(json!({
@@ -405,8 +405,9 @@ impl BeamAggregate {
 
     /// `cancel-execution`: a run still queued is cancelled in one statement,
     /// so a worker claiming it at the same moment either gets it first (and
-    /// the cancel is queued) or never sees it. A started run is cancelled by
-    /// a worker task.
+    /// the cancel is queued) or never sees it. No pipeline ends a run
+    /// cancelled while queued, so an `end_run` task publishes its terminal
+    /// frame. A started run is cancelled by a worker task.
     ///
     /// # Errors
     /// `BEM-412` for another user's run; `BEM-404` for an unknown one.
@@ -428,13 +429,29 @@ impl BeamAggregate {
             {
                 self.enqueue(NewTask {
                     execution_id: Some(p.execution_id),
-                    ..NewTask::new(
-                        "cancel_execution",
+                    ..NewTask::of(
+                        WorkerTask::CancelExecution,
                         json!({"execution_id": execution, "org_id": caller.org_id}),
                     )
                 })
                 .await?;
             }
+            let run = &task["payload"];
+            self.enqueue(NewTask {
+                execution_id: Some(p.execution_id),
+                ..NewTask::of(
+                    WorkerTask::EndRun,
+                    json!({
+                        "session_id": run.get("session_id"),
+                        "request_id": run.get("request_id"),
+                        "execution_id": execution,
+                        "agent_name": run.get("agent_name"),
+                        "org_id": caller.org_id,
+                        "reason": "cancelled",
+                    }),
+                )
+            })
+            .await?;
             return Ok(json!({"execution_id": execution, "status": "cancelled"}));
         }
         // Still queued, but another user's.
@@ -446,8 +463,8 @@ impl BeamAggregate {
         let task_id = self
             .enqueue(NewTask {
                 execution_id: Some(p.execution_id),
-                ..NewTask::new(
-                    "cancel_execution",
+                ..NewTask::of(
+                    WorkerTask::CancelExecution,
                     json!({"execution_id": execution, "org_id": caller.org_id}),
                 )
             })
@@ -470,8 +487,8 @@ impl BeamAggregate {
             execution_id: Some(p.execution_id),
             retryable: false,
             max_attempts: 1,
-            ..NewTask::new(
-                "retry_execution",
+            ..NewTask::of(
+                WorkerTask::RetryExecution,
                 json!({"execution_id": execution, "reason": p.reason, "org_id": caller.org_id}),
             )
         };

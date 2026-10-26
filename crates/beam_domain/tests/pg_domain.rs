@@ -10,6 +10,8 @@ mod support;
 use beam_domain::{BeamSql, DomainStore, SessionRecord};
 use beam_store::tasks::{TaskStatus, INVOKE_TASK};
 use beam_store::PgBeamStore;
+use beam_stream::{BeamStream, InMemoryTransport};
+use beam_types::StreamChunkType;
 use riverbase_core::query::{QueryAccess, QueryRequest};
 use riverbase_core::{Domain, EngineContext};
 use serde_json::{json, Value};
@@ -442,13 +444,23 @@ async fn the_same_idempotency_key_returns_the_first_run() {
     assert_eq!(second["request_id"], first["request_id"]);
 }
 
-/// A queued run is cancelled before it starts, by its owner only.
+/// A queued run is cancelled before it starts, by its owner only, and its
+/// stream gets one terminal `error` frame (an `end_run` task).
 #[tokio::test]
 async fn a_queued_run_is_cancelled_by_its_owner() {
-    let Some(store) = store("beam_domain").await else {
+    // Its own database: it runs the queue.
+    let Some(store) = store("beam_domain_cancel").await else {
         return;
     };
-    let w = world(&store).await;
+    support::clear_queue(&store).await;
+    let transport = std::sync::Arc::new(InMemoryTransport::new());
+    let stream = std::sync::Arc::new(BeamStream::new(transport.clone()));
+    let w = support::world_with(&store, |builder, name| {
+        let beam = builder.stream(stream).build().unwrap();
+        beam.register_echo_agent(name);
+        beam
+    })
+    .await;
     let command = w.domain.command_dyn();
     let out = command
         .execute(&w.owner_ctx(), "stream", hello(w.session), w.agent())
@@ -474,6 +486,49 @@ async fn a_queued_run_is_cancelled_by_its_owner() {
         w.task(uuid_of(&out, "task_id")).await.status(),
         Some(TaskStatus::Cancelled)
     );
+
+    let ends = end_runs(&store, uuid_of(&out, "execution_id")).await;
+    assert_eq!(ends.len(), 1, "end_run tasks: {ends:?}");
+    let ended = w.run_task(ends[0]).await;
+    assert_eq!(
+        ended.status(),
+        Some(TaskStatus::Succeeded),
+        "{:?}",
+        ended.error
+    );
+    let channel = format!(
+        "ws.channel.{}:{}",
+        w.session,
+        out["request_id"].as_str().expect("request_id")
+    );
+    let frames: Vec<_> = transport
+        .frames()
+        .await
+        .into_iter()
+        .filter(|f| f.channel == channel && f.frame.chunk_type == StreamChunkType::Error)
+        .collect();
+    assert_eq!(frames.len(), 1, "terminal frames: {}", frames.len());
+}
+
+/// The `end_run` tasks queued for `execution`.
+async fn end_runs(store: &PgBeamStore, execution: Uuid) -> Vec<Uuid> {
+    use diesel::sql_types::Uuid as SqlUuid;
+    use diesel_async::RunQueryDsl;
+
+    #[derive(diesel::QueryableByName)]
+    struct Id {
+        #[diesel(sql_type = SqlUuid)]
+        id: Uuid,
+    }
+    let mut conn = store.pool().get().await.expect("conn");
+    let rows: Vec<Id> = diesel::sql_query(
+        "SELECT _id AS id FROM ref_beam.agent_task WHERE execution_id = $1 AND task = 'end_run'",
+    )
+    .bind::<SqlUuid, _>(execution)
+    .load(&mut conn)
+    .await
+    .expect("end_run tasks");
+    rows.into_iter().map(|r| r.id).collect()
 }
 
 /// A `beam-user` reaches only its own rows through queued commands: another

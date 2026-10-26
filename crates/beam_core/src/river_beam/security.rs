@@ -2,7 +2,7 @@
 
 use beam_audit::{AuditAction, AuditEvent};
 use beam_security::{SecurityContext, SecurityDecision, SecurityRequest, SecurityStage};
-use beam_types::AgentInput;
+use beam_types::{AgentInput, AgentResult};
 use serde_json::Value;
 
 use riverbase_core::RiverbaseResult;
@@ -64,13 +64,12 @@ impl RiverBeam {
         let mut payload = serde_json::Map::new();
         payload.insert("run_id".into(), Value::String(input.run_id.to_string()));
         payload.insert("step_count".into(), Value::from(step_count));
-        payload.insert("elapsed_seconds".into(), Value::from(0.0));
         payload.insert("token_count".into(), Value::from(token_count));
         self.check_security_payload(SecurityStage::Runtime, input, payload)
             .await
     }
 
-    /// Run the security engine for `stage` over `content`. Returns an error when
+    /// Run the security checks for `stage` over `content`. Returns an error when
     /// a deny/terminate/quarantine verdict is enforced.
     pub(super) async fn check_security(
         &self,
@@ -78,16 +77,8 @@ impl RiverBeam {
         input: &AgentInput,
         content: &str,
     ) -> RiverbaseResult<()> {
-        let mut payload = serde_json::Map::new();
-        payload.insert("content".into(), Value::String(content.to_string()));
-        if let Some(interaction_id) = input.interaction_id {
-            payload.insert(
-                "interaction_id".into(),
-                Value::String(interaction_id.to_string()),
-            );
-        }
-        payload.insert("run_id".into(), Value::String(input.run_id.to_string()));
-        self.check_security_payload(stage, input, payload).await
+        self.check_security_payload(stage, input, content_payload(input, content))
+            .await
     }
 
     /// [`Self::check_security`] with a prepared payload.
@@ -97,6 +88,76 @@ impl RiverBeam {
         input: &AgentInput,
         payload: serde_json::Map<String, Value>,
     ) -> RiverbaseResult<()> {
+        self.decide_security(stage, input, payload)
+            .await
+            .map(|_| ())
+    }
+
+    /// `BEFORE_OUTPUT` on the answer, with the agent's instructions for the
+    /// prompt-echo check (OUT-003). A `Mask` verdict, when enforced, masks
+    /// what the output detectors flag in `result` and in its held `done`
+    /// frame, so neither the client nor the transcript gets it.
+    pub(super) async fn guard_output(
+        &self,
+        input: &AgentInput,
+        instructions: String,
+        result: &mut AgentResult,
+        done: Option<&mut Value>,
+    ) -> RiverbaseResult<()> {
+        let output = super::result_text(result);
+        if output.is_empty() {
+            return Ok(());
+        }
+        let mut payload = content_payload(input, &output);
+        payload.insert("instructions".into(), Value::String(instructions));
+        let decision = self
+            .decide_security(SecurityStage::BeforeOutput, input, payload)
+            .await?;
+        if decision.action != beam_security::SecurityAction::Mask || !self.security.enforce() {
+            return Ok(());
+        }
+        let detectors = self.security.output_detectors();
+        // A manager without output detectors masks through its decision: the
+        // answer becomes its `sanitized_content`.
+        let sanitized = decision.sanitized_content.filter(|_| detectors.is_empty());
+        let masked = |text: &str| match &sanitized {
+            Some(sanitized) => sanitized.clone(),
+            None => beam_security::mask_flagged(&detectors, text),
+        };
+        if sanitized.is_some() {
+            result.content.retain(|p| p.text.is_none());
+            result.content.insert(0, beam_types::ContentPart::text(""));
+        }
+        for part in &mut result.content {
+            if let Some(text) = part.text.as_mut() {
+                *text = masked(text);
+            }
+        }
+        if let Some(frame) = done {
+            match (&sanitized, frame.pointer_mut("/result/content")) {
+                (Some(_), Some(content)) => {
+                    *content = serde_json::to_value(&result.content).unwrap_or(Value::Null);
+                }
+                (None, Some(Value::Array(parts))) => {
+                    for part in parts {
+                        if let Some(Value::String(text)) = part.get_mut("text") {
+                            *text = masked(text);
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+
+    /// The decision for `stage`; an error when a deny verdict is enforced.
+    pub(super) async fn decide_security(
+        &self,
+        stage: SecurityStage,
+        input: &AgentInput,
+        payload: serde_json::Map<String, Value>,
+    ) -> RiverbaseResult<SecurityDecision> {
         let request = SecurityRequest::new(stage)
             .with_payload(payload)
             .with_context(SecurityContext {
@@ -124,7 +185,36 @@ impl RiverBeam {
                 .unwrap_or_else(|| "request blocked by security policy".to_string());
             return Err(crate::BEM_061.with_data(message));
         }
-        Ok(())
+        Ok(decision)
+    }
+
+    /// The audit event of a stream the guard stopped (`AFTER_LLM`, as the
+    /// text came from the model): the finding's rule and pattern.
+    pub(super) async fn audit_stream_block(
+        &self,
+        input: &AgentInput,
+        finding: Option<&beam_security::Finding>,
+    ) {
+        let Some(finding) = finding else { return };
+        let echo = finding.detector == "prompt_echo";
+        let mut metadata = serde_json::Map::new();
+        metadata.insert(
+            "matched_patterns".into(),
+            serde_json::json!([finding.pattern_id]),
+        );
+        let decision = SecurityDecision {
+            action: beam_security::SecurityAction::Deny,
+            severity: beam_security::SecuritySeverity::Critical,
+            matched_rules: vec![if echo { "OUT-003" } else { "OUT-001" }.to_owned()],
+            narration: "streamed output blocked".into(),
+            user_message: Some("This request could not be completed for security reasons.".into()),
+            metadata,
+            violation_type: Some(beam_security::ViolationType::OutputSecretDetected),
+            score: finding.severity.score(),
+            sanitized_content: None,
+        };
+        self.audit_security(SecurityStage::AfterLlm, input, &decision)
+            .await;
     }
 
     pub(super) async fn audit_security(
@@ -215,4 +305,18 @@ impl RiverBeam {
         }
         Ok(())
     }
+}
+
+/// A check's payload: the content and the invoke's ids.
+fn content_payload(input: &AgentInput, content: &str) -> serde_json::Map<String, Value> {
+    let mut payload = serde_json::Map::new();
+    payload.insert("content".into(), Value::String(content.to_string()));
+    if let Some(interaction_id) = input.interaction_id {
+        payload.insert(
+            "interaction_id".into(),
+            Value::String(interaction_id.to_string()),
+        );
+    }
+    payload.insert("run_id".into(), Value::String(input.run_id.to_string()));
+    payload
 }

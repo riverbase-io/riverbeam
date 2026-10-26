@@ -1067,7 +1067,6 @@ dependencies = [
  "diesel",
  "diesel-async",
  "regex",
- "river_reed",
  "riverbase_core",
  "serde",
  "serde_json",
@@ -1190,6 +1189,7 @@ dependencies = [
  "async-trait",
  "beam_core",
  "beam_env",
+ "beam_execution",
  "beam_knowledge",
  "beam_runtime",
  "beam_store",
@@ -4664,16 +4664,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rexile"
-version = "0.5.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c10ea958e7c3d18b6b9612163a08d842a4f73dd2239d6908ccf751c85ceca8ba"
-dependencies = [
- "aho-corasick",
- "memchr",
-]
-
-[[package]]
 name = "rhai"
 version = "1.26.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4836,23 +4826,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "river_reed"
-version = "0.2.0"
-dependencies = [
- "async-trait",
- "chrono",
- "diesel",
- "diesel_migrations",
- "r2d2",
- "riverbase_core",
- "rust-rule-engine",
- "serde",
- "serde_json",
- "tokio",
- "uuid",
-]
-
-[[package]]
 name = "riverbase_core"
 version = "0.2.0"
 dependencies = [
@@ -4967,21 +4940,6 @@ dependencies = [
  "quote",
  "serde_json",
  "syn 2.0.117",
-]
-
-[[package]]
-name = "rust-rule-engine"
-version = "1.20.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c76128532b822323d8716dd8299f1fdf16b8ddb4b2d50f121e4e77e79002ac07"
-dependencies = [
- "chrono",
- "log",
- "nom",
- "rexile",
- "serde",
- "serde_json",
- "thiserror 2.0.18",
 ]
 
 [[package]]

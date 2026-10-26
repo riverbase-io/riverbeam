@@ -6,7 +6,6 @@ use beam_audit::{AuditAction, AuditEvent};
 use beam_execution::idempotency::normalize_idempotency_scope;
 use beam_execution::{ExecutionRow, ExecutionStatus, Lease, StopReason};
 use beam_runtime::RuntimeContext;
-use beam_security::SecurityStage;
 use beam_store::{InteractionStatus, RunStatus};
 use beam_types::{AgentContext, AgentInput, AgentResult, InvokeRequest};
 use beam_usage::UsagePlan;
@@ -17,8 +16,9 @@ use uuid::Uuid;
 use riverbase_core::RiverbaseResult;
 
 use super::{
-    error_category, execution_ref, ops, replay_result, result_text, resume_request, to_agent_input,
-    wait_for_stop, AttemptGuard, AttemptOutcome, HeldLease, InvokeIdentity, RiverBeam,
+    error_category, execution_ref, instructions_of, ops, replay_result, resume_request,
+    to_agent_input, wait_for_stop, AttemptGuard, AttemptOutcome, HeldLease, InvokeIdentity,
+    RiverBeam,
 };
 
 impl RiverBeam {
@@ -359,13 +359,17 @@ impl RiverBeam {
                 agent_res.citations.clone_from(&prepared.citations);
             }
 
-            // `BEFORE_OUTPUT` on the answer text, then the
-            // `RUNTIME` stage with the steps and tokens the run used.
-            let output = result_text(&agent_res);
-            if !output.is_empty() {
-                self.check_security(SecurityStage::BeforeOutput, agent_input, &output)
-                    .await?;
-            }
+            // `BEFORE_OUTPUT` on the answer text (a `Mask` verdict masks the
+            // answer and its held `done`), then the `RUNTIME` stage with the
+            // steps and tokens the run used.
+            let mut done = pending_done.take();
+            self.guard_output(
+                agent_input,
+                instructions_of(&agent_ctx.conversation_history),
+                &mut agent_res,
+                done.as_mut(),
+            )
+            .await?;
             // The steps the runtime reported.
             let steps = dispatched.steps;
             let tokens = agent_res
@@ -387,7 +391,6 @@ impl RiverBeam {
             // An interrupted run's `done` waits for `WAITING_FOR_INPUT`: a client
             // that answers it at once (an automatic client tool) must find the
             // execution waiting, or `resume` refuses the answer.
-            let mut done = pending_done.take();
             if !agent_res.interrupted {
                 self.publish_done(agent_input, done.take()).await?;
             }
@@ -523,8 +526,12 @@ impl RiverBeam {
                     .error(Some(err.errmesg.clone())),
             )
             .await;
-        // The dead letter, then the terminal `error` frame.
-        self.dead_letter_failure(input, err).await;
+        // The dead letter, then the terminal `error` frame. A security denial
+        // gets no dead letter: a retry runs the same checks on the same request
+        // and, but for the token budget, is denied again (see plan 031 D1).
+        if site != crate::BEM_061.errcode {
+            self.dead_letter_failure(input, err).await;
+        }
         self.publish_failure(input, err).await;
     }
 

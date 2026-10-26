@@ -1,95 +1,11 @@
-use std::str::FromStr;
 use std::sync::Arc;
 
 use beam_core::RiverBeam;
+use beam_execution::StopReason;
+use beam_store::tasks::WorkerTask;
 use beam_types::InvokeRequest;
 use riverbase_core::{RiverbaseError, RiverbaseResult};
 use serde_json::Value;
-
-/// RPC task names exported by the worker (parity with Python `export_task`).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum WorkerTask {
-    InvokeAgent,
-    IngestKnowledgeDocument,
-    DeleteKnowledgeDocument,
-    RememberMemory,
-    EditMemory,
-    ExpireMemory,
-    ForgetMemory,
-    CancelExecution,
-    RetryExecution,
-    // Operations.
-    ReconcileNow,
-    ListDeadLetters,
-    RetryDeadLetter,
-    DiscardDeadLetter,
-    DeleteUserAgentData,
-    // Revisions and evals.
-    MarkRevisionValidating,
-    ActivateRevision,
-    RetireRevision,
-    ListRevisions,
-    SubmitAgentFeedback,
-    RunEvaluation,
-}
-
-impl WorkerTask {
-    #[must_use]
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::InvokeAgent => "invoke_agent",
-            Self::IngestKnowledgeDocument => "ingest_knowledge_document",
-            Self::DeleteKnowledgeDocument => "delete_knowledge_document",
-            Self::RememberMemory => "remember_memory",
-            Self::EditMemory => "edit_memory",
-            Self::ExpireMemory => "expire_memory",
-            Self::ForgetMemory => "forget_memory",
-            Self::CancelExecution => "cancel_execution",
-            Self::RetryExecution => "retry_execution",
-            Self::ReconcileNow => "reconcile_now",
-            Self::ListDeadLetters => "list_dead_letters",
-            Self::RetryDeadLetter => "retry_dead_letter",
-            Self::DiscardDeadLetter => "discard_dead_letter",
-            Self::DeleteUserAgentData => "delete_user_agent_data",
-            Self::MarkRevisionValidating => "mark_revision_validating",
-            Self::ActivateRevision => "activate_revision",
-            Self::RetireRevision => "retire_revision",
-            Self::ListRevisions => "list_revisions",
-            Self::SubmitAgentFeedback => "submit_agent_feedback",
-            Self::RunEvaluation => "run_evaluation",
-        }
-    }
-}
-
-impl FromStr for WorkerTask {
-    type Err = RiverbaseError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "invoke_agent" => Ok(Self::InvokeAgent),
-            "ingest_knowledge_document" => Ok(Self::IngestKnowledgeDocument),
-            "delete_knowledge_document" => Ok(Self::DeleteKnowledgeDocument),
-            "remember_memory" => Ok(Self::RememberMemory),
-            "edit_memory" => Ok(Self::EditMemory),
-            "expire_memory" => Ok(Self::ExpireMemory),
-            "forget_memory" => Ok(Self::ForgetMemory),
-            "cancel_execution" => Ok(Self::CancelExecution),
-            "retry_execution" => Ok(Self::RetryExecution),
-            "reconcile_now" => Ok(Self::ReconcileNow),
-            "list_dead_letters" => Ok(Self::ListDeadLetters),
-            "retry_dead_letter" => Ok(Self::RetryDeadLetter),
-            "discard_dead_letter" => Ok(Self::DiscardDeadLetter),
-            "delete_user_agent_data" => Ok(Self::DeleteUserAgentData),
-            "mark_revision_validating" => Ok(Self::MarkRevisionValidating),
-            "activate_revision" => Ok(Self::ActivateRevision),
-            "retire_revision" => Ok(Self::RetireRevision),
-            "list_revisions" => Ok(Self::ListRevisions),
-            "submit_agent_feedback" => Ok(Self::SubmitAgentFeedback),
-            "run_evaluation" => Ok(Self::RunEvaluation),
-            other => Err(beam_core::BEM_091.with_data(other.to_string())),
-        }
-    }
-}
 
 /// `payload[key]` as a UUID.
 fn uuid_field(payload: &Value, key: &str) -> RiverbaseResult<uuid::Uuid> {
@@ -206,11 +122,14 @@ impl BeamWorker {
         self.beam.invoke(request).await
     }
 
-    /// Publish the terminal `error` frame of a queued run that failed before
-    /// its pipeline published one (concurrency conflict, drain, a bad
-    /// payload), so stream clients and the `/invoke` alias stop waiting.
-    /// Does nothing without a stream or without the run's ids.
-    pub async fn publish_run_failure(&self, payload: &Value, err: &RiverbaseError) {
+    /// Publish the terminal `error` frame of a run whose pipeline did not
+    /// end it: it failed before publishing one (concurrency conflict, drain,
+    /// a bad payload), its worker died on its last attempt, no worker ran it
+    /// in time, or it was cancelled while queued. The one place that ends a
+    /// run's stream from outside its pipeline, so stream clients and the
+    /// `/invoke` alias stop waiting. Does nothing without a stream or
+    /// without the run's ids.
+    pub async fn publish_run_end(&self, payload: &Value, err: &RiverbaseError) {
         let Some(stream) = self.beam.beam_stream() else {
             return;
         };
@@ -225,8 +144,27 @@ impl BeamWorker {
         frame.execution_id = text("execution_id");
         frame.agent_name = text("agent_name");
         if let Err(e) = stream.publish_event(&session, &request, frame).await {
-            tracing::warn!(error = %e, "could not publish a failed run's error frame");
+            tracing::warn!(error = %e, "could not publish an ended run's error frame");
         }
+    }
+
+    /// `end_run` task: the terminal frame of a run that ended without its
+    /// pipeline. Payload `{session_id, request_id, execution_id, agent_name,
+    /// org_id, reason}`; the only reason is `cancelled`. Without the run's
+    /// ids there is no stream to end, and nothing is published.
+    ///
+    /// # Errors
+    /// `BEM-003` for another reason.
+    async fn end_run(&self, payload: &Value) -> RiverbaseResult<Value> {
+        let reason = text_field(payload, "reason")?;
+        if reason != "cancelled" {
+            return Err(beam_core::BEM_003.with_data(format!("unknown end_run reason {reason}")));
+        }
+        if let Ok(id) = execution_id(payload) {
+            self.publish_run_end(payload, &StopReason::Cancelled.error(id))
+                .await;
+        }
+        Ok(serde_json::json!({ "reason": reason }))
     }
 
     /// Dispatch a task by name with a JSON payload (queue consumer entry point).
@@ -247,7 +185,8 @@ impl BeamWorker {
     // One arm per worker task.
     #[allow(clippy::too_many_lines)]
     async fn dispatch(&self, task: &str, payload: Value) -> RiverbaseResult<Value> {
-        let task = WorkerTask::from_str(task)?;
+        let task =
+            WorkerTask::parse(task).ok_or_else(|| beam_core::BEM_091.with_data(task.to_owned()))?;
         match task {
             WorkerTask::InvokeAgent => {
                 let request: InvokeRequest = serde_json::from_value(payload)
@@ -263,6 +202,7 @@ impl BeamWorker {
             WorkerTask::CancelExecution => {
                 self.beam.cancel_execution(execution_id(&payload)?).await
             }
+            WorkerTask::EndRun => self.end_run(&payload).await,
             WorkerTask::RetryExecution => {
                 // Python returns the new attempt; the redispatched invoke result is included.
                 let id = execution_id(&payload)?;

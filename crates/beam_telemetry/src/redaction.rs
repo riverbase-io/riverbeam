@@ -1,5 +1,5 @@
-//! Strip credentials from dumps that leave the process: dead letters, exports
-//! and audit metadata (Python `kernel/redaction.py`).
+//! Strip credentials from dumps that leave the process: exports and audit
+//! metadata.
 
 use serde_json::{Map, Value};
 

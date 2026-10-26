@@ -8,10 +8,12 @@
 //! - **Tick.** Every `BEAM_QUEUE_POLL_MS` it claims due rows, so a lost hint
 //!   (or no bus at all) only delays a task.
 //! - **Sweep.** Every lease period it requeues tasks whose worker died
-//!   (`beam_store::tasks::sweep_expired`), fails tasks no worker ran within
-//!   `BEAM_QUEUE_TTL_SECS`, deletes finished tasks past
-//!   `BEAM_TASK_RETENTION_DAYS`, and queues the resumes that expire
-//!   client-tool actions nobody answered.
+//!   (`beam_store::tasks::sweep_expired`) or fails them on their last
+//!   attempt, fails tasks no worker ran within `BEAM_QUEUE_TTL_SECS`,
+//!   deletes finished tasks past `BEAM_TASK_RETENTION_DAYS`, and queues the
+//!   resumes that expire client-tool actions nobody answered. A failed
+//!   invoke gets its terminal frame here
+//!   ([`BeamWorker::publish_run_end`]).
 //! - **Revisions.** It reloads its revision book on [`REVISION_TOPIC`] and
 //!   every `BEAM_REVISION_RELOAD_SECS`, because a hint can be lost.
 //!
@@ -22,15 +24,19 @@
 //! at once. The outcome is written only while the lease is still this
 //! worker's.
 //!
-//! One semaphore (`BEAM_WORKER_CONCURRENCY`) bounds running tasks, and
-//! nothing is claimed without a free permit. Control tasks
-//! ([`CONTROL_TASKS`], such as `cancel_execution`) have a small pool of
-//! their own, so a cancel never waits behind the runs it cancels.
+//! Each [`Lane`] has its own permits, and nothing is claimed without a free
+//! one: control tasks (a cancel, a run's end) never wait behind the runs
+//! they act on, and batch work (`BEAM_WORKER_BATCH_CONCURRENCY`) never holds
+//! up user runs (`BEAM_WORKER_CONCURRENCY`).
+//!
+//! A worker claims only the tasks in its catalog ([`WorkerTask`]). A task
+//! queued by a newer version stays `QUEUED` for a worker that runs it, and
+//! fails with `queue_ttl` after `BEAM_QUEUE_TTL_SECS` if none does.
 
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use beam_store::tasks::{self, TaskRow, INVOKE_TASK, REVISION_TOPIC, TASK_TOPIC};
+use beam_store::tasks::{self, Lane, TaskRow, WorkerTask, INVOKE_TASK, REVISION_TOPIC, TASK_TOPIC};
 use beam_store::PgBeamStore;
 use futures_util::StreamExt;
 use riverbase_core::transport::StreamBus;
@@ -43,22 +49,19 @@ use uuid::Uuid;
 use crate::worker::BeamWorker;
 
 /// Tasks whose success changes every worker's revision book.
-const REVISION_TASKS: [&str; 3] = [
-    "mark_revision_validating",
-    "activate_revision",
-    "retire_revision",
+const REVISION_TASKS: [WorkerTask; 3] = [
+    WorkerTask::MarkRevisionValidating,
+    WorkerTask::ActivateRevision,
+    WorkerTask::RetireRevision,
 ];
 
 /// Tasks that are not run again after an error (a failed run is the result).
-const NO_RETRY_ON_ERROR: [&str; 2] = [INVOKE_TASK, "run_evaluation"];
-
-/// Tasks claimed from their own pool, ahead of the runs they act on.
-pub const CONTROL_TASKS: [&str; 1] = ["cancel_execution"];
+const NO_RETRY_ON_ERROR: [WorkerTask; 2] = [WorkerTask::InvokeAgent, WorkerTask::RunEvaluation];
 
 /// Client-tool actions expired per sweep.
 const CLIENT_TOOL_EXPIRY_BATCH: i64 = 100;
 
-/// Permits for [`CONTROL_TASKS`].
+/// Permits of the [`Lane::Control`] lane.
 const CONTROL_PERMITS: usize = 4;
 
 /// Another run holds the session's concurrency slot: the run waits for it
@@ -71,8 +74,12 @@ const BUSY_WAIT_MAX: Duration = Duration::from_secs(5);
 /// Queue settings, from the environment.
 #[derive(Debug, Clone)]
 pub struct QueueConfig {
-    /// `BEAM_WORKER_CONCURRENCY` (default 16): tasks running at once.
+    /// `BEAM_WORKER_CONCURRENCY` (default 16): agent runs
+    /// ([`Lane::Interactive`]) running at once.
     pub concurrency: usize,
+    /// `BEAM_WORKER_BATCH_CONCURRENCY` (default 4): batch tasks
+    /// ([`Lane::Batch`]) running at once.
+    pub batch_concurrency: usize,
     /// `BEAM_QUEUE_POLL_MS` (default 1000): the polling tick.
     pub poll: Duration,
     /// `BEAM_TASK_LEASE_SECS` (default 30): a claim's lease, renewed while
@@ -108,6 +115,7 @@ impl Default for QueueConfig {
     fn default() -> Self {
         Self {
             concurrency: 16,
+            batch_concurrency: 4,
             poll: Duration::from_secs(1),
             lease: Duration::from_secs(30),
             queue_ttl: Duration::from_hours(1),
@@ -123,8 +131,10 @@ impl QueueConfig {
     #[must_use]
     pub fn from_env() -> Self {
         let concurrency = usize::try_from(env_u64("BEAM_WORKER_CONCURRENCY", 16)).unwrap_or(16);
+        let batch = usize::try_from(env_u64("BEAM_WORKER_BATCH_CONCURRENCY", 4)).unwrap_or(4);
         Self {
             concurrency: concurrency.max(1),
+            batch_concurrency: batch.max(1),
             poll: Duration::from_millis(env_u64("BEAM_QUEUE_POLL_MS", 1000).max(10)),
             lease: Duration::from_secs(env_u64("BEAM_TASK_LEASE_SECS", 30).max(3)),
             queue_ttl: Duration::from_secs(env_u64("BEAM_QUEUE_TTL_SECS", 3600).max(1)),
@@ -141,8 +151,32 @@ pub struct QueueWorker {
     store: PgBeamStore,
     bus: Option<Arc<dyn StreamBus>>,
     config: QueueConfig,
+    control: LanePool,
+    interactive: LanePool,
+    batch: LanePool,
+}
+
+/// One lane's permits and the task names it claims.
+struct LanePool {
     permits: Arc<Semaphore>,
-    control: Arc<Semaphore>,
+    size: usize,
+    names: Vec<&'static str>,
+}
+
+impl LanePool {
+    fn new(lane: Lane, size: usize) -> Self {
+        let size = size.max(1);
+        Self {
+            permits: Arc::new(Semaphore::new(size)),
+            size,
+            names: lane.names(),
+        }
+    }
+}
+
+/// Whether `row` is one of `tasks`.
+fn row_is(row: &TaskRow, tasks: &[WorkerTask]) -> bool {
+    WorkerTask::parse(&row.task).is_some_and(|task| tasks.contains(&task))
 }
 
 /// What is kept of an invoke's result: the ids. The answer itself is in
@@ -201,7 +235,7 @@ fn retries(row: &TaskRow, err: &RiverbaseError) -> bool {
     if row.attempt_count >= row.max_attempts {
         return false;
     }
-    row.retryable && err.http_status >= 500 && !NO_RETRY_ON_ERROR.contains(&row.task.as_str())
+    row.retryable && err.http_status >= 500 && !row_is(row, &NO_RETRY_ON_ERROR)
 }
 
 /// Resolves when the lease is lost; never resolves when the renewal just
@@ -215,14 +249,22 @@ async fn lease_lost(lost: oneshot::Receiver<()>) {
 impl QueueWorker {
     #[must_use]
     pub fn new(worker: Arc<BeamWorker>, store: PgBeamStore, config: QueueConfig) -> Self {
-        let permits = Arc::new(Semaphore::new(config.concurrency.max(1)));
         Self {
             worker,
             store,
             bus: None,
+            control: LanePool::new(Lane::Control, CONTROL_PERMITS),
+            interactive: LanePool::new(Lane::Interactive, config.concurrency),
+            batch: LanePool::new(Lane::Batch, config.batch_concurrency),
             config,
-            permits,
-            control: Arc::new(Semaphore::new(CONTROL_PERMITS)),
+        }
+    }
+
+    fn pool(&self, lane: Lane) -> &LanePool {
+        match lane {
+            Lane::Control => &self.control,
+            Lane::Interactive => &self.interactive,
+            Lane::Batch => &self.batch,
         }
     }
 
@@ -245,8 +287,11 @@ impl QueueWorker {
     }
 
     /// Claim and run task `id` (a hint naming `task`), or the oldest due
-    /// task when `id` is `None`. Returns whether a task was claimed. The task
-    /// runs on a spawned task; this returns once it is claimed.
+    /// task of `task`'s lane when `id` is `None`. The task's lane gives the
+    /// permit. A hint without a task, or naming one this worker does not
+    /// run, is ignored: a worker that runs it claims it. Returns whether a
+    /// task was claimed. The task runs on a spawned task; this returns once
+    /// it is claimed.
     ///
     /// # Errors
     /// `BEM-507` when the claim fails.
@@ -255,21 +300,25 @@ impl QueueWorker {
         id: Option<Uuid>,
         task: Option<&str>,
     ) -> RiverbaseResult<bool> {
-        let control = task.is_some_and(|t| CONTROL_TASKS.contains(&t));
-        let pool = if control {
-            &self.control
-        } else {
-            &self.permits
+        let Some(known) = task.and_then(WorkerTask::parse) else {
+            debug!(task_id = ?id, ?task, "a hint for a task this worker does not run: ignored");
+            return Ok(false);
         };
-        let Ok(permit) = Arc::clone(pool).try_acquire_owned() else {
+        self.claim_in(known.lane(), id).await
+    }
+
+    /// Claim and run task `id`, or the oldest due task, among `lane`'s
+    /// tasks and from its permits.
+    async fn claim_in(self: &Arc<Self>, lane: Lane, id: Option<Uuid>) -> RiverbaseResult<bool> {
+        let pool = self.pool(lane);
+        let Ok(permit) = Arc::clone(&pool.permits).try_acquire_owned() else {
             return Ok(false);
         };
         let (owner, lease) = (self.config.worker_id.as_str(), self.config.lease);
         let queue = self.store.db().tasks();
         let row = match id {
-            Some(id) => queue.claim_by_id(id, owner, lease).await?,
-            None if control => queue.claim_next_of(owner, lease, &CONTROL_TASKS).await?,
-            None => queue.claim_next(owner, lease).await?,
+            Some(id) => queue.claim_by_id(id, owner, lease, &pool.names).await?,
+            None => queue.claim_next_of(owner, lease, &pool.names).await?,
         };
         let Some(row) = row else { return Ok(false) };
         let this = Arc::clone(self);
@@ -277,22 +326,27 @@ impl QueueWorker {
         Ok(true)
     }
 
-    /// Claim and run the oldest due task here, waiting for it to finish
-    /// (tests and one-shot tools). Returns the finished row, or `None`
-    /// when nothing was due.
+    /// Claim and run the oldest due task of any lane here, from an
+    /// interactive permit, waiting for it to finish (tests and one-shot
+    /// tools). Returns the finished row, or `None` when nothing was due.
     ///
     /// # Errors
     /// `BEM-507` when the queue cannot be read or written.
     pub async fn run_next(&self) -> RiverbaseResult<Option<TaskRow>> {
-        let permit = Arc::clone(&self.permits)
+        let permit = Arc::clone(&self.interactive.permits)
             .acquire_owned()
             .await
             .map_err(|e| beam_core::BEM_507.with_data(e.to_string()))?;
+        let known: Vec<&str> = WorkerTask::ALL
+            .iter()
+            .copied()
+            .map(WorkerTask::as_str)
+            .collect();
         let row = self
             .store
             .db()
             .tasks()
-            .claim_next(&self.config.worker_id, self.config.lease)
+            .claim_next_of(&self.config.worker_id, self.config.lease, &known)
             .await?;
         let Some(row) = row else { return Ok(None) };
         let id = row.id;
@@ -380,7 +434,7 @@ impl QueueWorker {
                 let written = queue
                     .complete(row.id, owner, &stored_result(&row.task, &value), &payload)
                     .await?;
-                if written && REVISION_TASKS.contains(&row.task.as_str()) {
+                if written && row_is(row, &REVISION_TASKS) {
                     self.publish(REVISION_TOPIC, json!({})).await;
                 }
             }
@@ -402,7 +456,7 @@ impl QueueWorker {
                 // A run that failed before its pipeline published a frame:
                 // tell its stream clients it ended.
                 if written && !retry && row.task == INVOKE_TASK {
-                    self.worker.publish_run_failure(&row.payload, &err).await;
+                    self.worker.publish_run_end(&row.payload, &err).await;
                 }
             }
         }
@@ -444,24 +498,33 @@ impl QueueWorker {
         }
     }
 
-    /// Requeue tasks whose worker died, fail tasks no worker ran in time,
-    /// and delete old finished tasks.
+    /// Requeue tasks whose worker died (fail them on their last attempt),
+    /// fail tasks no worker ran in time, and delete old finished tasks. A
+    /// failed invoke's stream gets its terminal frame. Returns the requeued
+    /// ids.
     ///
     /// # Errors
     /// `BEM-507` when the queue cannot be written.
     pub async fn sweep(&self) -> RiverbaseResult<Vec<Uuid>> {
         let queue = self.store.db().tasks();
-        let requeued = queue.sweep_expired().await?;
+        let swept = queue.sweep_expired().await?;
         let expired = queue.expire_queued(self.config.queue_ttl).await?;
         let purged = queue.purge_finished(self.config.retention).await?;
-        for row in expired.iter().filter(|r| r.task == INVOKE_TASK) {
+        for row in swept.failed.iter().filter(|r| r.task == INVOKE_TASK) {
             self.worker
-                .publish_run_failure(&row.payload, &beam_core::BEM_508.raise())
+                .publish_run_end(&row.payload, &beam_core::BEM_510.raise())
                 .await;
         }
-        if !requeued.is_empty() || !expired.is_empty() || purged > 0 {
+        for row in expired.iter().filter(|r| r.task == INVOKE_TASK) {
+            self.worker
+                .publish_run_end(&row.payload, &beam_core::BEM_508.raise())
+                .await;
+        }
+        let requeued = swept.requeued;
+        if !requeued.is_empty() || !swept.failed.is_empty() || !expired.is_empty() || purged > 0 {
             info!(
                 requeued = requeued.len(),
+                failed = swept.failed.len(),
                 expired = expired.len(),
                 purged,
                 "beam work queue swept"
@@ -508,7 +571,7 @@ impl QueueWorker {
                 execution_id: request.execution_id,
                 user_id: id(auth.and_then(|a| a.user_id.as_ref())),
                 org_id: id(auth.and_then(|a| a.org_id.as_ref())),
-                ..tasks::NewTask::new(INVOKE_TASK, payload)
+                ..tasks::NewTask::of(WorkerTask::InvokeAgent, payload)
             };
             queue.enqueue(&task).await?;
             queued += 1;
@@ -543,6 +606,7 @@ impl QueueWorker {
         info!(
             worker_id = %self.config.worker_id,
             concurrency = self.config.concurrency,
+            batch_concurrency = self.config.batch_concurrency,
             hints = self.bus.is_some(),
             "beam work queue started"
         );
@@ -554,8 +618,15 @@ impl QueueWorker {
         for task in &loops {
             task.abort();
         }
-        let all = u32::try_from(self.config.concurrency).unwrap_or(u32::MAX);
-        let drained = tokio::time::timeout(self.config.lease, self.permits.acquire_many(all)).await;
+        // Every lane's permits back means no task of any lane still runs.
+        let drain = async {
+            for lane in Lane::ALL {
+                let pool = self.pool(lane);
+                let all = u32::try_from(pool.size).unwrap_or(u32::MAX);
+                let _ = pool.permits.acquire_many(all).await;
+            }
+        };
+        let drained = tokio::time::timeout(self.config.lease, drain).await;
         if drained.is_err() {
             warn!("beam work queue stopped with tasks still running; their leases will expire");
         }
@@ -588,12 +659,11 @@ impl QueueWorker {
         tick.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
         loop {
             tick.tick().await;
-            // Control tasks first, from their own permits; then the rest,
-            // until nothing is due or every permit is taken.
-            for control in [true, false] {
-                let kind = control.then_some(CONTROL_TASKS[0]);
+            // Lane by lane (control first), each from its own permits, until
+            // nothing of the lane is due or its permits are taken.
+            for lane in Lane::ALL {
                 loop {
-                    match self.claim(None, kind).await {
+                    match self.claim_in(lane, None).await {
                         Ok(true) => {}
                         Ok(false) => break,
                         Err(e) => {
@@ -738,6 +808,55 @@ mod tests {
         let store = beam_core::BEM_507.raise();
         assert!(retries(&row("remember_memory", 1, true), &store));
         assert!(!retries(&row("remember_memory", 1, false), &store));
+    }
+
+    /// With every batch permit taken, a run is still claimed from its own
+    /// lane, and the batch task waits. Needs `BEAM_DATABASE_URL`; skips
+    /// without it.
+    #[tokio::test]
+    async fn a_full_batch_lane_does_not_block_runs() {
+        let Some(store) = beam_store::testdb::store("beam_worker_lanes").await else {
+            return;
+        };
+        let beam = beam_core::RiverBeam::builder(beam_core::BeamConfig::default())
+            .pg_store(store.clone())
+            .build()
+            .unwrap();
+        let queue = Arc::new(QueueWorker::new(
+            Arc::new(BeamWorker::new(Arc::new(beam))),
+            store.clone(),
+            QueueConfig {
+                batch_concurrency: 1,
+                ..QueueConfig::default()
+            },
+        ));
+        let _held = Arc::clone(&queue.batch.permits)
+            .try_acquire_owned()
+            .expect("the batch lane's one permit");
+        // Only the claims matter here, not how the tasks then run.
+        let batch = tasks::NewTask::of(WorkerTask::ReconcileNow, json!({}));
+        let run = tasks::NewTask::of(WorkerTask::InvokeAgent, json!({}));
+        for task in [&batch, &run] {
+            store.db().tasks().enqueue(task).await.expect("enqueue");
+        }
+        let claimed = |task: &tasks::NewTask| {
+            let (queue, id, name) = (Arc::clone(&queue), task.id, task.task.clone());
+            async move { queue.claim(Some(id), Some(&name)).await.expect("claim") }
+        };
+        assert!(
+            !claimed(&batch).await,
+            "a batch task claimed without a permit"
+        );
+        assert!(claimed(&run).await, "the run waited behind the batch lane");
+        let row = store
+            .db()
+            .tasks()
+            .get(batch.id)
+            .await
+            .expect("get")
+            .expect("task");
+        assert_eq!(row.status(), Some(tasks::TaskStatus::Queued));
+        assert_eq!(row.attempt_count, 0);
     }
 
     #[test]

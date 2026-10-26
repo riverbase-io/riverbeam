@@ -31,7 +31,9 @@ impl Default for HitlConfig {
     }
 }
 
-/// Tenant/agent security policy (ports `SecurityPolicy`).
+/// Tenant/agent security policy (ports `SecurityPolicy`). Unknown keys are
+/// ignored, so a policy that still sets `max_recursion` or `max_timeout`
+/// loads.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SecurityPolicy {
     #[serde(default)]
@@ -46,10 +48,6 @@ pub struct SecurityPolicy {
     pub max_steps: u64,
     #[serde(default = "default_max_tokens")]
     pub max_tokens: u64,
-    #[serde(default = "default_max_recursion")]
-    pub max_recursion: u64,
-    #[serde(default = "default_max_timeout")]
-    pub max_timeout: f64,
 }
 
 fn default_max_steps() -> u64 {
@@ -57,12 +55,6 @@ fn default_max_steps() -> u64 {
 }
 fn default_max_tokens() -> u64 {
     128_000
-}
-fn default_max_recursion() -> u64 {
-    10
-}
-fn default_max_timeout() -> f64 {
-    30.0
 }
 
 impl Default for SecurityPolicy {
@@ -74,8 +66,21 @@ impl Default for SecurityPolicy {
             hitl_config: HitlConfig::default(),
             max_steps: default_max_steps(),
             max_tokens: default_max_tokens(),
-            max_recursion: default_max_recursion(),
-            max_timeout: default_max_timeout(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A policy that sets keys no rule reads (`max_recursion`, `max_timeout`)
+    /// still loads.
+    #[test]
+    fn a_policy_with_removed_keys_still_loads() {
+        let policy: SecurityPolicy =
+            serde_json::from_str(r#"{"max_steps": 9, "max_recursion": 3, "max_timeout": 12.5}"#)
+                .unwrap();
+        assert_eq!(policy.max_steps, 9);
     }
 }

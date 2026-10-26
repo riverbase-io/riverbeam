@@ -1,7 +1,7 @@
 //! `PgSecurityStore` against Postgres (needs `--features postgres` and
 //! `BEAM_DATABASE_URL`; skips otherwise). Rows are left for
 //! `scripts/cross_read.py`.
-#![cfg(all(feature = "postgres", feature = "rules"))]
+#![cfg(feature = "postgres")]
 
 use std::sync::Arc;
 

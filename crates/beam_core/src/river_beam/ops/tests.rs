@@ -207,8 +207,8 @@ async fn only_the_session_owner_subscribes() {
         .unwrap());
 }
 
-/// A failed invoke is a dead letter with its secrets
-/// redacted; retry runs it again, discard removes it.
+/// A failed invoke is a dead letter that holds only its ids, none of
+/// the request; retry runs it again, discard removes it.
 #[tokio::test]
 async fn failed_invokes_become_dead_letters() {
     let transport = Arc::new(FlakyTransport::default());
@@ -230,10 +230,14 @@ async fn failed_invokes_become_dead_letters() {
     let listed = beam.list_dead_letters().await.unwrap();
     let letter = &listed["letters"][0];
     assert_eq!(letter["task_name"], "invoke_agent");
-    assert_eq!(
-        letter["payload"]["invoke_request"]["metadata"]["api_key"],
-        "[redacted]"
-    );
+    let mut keys: Vec<&str> = letter["payload"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .map(String::as_str)
+        .collect();
+    keys.sort_unstable();
+    assert_eq!(keys, ["execution_id", "session_id"]);
     let id = Uuid::parse_str(letter["id"].as_str().unwrap()).unwrap();
 
     let retried = beam.retry_dead_letter(id).await.unwrap();
@@ -343,4 +347,64 @@ async fn reconcile_runs_once_at_a_time_and_readiness_tracks_drain() {
         .await;
     assert_eq!(beam.readiness().await["status"], "unavailable");
     assert_eq!(RiverBeam::liveness()["status"], "ok");
+}
+
+/// The text of every frame the transport sent.
+fn sent_text(transport: &FlakyTransport) -> String {
+    serde_json::to_string(&*transport.frames.lock().unwrap()).unwrap()
+}
+
+/// Plan 030 acceptance 4: a secret the model streams never reaches a stream
+/// client; the run ends with an error frame. The denial leaves no dead
+/// letter, so the secret is not stored there either.
+#[tokio::test]
+async fn a_streamed_secret_ends_the_run_with_an_error_frame() {
+    let transport = Arc::new(FlakyTransport::default());
+    let beam = beam(&transport);
+    let mut req = request("demo", "u1");
+    req.content = vec![ContentPart::text("Your key is AKIAIOSFODNN7EXAMPLE")];
+    let err = beam.invoke_result(req).await.unwrap_err();
+    assert_eq!(err.errcode.as_str(), "BEM-061");
+    let frames = transport.frames.lock().unwrap().clone();
+    assert!(
+        frames
+            .iter()
+            .any(|f| f.chunk_type == StreamChunkType::Error),
+        "an error frame ends the stream"
+    );
+    assert!(!frames.iter().any(|f| f.chunk_type == StreamChunkType::Done));
+    assert!(!sent_text(&transport).contains("AKIA"));
+    assert_eq!(
+        beam.list_dead_letters().await.unwrap()["letters"],
+        json!([])
+    );
+}
+
+/// Plan 030 acceptance 4: streamed PII reaches the client masked, and so
+/// does the result and the stored answer.
+#[tokio::test]
+async fn streamed_pii_reaches_the_client_and_the_transcript_masked() {
+    let transport = Arc::new(FlakyTransport::default());
+    let beam = beam(&transport);
+    let mut req = request("demo", "u1");
+    req.content = vec![ContentPart::text("write to jane.doe@example.com")];
+    let result = beam.invoke_result(req).await.unwrap();
+    assert_eq!(
+        result.content[0].text.as_deref(),
+        Some("Echo: write to [redacted]")
+    );
+    let sent = sent_text(&transport);
+    assert!(sent.contains("[redacted]"), "{sent}");
+    assert!(!sent.contains("jane.doe"), "{sent}");
+    let stored = beam
+        .store()
+        .list_messages(result.session_id.unwrap())
+        .await
+        .unwrap();
+    let answer = stored
+        .iter()
+        .find(|m| m.content.to_string().contains("Echo:"))
+        .expect("the stored answer");
+    assert!(answer.content.to_string().contains("[redacted]"));
+    assert!(!answer.content.to_string().contains("jane.doe"));
 }

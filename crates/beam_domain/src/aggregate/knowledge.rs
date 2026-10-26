@@ -2,7 +2,7 @@
 //! `delete-knowledge`. Each queues a worker task (the worker parses, chunks
 //! and embeds). The Casbin policy keeps them to `beam-admin`.
 
-use beam_store::tasks::NewTask;
+use beam_store::tasks::{NewTask, WorkerTask};
 use riverbase_core::RiverbaseResult;
 use serde_json::{json, Value};
 use uuid::Uuid;
@@ -51,8 +51,8 @@ struct Document {
 impl Document {
     /// The `ingest_knowledge_document` task for document `document_id`.
     fn task(self, document_id: &str, org_id: Option<&str>) -> NewTask {
-        NewTask::new(
-            "ingest_knowledge_document",
+        NewTask::of(
+            WorkerTask::IngestKnowledgeDocument,
             json!({
                 "document_id": document_id,
                 "title": self.title,
@@ -161,8 +161,8 @@ impl BeamAggregate {
     /// Store errors.
     pub async fn delete_knowledge(&mut self, p: DeleteKnowledgePayload) -> RiverbaseResult<Value> {
         let caller = self.caller();
-        let task = NewTask::new(
-            "delete_knowledge_document",
+        let task = NewTask::of(
+            WorkerTask::DeleteKnowledgeDocument,
             json!({ "document_id": p.document_id, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;

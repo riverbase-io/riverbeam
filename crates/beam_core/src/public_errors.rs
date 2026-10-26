@@ -188,7 +188,7 @@ pub fn public_code(site: &str) -> Option<&'static str> {
         95..=97 => "BEM-435",
         107 | 108 => "BEM-400",
         // Store failures, entity writes included (BEM-145, BEM-146),
-        // and a beam's build errors (BEM-147..=149).
+        // and a beam's build errors (BEM-147, BEM-149).
         109..=149 => "FLR-001",
         200..=206 | 208..=227 | 231..=234 => "FLR-001",
         207 | 230 | 237 | 238 | 240 | 245 => "BEM-400",
@@ -254,7 +254,7 @@ pub fn public_code(site: &str) -> Option<&'static str> {
         // Audio backends (sidecars, see plan 005 D8).
         503..=506 => "FLR-001",
         // Work queue and macro-mode domain.
-        507 | 509 => "FLR-001",
+        507 | 509 | 510 => "FLR-001",
         // No worker ran it: Python's queue-unavailable code.
         508 => "BEM-435",
         _ => return None,

@@ -1,24 +1,42 @@
-//! Builds the `Input.*` fact JSON for each stage.
+//! Builds each stage's typed facts from the request, the policy and the
+//! detectors.
 //!
-//! All regex scoring and policy-set membership is resolved here in Rust; the GRL
-//! documents ([`crate::grl`]) only see precomputed numbers and booleans.
+//! Detection and policy-set membership are resolved here; the rules
+//! ([`crate::rules`]) only read the outcome: each detector kind's highest
+//! severity, and the policy's flags.
 
-use serde_json::{json, Value};
+use serde_json::Value;
 
+use crate::detect::{highest, Detector, DetectorKind, Detectors, Finding, PromptEcho};
 use crate::enums::SecurityStage;
-use crate::patterns::PatternLoader;
 use crate::policy::SecurityPolicy;
 use crate::request::SecurityRequest;
+use crate::rules::{
+    Facts, HitlOutcome, InputFacts, MemoryFacts, OutputFacts, RuntimeFacts, ToolFacts,
+};
 
-/// Construct the fact object for `stage` from the request payload + policy.
+/// The facts for `stage` from the request payload and the policy, and the
+/// detectors' findings.
 #[must_use]
-pub fn build_facts(stage: SecurityStage, req: &SecurityRequest, policy: &SecurityPolicy) -> Value {
+pub fn build_facts(
+    stage: SecurityStage,
+    req: &SecurityRequest,
+    policy: &SecurityPolicy,
+    detectors: &Detectors,
+) -> (Facts, Vec<Finding>) {
     let p = &req.payload;
     let content = req.str_field("content");
+    let mut findings = Vec::new();
+    let mut scan = |kinds: &[DetectorKind]| {
+        let found = detectors.scan(kinds, &content);
+        let severity = highest(&found);
+        findings.extend(found);
+        severity
+    };
 
-    match stage {
-        // Python routes these through the input KB (`stages.ROUTES`); the
-        // HITL resume fact also requires an identity (IAM-001).
+    let facts = match stage {
+        // These run the input rules; the HITL resume also requires an
+        // identity (IAM-001).
         SecurityStage::BeforeInput
         | SecurityStage::BeforeContextInjection
         | SecurityStage::BeforeLlm
@@ -28,18 +46,29 @@ pub fn build_facts(stage: SecurityStage, req: &SecurityRequest, policy: &Securit
                 .as_ref()
                 .and_then(|c| c.user_id.as_deref())
                 .filter(|u| !u.is_empty());
-            json!({
-                "content_empty": content.is_empty(),
-                "injection_score": PatternLoader::score_injection(&content),
-                "role_override_score": PatternLoader::score_role_override(&content),
-                "identity_missing": stage == SecurityStage::BeforeHitlResume && user.is_none(),
+            Facts::Input(InputFacts {
+                content_empty: content.is_empty(),
+                injection: scan(&[DetectorKind::Injection]),
+                role_override: scan(&[DetectorKind::RoleOverride]),
+                identity_missing: stage == SecurityStage::BeforeHitlResume && user.is_none(),
             })
         }
-        SecurityStage::AfterLlm | SecurityStage::BeforeOutput => json!({
-            "content_empty": content.is_empty(),
-            "secrets_score": PatternLoader::score_secrets(&content),
-            "pii_score": PatternLoader::score_pii(&content),
-        }),
+        SecurityStage::AfterLlm | SecurityStage::BeforeOutput => {
+            let secrets = scan(&[DetectorKind::Secrets]);
+            let pii = scan(&[DetectorKind::Pii]);
+            // The agent's instructions, when the caller sends them (OUT-003).
+            let echo = PromptEcho::new(&req.str_field("instructions"));
+            let echoed = echo.scan(&content);
+            let prompt_echo = highest(&echoed);
+            findings.extend(echoed);
+            Facts::Output(OutputFacts {
+                content_empty: content.is_empty(),
+                secrets,
+                pii,
+                echo_checked: !echo.is_empty(),
+                prompt_echo,
+            })
+        }
         SecurityStage::BeforeTool | SecurityStage::AfterTool => {
             let tool = req.str_field("tool_name");
             // The call already ran, so it was approved.
@@ -47,66 +76,57 @@ pub fn build_facts(stage: SecurityStage, req: &SecurityRequest, policy: &Securit
                 || p.get("hitl_approved")
                     .and_then(Value::as_bool)
                     .unwrap_or(false);
-            let denied_global = policy.global_denied_tools.contains(&tool);
-            let denied_allowlist = !policy.global_allowed_tools.is_empty()
-                && !policy.global_allowed_tools.contains(&tool);
-            json!({
-                "always": true,
-                "tool_denied_global": denied_global,
-                "tool_denied_allowlist": denied_allowlist,
-                "hitl_outcome": hitl_outcome(&tool, hitl_approved, policy),
+            // The result the model will read, after the call (TOOL-002).
+            let output_checked = stage == SecurityStage::AfterTool && !content.is_empty();
+            Facts::Tool(ToolFacts {
+                denied_global: policy.global_denied_tools.contains(&tool),
+                denied_allowlist: !policy.global_allowed_tools.is_empty()
+                    && !policy.global_allowed_tools.contains(&tool),
+                hitl: hitl_outcome(&tool, hitl_approved, policy),
+                output_checked,
+                output_injection: if output_checked {
+                    scan(&[DetectorKind::Injection, DetectorKind::RoleOverride])
+                } else {
+                    None
+                },
             })
         }
         SecurityStage::BeforeMemoryWrite => {
             let operation = p.get("operation").and_then(Value::as_str).unwrap_or("save");
-            let confidence = p.get("confidence").and_then(Value::as_f64).unwrap_or(0.0);
             let skip = content.is_empty() || operation != "save";
-            let score = if skip {
-                0.0
-            } else {
-                PatternLoader::score_memory_sensitive(&content)
-            };
-            json!({ "always": true, "memory_skip": skip, "sensitive_score": score, "confidence": confidence })
-        }
-        SecurityStage::Runtime => {
-            let step_count = p.get("step_count").and_then(Value::as_u64).unwrap_or(0);
-            let token_count = p.get("token_count").and_then(Value::as_u64).unwrap_or(0);
-            let recursion_depth = p
-                .get("recursion_depth")
-                .and_then(Value::as_u64)
-                .unwrap_or(0);
-            let loop_detected = p
-                .get("loop_detected")
-                .and_then(Value::as_bool)
-                .unwrap_or(false);
-            let elapsed_seconds = p
-                .get("elapsed_seconds")
-                .and_then(Value::as_f64)
-                .unwrap_or(0.0);
-            // Python `int(max_steps * 0.80)`.
-            let step_threshold = policy.max_steps * 4 / 5;
-            json!({
-                "always": true,
-                "step_count": step_count,
-                "max_steps": policy.max_steps,
-                "step_threshold": step_threshold,
-                "token_count": token_count,
-                "max_tokens": policy.max_tokens,
-                "recursion_depth": recursion_depth,
-                "max_recursion": policy.max_recursion,
-                "loop_detected": loop_detected,
-                "elapsed_seconds": elapsed_seconds,
-                "max_timeout": policy.max_timeout,
+            Facts::Memory(MemoryFacts {
+                skip,
+                sensitive: if skip {
+                    None
+                } else {
+                    scan(&[DetectorKind::MemorySensitive])
+                },
+                injection: if skip {
+                    None
+                } else {
+                    scan(&[DetectorKind::Injection, DetectorKind::RoleOverride])
+                },
             })
         }
-    }
+        SecurityStage::Runtime => {
+            let count = |key: &str| p.get(key).and_then(Value::as_u64).unwrap_or(0);
+            Facts::Runtime(RuntimeFacts {
+                step_count: count("step_count"),
+                max_steps: policy.max_steps,
+                // Python `int(max_steps * 0.80)`.
+                step_threshold: policy.max_steps * 4 / 5,
+                token_count: count("token_count"),
+                max_tokens: policy.max_tokens,
+            })
+        }
+    };
+    (facts, findings)
 }
 
-/// Python `_tool_hitl_required` as a code: 0 no narration, 1 approved,
-/// 2 auto-approved, 3 approval required, 4 not required for this tool.
-fn hitl_outcome(tool: &str, approved: bool, policy: &SecurityPolicy) -> u8 {
+/// Whether `tool` needs a human (Python `_tool_hitl_required`).
+fn hitl_outcome(tool: &str, approved: bool, policy: &SecurityPolicy) -> HitlOutcome {
     if approved {
-        return 1;
+        return HitlOutcome::Approved;
     }
     if policy
         .hitl_config
@@ -114,13 +134,13 @@ fn hitl_outcome(tool: &str, approved: bool, policy: &SecurityPolicy) -> u8 {
         .iter()
         .any(|spec| !spec.is_empty() && (spec == tool || fnmatch(tool, spec)))
     {
-        return 2;
+        return HitlOutcome::AutoApproved;
     }
     match policy.tool_policies.get(tool) {
-        Some(tp) if tp.hitl_required => 3,
-        Some(_) => 4,
-        None if policy.hitl_config.enabled => 3,
-        None => 0,
+        Some(tp) if tp.hitl_required => HitlOutcome::Required,
+        Some(_) => HitlOutcome::NotRequired,
+        None if policy.hitl_config.enabled => HitlOutcome::Required,
+        None => HitlOutcome::Unlisted,
     }
 }
 

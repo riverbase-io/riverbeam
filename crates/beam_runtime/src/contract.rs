@@ -138,6 +138,9 @@ pub struct RuntimeContext {
     /// Fits each model call of the run to its budget and meters it (plan 023
     /// A2); without one, calls go as the run built them.
     pub fitter: Option<Arc<dyn crate::seams::ContextFitter>>,
+    /// How tool results reach the model (`BEAM_SECURITY_SPOTLIGHT`): inside
+    /// `untrusted` tags by default.
+    pub spotlight: beam_types::Spotlight,
 }
 
 impl Default for RuntimeContext {
@@ -154,6 +157,7 @@ impl Default for RuntimeContext {
             restrict_tools: false,
             lease: None,
             fitter: None,
+            spotlight: beam_types::Spotlight::Tagged,
         }
     }
 }

@@ -25,8 +25,6 @@ tracing = { workspace = true }
 uuid = { workspace = true }
 
 [dev-dependencies]
-# Tests build beams with security on (the default config).
-beam_core = { workspace = true, features = ["security-rules"] }
 diesel = { workspace = true }
 diesel-async = { workspace = true }
 beam_runtime = { workspace = true, features = ["testing"] }

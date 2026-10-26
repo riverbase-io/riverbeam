@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 use crate::db::{Db, Site};
 use crate::store::StoreResult;
-use crate::tasks::{self, NewTask, TaskRow};
+use crate::tasks::{self, NewTask, Swept, TaskRow};
 
 /// The work queue on a [`Db`].
 pub struct Tasks<'d> {
@@ -52,7 +52,8 @@ impl Tasks<'_> {
             .await
     }
 
-    /// Claim task `id` for `owner` ([`tasks::claim_by_id`]).
+    /// Claim task `id` for `owner` when it is named in `names`
+    /// ([`tasks::claim_by_id`]).
     ///
     /// # Errors
     /// `BEM-507` when the claim fails.
@@ -61,24 +62,14 @@ impl Tasks<'_> {
         id: Uuid,
         owner: &str,
         lease: Duration,
+        names: &[&str],
     ) -> StoreResult<Option<TaskRow>> {
         let schema = self.db.schema();
         self.site()
             .cross_org(|conn| {
-                Box::pin(async move { tasks::claim_by_id(conn, schema, id, owner, lease).await })
-            })
-            .await
-    }
-
-    /// Claim the oldest due task for `owner` ([`tasks::claim_next`]).
-    ///
-    /// # Errors
-    /// `BEM-507` when the claim fails.
-    pub async fn claim_next(&self, owner: &str, lease: Duration) -> StoreResult<Option<TaskRow>> {
-        let schema = self.db.schema();
-        self.site()
-            .cross_org(|conn| {
-                Box::pin(async move { tasks::claim_next(conn, schema, owner, lease).await })
+                Box::pin(
+                    async move { tasks::claim_by_id(conn, schema, id, owner, lease, names).await },
+                )
             })
             .await
     }
@@ -181,11 +172,11 @@ impl Tasks<'_> {
             .await
     }
 
-    /// Requeue tasks whose lease expired ([`tasks::sweep_expired`]).
+    /// Requeue or fail tasks whose lease expired ([`tasks::sweep_expired`]).
     ///
     /// # Errors
     /// `BEM-507` when the update fails.
-    pub async fn sweep_expired(&self) -> StoreResult<Vec<Uuid>> {
+    pub async fn sweep_expired(&self) -> StoreResult<Swept> {
         let schema = self.db.schema();
         self.site()
             .cross_org(|conn| Box::pin(async move { tasks::sweep_expired(conn, schema).await }))

@@ -139,7 +139,8 @@ impl BeamAggregate {
         task.org_id = task.org_id.or_else(|| parse(caller.org_id.as_ref()));
         task.src_cmd = self.command_uuid();
         self.db().enqueue_task(&task).await.map_err(sql)?;
-        // The task name lets a worker claim control tasks from their own pool.
+        // The task name picks the lane a worker claims it from; a worker
+        // that does not run the task ignores the hint.
         self.core
             .emit_message(TASK_TOPIC, json!({ "task_id": task.id, "task": task.task }))
             .await?;

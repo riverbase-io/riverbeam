@@ -104,6 +104,7 @@ impl RiverBeam {
                     "ltm".to_owned(),
                     self.config.longterm_top_k,
                 )]),
+                spotlight: beam_types::Spotlight::from_flag(self.config.security_spotlight),
                 ..BuildOptions::default()
             },
         );

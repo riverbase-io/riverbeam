@@ -13,18 +13,22 @@
 //! 6. input-schema validation (Python's checks: required args and simple types)
 //! 7. execution with the timeout; failures retry up to `max_retries`, a timeout does not
 //! 8. the output is bounded (`bound_tool_output`)
-//! 9. the `AFTER_TOOL` security stage
+//! 9. the `AFTER_TOOL` security stage on the result text: an output it blocks
+//!    (an injection aimed at the model) is withheld, and the call's result is
+//!    the error [`OUTPUT_WITHHELD`]
 //! 10. a successful side-effecting result is remembered
 //!
 //! Refusals and failures are results with `error` set, as in Python; only a
-//! security block is an error.
+//! `BEFORE_TOOL` security block is an error.
 
 use std::collections::HashSet;
 use std::sync::Arc;
 use std::time::Duration;
 
 use beam_runtime::ClientAnswer;
-use beam_security::{SecurityContext, SecurityManagement, SecurityRequest, SecurityStage};
+use beam_security::{
+    SecurityContext, SecurityDecision, SecurityManagement, SecurityRequest, SecurityStage,
+};
 use riverbase_core::{RiverbaseError, RiverbaseResult};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
@@ -52,11 +56,24 @@ pub struct ToolRuntimeResult {
     pub cached: bool,
 }
 
+/// The error a call gets when `AFTER_TOOL` blocks its output.
+pub const OUTPUT_WITHHELD: &str = "tool output withheld by security policy";
+
 impl ToolRuntimeResult {
     fn error(message: impl Into<String>) -> Self {
         Self {
             error: Some(message.into()),
             ..Self::default()
+        }
+    }
+
+    /// The text the model reads: the error, else the output.
+    fn text(&self) -> String {
+        match (&self.error, &self.output) {
+            (Some(error), _) => error.clone(),
+            (None, Value::Null) => String::new(),
+            (None, Value::String(text)) => text.clone(),
+            (None, other) => other.to_string(),
         }
     }
 }
@@ -335,21 +352,25 @@ impl ToolRuntime {
         }
     }
 
-    async fn check_stage(
+    /// The decision for `stage`, with `content` to scan; `None` without a
+    /// security manager.
+    async fn decide_stage(
         &self,
         stage: SecurityStage,
         definition: &ToolDefinition,
         args: &Value,
         call: &ToolCallContext,
-    ) -> RiverbaseResult<()> {
-        let Some(security) = &self.security else {
-            return Ok(());
-        };
+        content: Option<String>,
+    ) -> Option<SecurityDecision> {
+        let security = self.security.as_ref()?;
         let auth = call.auth.as_ref();
         let input = call.input.as_deref();
         let mut payload = Map::new();
         payload.insert("tool_name".into(), Value::String(definition.name.clone()));
         payload.insert("args".into(), args.clone());
+        if let Some(content) = content {
+            payload.insert("content".into(), Value::String(content));
+        }
         // The run, session and interaction, so the decision (which holds the
         // tool's arguments) is kept and deleted with its session.
         if let Some(input) = input {
@@ -364,9 +385,24 @@ impl ToolRuntime {
                 interaction_id: input.and_then(|i| i.interaction_id.map(|id| id.to_string())),
                 session_id: input.map(|i| i.session_id.to_string()),
             });
-        let decision = security.check(&request).await;
+        Some(security.check(&request).await)
+    }
+
+    /// `BEFORE_TOOL`: a blocked call is an error.
+    async fn check_call(
+        &self,
+        definition: &ToolDefinition,
+        args: &Value,
+        call: &ToolCallContext,
+    ) -> RiverbaseResult<()> {
+        let Some(decision) = self
+            .decide_stage(SecurityStage::BeforeTool, definition, args, call, None)
+            .await
+        else {
+            return Ok(());
+        };
         // Python's handlers raise `SecurityBlocked` when enforcing.
-        if decision.denies() && security.enforce() {
+        if decision.denies() && self.enforces() {
             let message = decision
                 .user_message
                 .clone()
@@ -376,10 +412,41 @@ impl ToolRuntime {
         Ok(())
     }
 
+    /// `AFTER_TOOL` on the result text (at most `max_result_chars`): a blocked
+    /// output is withheld, so the model never reads it and the run goes on.
+    async fn check_output(
+        &self,
+        definition: &ToolDefinition,
+        args: &Value,
+        call: &ToolCallContext,
+        result: ToolRuntimeResult,
+    ) -> ToolRuntimeResult {
+        let text: String = result.text().chars().take(self.max_result_chars).collect();
+        let Some(decision) = self
+            .decide_stage(SecurityStage::AfterTool, definition, args, call, Some(text))
+            .await
+        else {
+            return result;
+        };
+        if decision.denies() && self.enforces() {
+            tracing::warn!(
+                tool = %definition.name,
+                rules = ?decision.matched_rules,
+                "tool output withheld by security policy"
+            );
+            return ToolRuntimeResult::error(OUTPUT_WITHHELD);
+        }
+        result
+    }
+
+    fn enforces(&self) -> bool {
+        self.security.as_ref().is_some_and(|s| s.enforce())
+    }
+
     /// Run one tool call (see the module docs for the order).
     ///
     /// # Errors
-    /// `BEM-061` when a security stage blocks the call; idempotency store errors.
+    /// `BEM-061` when `BEFORE_TOOL` blocks the call; idempotency store errors.
     pub async fn execute(
         &self,
         definition: &ToolDefinition,
@@ -480,8 +547,7 @@ impl ToolRuntime {
                 ..cached
             });
         }
-        self.check_stage(SecurityStage::BeforeTool, definition, &args, &ctx.call)
-            .await?;
+        self.check_call(definition, &args, &ctx.call).await?;
         let empty = Map::new();
         let arg_map = args.as_object().unwrap_or(&empty);
         if let Some(error) = validate_input(&definition.input_schema, arg_map) {
@@ -525,11 +591,14 @@ impl ToolRuntime {
                 result
             }
         };
-        self.check_stage(SecurityStage::AfterTool, definition, &args, &ctx.call)
-            .await?;
-        if definition.side_effect && result.error.is_none() {
-            // The side effect happened: a failed write is logged, not reported
-            // as a tool failure (the model would retry and repeat it).
+        let ran = result.error.is_none();
+        let result = self
+            .check_output(definition, &args, &ctx.call, result)
+            .await;
+        if definition.side_effect && ran {
+            // The side effect happened (its output may be withheld): a failed
+            // write is logged, not reported as a tool failure (the model would
+            // retry and repeat it).
             if let Err(e) = self.store.put(&key, &result, DEFAULT_TTL).await {
                 tracing::warn!(tool = %definition.name, error = %e, "tool result not remembered");
             }
@@ -544,7 +613,7 @@ impl ToolRuntime {
     /// remembered like a tool's own output.
     ///
     /// # Errors
-    /// `BEM-061` when a security stage blocks the call; idempotency store errors.
+    /// `BEM-061` when `BEFORE_TOOL` blocks the call; idempotency store errors.
     pub async fn client_result(
         &self,
         definition: &ToolDefinition,
@@ -581,8 +650,7 @@ impl ToolRuntime {
                 ..cached
             });
         }
-        self.check_stage(SecurityStage::BeforeTool, definition, &args, &ctx.call)
-            .await?;
+        self.check_call(definition, &args, &ctx.call).await?;
         let empty = Map::new();
         if let Some(error) =
             validate_input(&definition.input_schema, args.as_object().unwrap_or(&empty))
@@ -604,8 +672,9 @@ impl ToolRuntime {
             output: bound_tool_output(answer.output, self.max_result_chars),
             ..ToolRuntimeResult::default()
         };
-        self.check_stage(SecurityStage::AfterTool, definition, &args, &ctx.call)
-            .await?;
+        let result = self
+            .check_output(definition, &args, &ctx.call, result)
+            .await;
         if definition.side_effect {
             if let Err(e) = self.store.put(&key, &result, DEFAULT_TTL).await {
                 tracing::warn!(tool = %definition.name, error = %e, "tool result not remembered");

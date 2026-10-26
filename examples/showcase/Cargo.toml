@@ -20,11 +20,7 @@ name = "showcase-mcp"
 path = "src/bin/mcp.rs"
 
 [features]
-default = ["rules"]
 audio = ["dep:beam_audio", "beam_audio/audio-http", "axum/ws"]
-# The security rules on river_reed. Without them (`--no-default-features`)
-# the server starts only with SECURITY_ENABLED=0.
-rules = ["beam_core/security-rules"]
 
 [dependencies]
 aide = { workspace = true }

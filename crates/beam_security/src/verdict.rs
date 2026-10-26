@@ -1,12 +1,14 @@
 use serde_json::{json, Map, Value};
 
-use crate::codes::{RuleNarration, BLOCK_CODE, FLAG_CODE, HITL_CODE, REJECT_CODE};
+use crate::codes::{RuleNarration, BLOCK_CODE, FLAG_CODE, HITL_CODE, MASK_CODE, REJECT_CODE};
 use crate::decision::SecurityDecision;
+use crate::detect::{highest, Finding};
 use crate::enums::{SecurityAction, SecuritySeverity, ViolationType};
 
 fn code_to_action(code: i32) -> SecurityAction {
     match code {
         FLAG_CODE => SecurityAction::Warn,
+        MASK_CODE => SecurityAction::Mask,
         HITL_CODE => SecurityAction::RequireApproval,
         BLOCK_CODE | REJECT_CODE => SecurityAction::Deny,
         _ => SecurityAction::Allow, // ALLOW_CODE + unknown
@@ -14,58 +16,34 @@ fn code_to_action(code: i32) -> SecurityAction {
 }
 
 fn message_to_violation(message: &str) -> Option<ViolationType> {
-    // Ordered to match the Python dict insertion order.
+    // The first message part found names the violation, so a longer message
+    // comes before a shorter one it contains.
     const MAP: &[(&str, ViolationType)] = &[
+        // Indirect injection: the label is the retrieved-content one.
+        ("tool_output_injection", ViolationType::InjectionRagChunk),
         ("injection_blocked", ViolationType::InjectionUserInput),
         ("injection_flagged", ViolationType::InjectionUserInput),
-        ("injection_detected", ViolationType::InjectionUserInput),
         ("role_override", ViolationType::InjectionRoleOverride),
         ("memory_sensitive_data", ViolationType::MemorySensitiveData),
-        ("secrets_redacted", ViolationType::OutputSecretDetected),
         ("secrets_detected", ViolationType::OutputSecretDetected),
+        ("secrets_flagged", ViolationType::OutputSecretDetected),
         ("pii_detected", ViolationType::OutputPiiDetected),
-        (
-            "unsafe_content_detected",
-            ViolationType::OutputUnsafeContent,
-        ),
-        ("rag_cross_tenant", ViolationType::RagTenantFilterViolation),
-        ("rag_chunk_no_metadata", ViolationType::RagSensitiveDocument),
-        (
-            "rag_sensitive_document",
-            ViolationType::RagSensitiveDocument,
-        ),
-        ("rag_injection_detected", ViolationType::InjectionRagChunk),
+        // The instructions are confidential (LLM07).
+        ("prompt_echo", ViolationType::OutputSecretDetected),
         ("tool_denied_global", ViolationType::UnauthorizedTool),
         (
             "tool_denied_not_in_global_allowlist",
             ViolationType::UnauthorizedTool,
         ),
-        ("tool_denied_agent", ViolationType::UnauthorizedTool),
-        (
-            "tool_denied_agent_not_allowed",
-            ViolationType::UnauthorizedTool,
-        ),
-        ("tool_denied_plan", ViolationType::UnauthorizedTool),
-        (
-            "tool_denied_plan_not_allowed",
-            ViolationType::UnauthorizedTool,
-        ),
         ("tool_hitl_required", ViolationType::HitlRequiredNotObtained),
-        ("memory_cross_tenant", ViolationType::MemoryScopeViolation),
         (
             "memory_poisoning_suspected",
             ViolationType::MemoryPoisoningSuspected,
         ),
         ("run_max_steps_exceeded", ViolationType::RunMaxStepsExceeded),
-        ("run_timeout_exceeded", ViolationType::RunTimeoutExceeded),
         (
             "run_token_budget_exceeded",
             ViolationType::RunTokenBudgetExceeded,
-        ),
-        ("run_loop_detected", ViolationType::RunLoopDetected),
-        (
-            "run_recursion_exceeded",
-            ViolationType::RunRecursionExceeded,
         ),
         ("identity_missing", ViolationType::IdentityMissing),
     ];
@@ -186,4 +164,24 @@ pub fn verdict_from_narrations(
         score,
         sanitized_content,
     }
+}
+
+/// The detectors' part of a decision: the ids of the patterns that matched
+/// (`metadata["matched_patterns"]`, in order, once each), and the score and
+/// severity of the highest finding.
+pub(crate) fn apply_findings(decision: &mut SecurityDecision, findings: &[Finding]) {
+    let Some(top) = highest(findings) else {
+        return;
+    };
+    let mut ids: Vec<&str> = Vec::new();
+    for finding in findings {
+        if !ids.contains(&finding.pattern_id.as_str()) {
+            ids.push(&finding.pattern_id);
+        }
+    }
+    decision
+        .metadata
+        .insert("matched_patterns".into(), json!(ids));
+    decision.score = top.score();
+    decision.severity = severity_from_score(decision.score);
 }

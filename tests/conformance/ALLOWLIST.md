@@ -85,6 +85,8 @@ These are not ignored by the harness. They are listed so a failing scenario can 
 | Error frame | Recorded on dispatch errors; published when streaming | Recorded whenever an execution exists; published when streaming | Replay sees every failure |
 | Dead-letter retry/discard | In-memory status only | Status and attempts persisted | Survives restarts |
 | Dead-letter JSON | `id, task_name, payload, error, attempts, status` | Adds `execution_id`, `error_code` when set | Additive |
+| Dead-letter payload (plan 031) | The failed invoke's request, redacted by key and token prefix (inferred from the port) | `execution_id` and `session_id` only; retry reloads the request from the execution | A secret in the message text is not copied into the letter |
+| Dead letters for security denials (plan 031) | Every failed invoke is a dead letter (inferred from the port) | A `BEM-061` denial is not | A retry would be denied again |
 | Unknown dead letter | `KeyError` (500) | `BEM-488` (public `BEM-404`) | A clear not-found |
 | Readiness | SQL and Redis pings, schema constant | SQL ping, migration ledger, draining; no NATS ping (a NATS outage answers commands `503 BEM-435`). Since plan 020 `schema_version` is rc8's marker (26 once migration 0010 is applied) and the ledger is in `detail.migration` / `detail.latest_migration`; a missing earlier migration reads as `behind` | D4: no Redis |
 | `reconcile_now` `retrying` | In-memory controller count | Executions moved by this pass | Rust keeps no in-memory execution cache |

@@ -43,7 +43,6 @@ aide = { version = "0.15", features = ["axum", "axum-json", "axum-query", "macro
 schemars = { version = "0.9" }
 # riverbase's typed command payloads (`CommandPayload` needs its garde `Validate`).
 garde = { version = "0.22", default-features = false, features = ["derive", "serde"] }
-river_reed = { path = "../river-reed", features = ["grl-rule-engine"] }
 async-trait = "0.1"
 beam_types = { path = "crates/beam_types" }
 beam_errors = { path = "crates/beam_errors" }
@@ -54,9 +53,7 @@ beam_routing = { path = "crates/beam_routing" }
 beam_agents = { path = "crates/beam_agents" }
 beam_sandbox = { path = "crates/beam_sandbox" }
 beam_stream = { path = "crates/beam_stream" }
-# No default features: the binary (examples/showcase) turns the security
-# rules on, so a build can leave river_reed out.
-beam_core = { path = "crates/beam_core", default-features = false }
+beam_core = { path = "crates/beam_core" }
 beam_worker = { path = "crates/beam_worker" }
 beam_domain = { path = "crates/beam_domain" }
 beam_store = { path = "crates/beam_store" }
@@ -64,7 +61,7 @@ beam_knowledge = { path = "crates/beam_knowledge" }
 beam_usage = { path = "crates/beam_usage" }
 beam_audit = { path = "crates/beam_audit" }
 beam_audio = { path = "crates/beam_audio" }
-beam_security = { path = "crates/beam_security", default-features = false }
+beam_security = { path = "crates/beam_security" }
 beam_execution = { path = "crates/beam_execution" }
 beam_runtime = { path = "crates/beam_runtime" }
 beam_gateway = { path = "crates/beam_gateway" }

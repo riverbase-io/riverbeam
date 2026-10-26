@@ -9,7 +9,7 @@ use async_trait::async_trait;
 use beam_gateway::TokenCounter;
 use beam_knowledge::Hit;
 use beam_memory::{SessionSummary, SummaryBook, SummaryStore, TranscriptManager};
-use beam_types::{AgentInput, AgentMessage, ModelConfig, RequestContext, ResourceRef};
+use beam_types::{AgentInput, AgentMessage, ModelConfig, RequestContext, ResourceRef, Spotlight};
 use riverbase_core::RiverbaseResult;
 use serde_json::Value;
 use uuid::Uuid;
@@ -221,6 +221,8 @@ pub struct ContextBuildRequest {
     pub spec: Option<ContextSpec>,
     pub services: ContextServices,
     pub counter: TokenCounter,
+    /// How untrusted text reaches the model (`BEAM_SECURITY_SPOTLIGHT`).
+    pub spotlight: Spotlight,
     pub tool_names: Vec<String>,
 }
 

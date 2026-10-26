@@ -24,7 +24,9 @@ use beam_runtime::{
     InMemoryRuntimeStateStore, ModelCaller, NoModel, PgRuntimeStateStore, RuntimeRegistry,
     RuntimeStateStore, ToolExecutor,
 };
-use beam_security::{SecurityManagement, SecurityPolicy, SecurityStore};
+use beam_security::{
+    Detector, DetectorKind, Detectors, SecurityManagement, SecurityPolicy, SecurityStore,
+};
 use beam_store::{BeamStore, InMemoryStore, LegalHoldStore, OpsStore, PgBeamStore};
 use beam_stream::BeamStream;
 use beam_tools::{knowledge_search_tool, ToolService};
@@ -76,6 +78,7 @@ pub struct RiverBeamBuilder {
     audit: Option<Arc<AuditLogger>>,
     security: Option<Arc<dyn SecurityManagement>>,
     security_policy: Option<SecurityPolicy>,
+    security_detectors: Vec<(DetectorKind, Arc<dyn Detector>)>,
     transcript: Option<TranscriptManager>,
     manifests: Option<Arc<dyn ManifestStore>>,
     cost_store: Option<Arc<dyn CostStore>>,
@@ -103,6 +106,7 @@ impl RiverBeam {
             audit: None,
             security: None,
             security_policy: None,
+            security_detectors: Vec::new(),
             transcript: None,
             manifests: None,
             cost_store: None,
@@ -240,6 +244,14 @@ impl RiverBeamBuilder {
         self
     }
 
+    /// A detector the config-built security manager runs beside the
+    /// built-ins of `kind` (a classifier or a guard model, say). Excludes
+    /// [`Self::security`], which brings its own detectors.
+    pub fn security_detector(mut self, kind: DetectorKind, detector: Arc<dyn Detector>) -> Self {
+        self.security_detectors.push((kind, detector));
+        self
+    }
+
     /// The session transcript. Default: `MEMORY_BACKEND` over the store.
     pub fn transcript(mut self, transcript: TranscriptManager) -> Self {
         self.transcript = Some(transcript);
@@ -308,11 +320,11 @@ impl RiverBeamBuilder {
     ///
     /// # Errors
     /// `BEM-144` for a `MEMORY_BACKEND` with no transcript backend, `BEM-147`
-    /// for an unknown `AUDIT_SINKS` key, `BEM-148` when the security rules do
-    /// not load, `BEM-149` for choices that exclude each other ([`Self::tools`]
-    /// with [`Self::tool_executor`], [`Self::gateway`] with
+    /// for an unknown `AUDIT_SINKS` key, `BEM-149` for choices that exclude
+    /// each other ([`Self::tools`] with [`Self::tool_executor`], [`Self::gateway`] with
     /// [`Self::model_caller`], [`Self::security`] with
-    /// [`Self::security_policy`], a durable [`Self::store`]), and an invalid
+    /// [`Self::security_policy`] or [`Self::security_detector`], a durable
+    /// [`Self::store`]), and an invalid
     /// router's error.
     #[allow(clippy::too_many_lines)] // One line per field of the beam it assembles.
     pub fn build(self) -> RiverbaseResult<RiverBeam> {
@@ -330,6 +342,7 @@ impl RiverBeamBuilder {
             audit,
             security,
             security_policy,
+            security_detectors,
             transcript,
             manifests,
             cost_store,
@@ -348,6 +361,9 @@ impl RiverBeamBuilder {
         }
         if security.is_some() && security_policy.is_some() {
             return Err(crate::BEM_149.with_data("security and security_policy"));
+        }
+        if security.is_some() && !security_detectors.is_empty() {
+            return Err(crate::BEM_149.with_data("security and security_detector"));
         }
         if matches!(&storage, Storage::Store(store) if store.durable()) {
             return Err(crate::BEM_149.with_data("a durable store needs pg_store"));
@@ -394,12 +410,18 @@ impl RiverBeamBuilder {
             }
         });
 
+        let detectors = security_detectors
+            .into_iter()
+            .fold(Detectors::builtin(), |set, (kind, detector)| {
+                set.with(kind, detector)
+            });
         let security = resolve_security(
             &config,
             security,
             &security_policy.unwrap_or_default(),
+            detectors,
             pg.as_ref(),
-        )?;
+        );
         let audit = resolve_audit(&config, audit, pg.as_ref())?;
         let cost_store = cost_store.unwrap_or_else(|| match &pg {
             Some(pg) => Arc::new(PgCostStore::for_store(pg)),
@@ -497,15 +519,16 @@ fn resolve_security(
     config: &BeamConfig,
     security: Option<Arc<dyn SecurityManagement>>,
     policy: &SecurityPolicy,
+    detectors: Detectors,
     pg: Option<&PgBeamStore>,
-) -> RiverbaseResult<Arc<dyn SecurityManagement>> {
+) -> Arc<dyn SecurityManagement> {
     if let Some(security) = security {
-        return Ok(security);
+        return security;
     }
     let decisions = pg.map(|pg| {
         Arc::new(beam_security::PgSecurityStore::for_store(pg)) as Arc<dyn SecurityStore>
     });
-    build_security(config, policy.clone(), decisions)
+    build_security(config, policy.clone(), detectors, decisions)
 }
 
 /// The host's audit logger, or `AUDIT_SINKS` from the config (with the `sql`

@@ -156,46 +156,22 @@ impl ToolSource {
 
 /// An enforcing (or advisory) manager unless
 /// security is off; decisions persist in `store` when one is given.
-///
-/// # Errors
-/// `BEM-148` when the security rules fail to load (Python fails startup).
-#[cfg(feature = "security-rules")]
 fn build_security(
     config: &BeamConfig,
     policy: beam_security::SecurityPolicy,
+    detectors: beam_security::Detectors,
     store: Option<Arc<dyn beam_security::SecurityStore>>,
-) -> RiverbaseResult<Arc<dyn SecurityManagement>> {
+) -> Arc<dyn SecurityManagement> {
     if !config.security_enabled {
-        return Ok(Arc::new(DisabledSecurityManager));
+        return Arc::new(DisabledSecurityManager);
     }
-    let manager = beam_security::SecurityManager::new(policy).with_enforce(config.security_enforce);
-    if !manager.is_ready() {
-        return Err(crate::BEM_148.with_data("SECURITY_ENABLED is on"));
-    }
-    Ok(Arc::new(match store {
+    let manager = beam_security::SecurityManager::new(policy)
+        .with_detectors(detectors)
+        .with_enforce(config.security_enforce);
+    Arc::new(match store {
         Some(store) => manager.with_store(store),
         None => manager,
-    }))
-}
-
-/// Built without the security rules (feature `security-rules` off): only
-/// the no-op manager exists, so a beam with security enabled refuses to
-/// start rather than run unchecked.
-///
-/// # Errors
-/// `BEM-148` while `SECURITY_ENABLED` is on.
-#[cfg(not(feature = "security-rules"))]
-fn build_security(
-    config: &BeamConfig,
-    _policy: beam_security::SecurityPolicy,
-    _store: Option<Arc<dyn beam_security::SecurityStore>>,
-) -> RiverbaseResult<Arc<dyn SecurityManagement>> {
-    if config.security_enabled {
-        return Err(crate::BEM_148.with_data(
-            "this build has no security rules (feature `security-rules` off); set SECURITY_ENABLED=0",
-        ));
-    }
-    Ok(Arc::new(DisabledSecurityManager))
+    })
 }
 
 /// `AUDIT_SINKS` resolved key by key.
@@ -602,6 +578,18 @@ fn user_query_text(input: &AgentInput) -> String {
         .filter_map(|p| p.text.as_deref())
         .collect::<Vec<_>>()
         .join(" ")
+}
+
+/// The agent's instructions in its composed context: the system text, except
+/// the spotlight notice.
+fn instructions_of(history: &[AgentMessage]) -> String {
+    history
+        .iter()
+        .filter(|m| m.role == beam_types::AgentMessageRole::System)
+        .flat_map(|m| m.content.iter().filter_map(|p| p.text.as_deref()))
+        .filter(|text| *text != beam_types::UNTRUSTED_NOTICE)
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 fn result_text(result: &AgentResult) -> String {

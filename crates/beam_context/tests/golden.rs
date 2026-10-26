@@ -3,7 +3,10 @@
 //! Each fixture in `tests/context_compat/fixtures/` was written by
 //! `scripts/gen_context_fixtures.py` from the Python stack: the inputs, and
 //! the policy revision, manifest decisions and envelope Python produced. The
-//! Rust builder must produce the same for the same inputs.
+//! Rust builder must produce the same for the same inputs with spotlighting
+//! off. Python does not tag untrusted text (plan 030), so with spotlighting on
+//! (the default) the fixtures in [`SPOTLIGHT_DIFFERENCES`] differ, and only
+//! those.
 
 use std::collections::HashMap;
 use std::path::PathBuf;
@@ -18,7 +21,7 @@ use beam_context::services::{
 use beam_context::ContextBuilder;
 use beam_knowledge::Hit;
 use beam_memory::SessionSummary;
-use beam_types::{AgentInput, AgentMessage, ModelConfig};
+use beam_types::{AgentInput, AgentMessage, ModelConfig, Spotlight};
 use riverbase_core::RiverbaseResult;
 use serde_json::{json, Value};
 use uuid::Uuid;
@@ -121,7 +124,27 @@ fn decode<T: serde::de::DeserializeOwned>(value: &Value) -> T {
     serde_json::from_value(value.clone()).expect("decode fixture input")
 }
 
-async fn run(input: &Value) -> RiverbaseResult<Value> {
+/// Fixtures whose envelope differs from Python's with spotlighting on, and why.
+const SPOTLIGHT_DIFFERENCES: &[(&str, &str)] = &[
+    (
+        "budget_split.json",
+        "knowledge chunks are tagged; tools add the notice",
+    ),
+    (
+        "facts_resources_sensitivity.json",
+        "untrusted summary, knowledge, memory, facts and resources are tagged",
+    ),
+    (
+        "full_window.json",
+        "knowledge chunks are tagged; tools add the notice",
+    ),
+    (
+        "knowledge_tool_mode_memory_off.json",
+        "tools add the notice (their results come back tagged)",
+    ),
+];
+
+async fn run(input: &Value, spotlight: Spotlight) -> RiverbaseResult<Value> {
     let agent_input: AgentInput = decode(&input["agent_input"]);
     let model: ModelConfig = decode(&input["model"]);
     let memory_enabled = input.get("memory").and_then(Value::as_bool).unwrap_or(true);
@@ -153,6 +176,7 @@ async fn run(input: &Value) -> RiverbaseResult<Value> {
             spec: input.get("spec").map(decode),
             tool_names: input.get("tool_names").map(decode).unwrap_or_default(),
             source_budgets: HashMap::from([("ltm".to_owned(), 5)]),
+            spotlight,
             ..BuildOptions::default()
         },
     );
@@ -187,7 +211,7 @@ async fn run(input: &Value) -> RiverbaseResult<Value> {
 async fn builder_matches_python_fixtures() {
     for (path, fixture) in fixtures() {
         let expected = &fixture["expected"];
-        match run(&fixture["input"]).await {
+        match run(&fixture["input"], Spotlight::Off).await {
             Err(e) => {
                 // Python's ContextOverflowError (BEM-432) is site BEM-480 here.
                 assert_eq!(expected["error"], "BEM-432", "{path}: unexpected error {e}");
@@ -202,6 +226,51 @@ async fn builder_matches_python_fixtures() {
                     assert_eq!(actual[key], expected[key], "{path}: {key}");
                 }
             }
+        }
+    }
+}
+
+/// With spotlighting on, the listed fixtures differ from Python and tag every
+/// selected untrusted item; the rest match exactly.
+#[tokio::test]
+async fn spotlighting_changes_only_the_listed_fixtures() {
+    for (path, fixture) in fixtures() {
+        if fixture["expected"].get("error").is_some() {
+            continue;
+        }
+        let tagged = run(&fixture["input"], Spotlight::Tagged)
+            .await
+            .expect(&path);
+        let plain = run(&fixture["input"], Spotlight::Off).await.expect(&path);
+        let listed = SPOTLIGHT_DIFFERENCES
+            .iter()
+            .any(|(name, _)| path.ends_with(name));
+        assert_eq!(
+            tagged["messages"] != plain["messages"],
+            listed,
+            "{path}: listed {listed}, but the envelope {} Python's",
+            if listed { "matches" } else { "differs from" }
+        );
+        if listed {
+            let texts: Vec<&str> = tagged["messages"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter_map(|m| m["text"].as_str())
+                .collect();
+            assert!(
+                texts.contains(&beam_types::UNTRUSTED_NOTICE),
+                "{path}: no notice"
+            );
+            let tags = texts
+                .iter()
+                .filter(|t| t.starts_with("<untrusted source="))
+                .count();
+            let selected = tagged["selected_untrusted"].as_array().unwrap().len();
+            assert!(
+                tags >= selected,
+                "{path}: {tags} tagged, {selected} untrusted"
+            );
         }
     }
 }

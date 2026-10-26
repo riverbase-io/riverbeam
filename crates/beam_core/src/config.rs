@@ -4,11 +4,11 @@
 //!
 //! | Keys | Owner |
 //! |---|---|
-//! | `MEMORY_*`, `KNOWLEDGE_ENABLED`, `SECURITY_*`, `AUDIT_*` | [`BeamConfig`] (this file) |
+//! | `MEMORY_*`, `KNOWLEDGE_ENABLED`, `SECURITY_*`, `BEAM_SECURITY_*`, `AUDIT_*` | [`BeamConfig`] (this file) |
 //! | `EXECUTION_TIMEOUT_SECONDS`, `LEASE_*`, `BEAM_WORKER_ID` | `beam_execution::ExecutionConfig` |
 //! | `BEAM_STREAM_*` | `beam_stream::StreamConfig` |
 //! | `KNOWLEDGE_*` (the store), `BEAM_API_*`, `KNOWLEDGE_EMBED_*` | `beam_knowledge::KnowledgeBuildRequest`, `EmbedBatching` |
-//! | `BEAM_WORKER_CONCURRENCY`, `BEAM_QUEUE_*`, `BEAM_TASK_*`, `BEAM_REVISION_RELOAD_SECS`, `HOSTNAME` | `beam_worker::QueueConfig` |
+//! | `BEAM_WORKER_CONCURRENCY`, `BEAM_WORKER_BATCH_CONCURRENCY`, `BEAM_QUEUE_*`, `BEAM_TASK_*`, `BEAM_REVISION_RELOAD_SECS`, `HOSTNAME` | `beam_worker::QueueConfig` |
 //! | `BEAM_RTC_STREAM` | `beam_worker::rtc_stream_enabled` |
 //! | `BEAM_MCP_REQUIRE_ALLOWLIST`, `MCP_TOKEN_HEADER` | `beam_tools::McpSettings` |
 //! | `MCP_SECRET_KEY`, `MCP_TOKEN_*` | `beam_tools::McpTokenMinter` |
@@ -36,6 +36,17 @@ pub struct BeamConfig {
     /// `SECURITY_ENFORCE` (default true): when off, verdicts are evaluated
     /// and recorded but never block.
     pub security_enforce: bool,
+    /// `BEAM_SECURITY_STREAM_HOLDBACK` (default 256): the characters of
+    /// streamed model text held back until scanned (plan 030 D2). 0 turns the
+    /// stream guard off. Below 64 (`beam_security::detect::ECHO_SPAN`) it
+    /// cannot catch an echo of the instructions, and a secret longer than
+    /// this can be partly released before it matches.
+    pub security_stream_holdback: usize,
+    /// `BEAM_SECURITY_SPOTLIGHT` (default on): untrusted context items and
+    /// tool results reach the model inside `untrusted` tags, with a system
+    /// line saying they are data (plan 030). Off for a model that handles the
+    /// tags badly.
+    pub security_spotlight: bool,
     pub usage_enabled: bool,
     /// `AUDIT_ENABLED` (default true).
     pub audit_enabled: bool,
@@ -74,6 +85,8 @@ impl Default for BeamConfig {
             default_model: None,
             security_enabled: true,
             security_enforce: true,
+            security_stream_holdback: 256,
+            security_spotlight: true,
             usage_enabled: true,
             audit_enabled: true,
             audit_sinks: vec!["stdout".into()],
@@ -123,6 +136,9 @@ impl BeamConfig {
             knowledge_enabled: beam_env::flag("KNOWLEDGE_ENABLED", d.knowledge_enabled),
             security_enabled: beam_env::flag("SECURITY_ENABLED", d.security_enabled),
             security_enforce: beam_env::flag("SECURITY_ENFORCE", d.security_enforce),
+            security_stream_holdback: beam_env::number("BEAM_SECURITY_STREAM_HOLDBACK")
+                .unwrap_or(d.security_stream_holdback),
+            security_spotlight: beam_env::flag("BEAM_SECURITY_SPOTLIGHT", d.security_spotlight),
             audit_enabled: beam_env::flag("AUDIT_ENABLED", d.audit_enabled),
             audit_sinks: beam_env::list("AUDIT_SINKS").unwrap_or(d.audit_sinks),
             audit_file_path: beam_env::string("AUDIT_FILE_PATH").unwrap_or(d.audit_file_path),

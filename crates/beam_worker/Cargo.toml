@@ -10,6 +10,7 @@ authors = { workspace = true }
 beam_env = { workspace = true }
 async-trait = { workspace = true }
 beam_core = { workspace = true }
+beam_execution = { workspace = true }
 beam_store = { workspace = true }
 beam_stream = { workspace = true }
 beam_telemetry = { workspace = true }
@@ -23,8 +24,6 @@ tracing = { workspace = true }
 uuid = { workspace = true }
 
 [dev-dependencies]
-# Tests build beams with security on (the default config).
-beam_core = { workspace = true, features = ["security-rules"] }
 beam_store = { workspace = true, features = ["testing"] }
 diesel = { workspace = true }
 diesel-async = { workspace = true }

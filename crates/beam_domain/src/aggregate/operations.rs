@@ -5,7 +5,7 @@
 //! `beam-admin`, except `delete-my-agent-data` (a `beam-user`, on their own
 //! data; rc8, plan 023 D9).
 
-use beam_store::tasks::NewTask;
+use beam_store::tasks::{NewTask, WorkerTask};
 use riverbase_core::RiverbaseResult;
 use serde_json::{json, Value};
 
@@ -26,8 +26,8 @@ impl BeamAggregate {
     pub async fn reconcile_now(&mut self) -> RiverbaseResult<Value> {
         let caller = self.caller();
         let task_id = self
-            .enqueue(NewTask::new(
-                "reconcile_now",
+            .enqueue(NewTask::of(
+                WorkerTask::ReconcileNow,
                 json!({ "org_id": caller.org_id }),
             ))
             .await?;
@@ -44,8 +44,8 @@ impl BeamAggregate {
         let task = NewTask {
             retryable: false,
             max_attempts: 1,
-            ..NewTask::new(
-                "retry_dead_letter",
+            ..NewTask::of(
+                WorkerTask::RetryDeadLetter,
                 json!({ "letter_id": p.letter_id, "org_id": caller.org_id }),
             )
         };
@@ -63,8 +63,8 @@ impl BeamAggregate {
     ) -> RiverbaseResult<Value> {
         let caller = self.caller();
         let task_id = self
-            .enqueue(NewTask::new(
-                "discard_dead_letter",
+            .enqueue(NewTask::of(
+                WorkerTask::DiscardDeadLetter,
                 json!({ "letter_id": p.letter_id, "org_id": caller.org_id }),
             ))
             .await?;
@@ -115,8 +115,8 @@ impl BeamAggregate {
         let purged = self.db().purge_user_tasks(&user).await.map_err(sql)?;
         let org = self.caller().org_id;
         let task_id = self
-            .enqueue(NewTask::new(
-                "delete_user_agent_data",
+            .enqueue(NewTask::of(
+                WorkerTask::DeleteUserAgentData,
                 json!({ "user_id": user, "org_id": org }),
             ))
             .await?;

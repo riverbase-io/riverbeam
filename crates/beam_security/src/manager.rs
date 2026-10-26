@@ -1,6 +1,9 @@
+use std::sync::Arc;
+
 use async_trait::async_trait;
 
 use crate::decision::SecurityDecision;
+use crate::detect::Detector;
 use crate::enums::SecurityStage;
 use crate::policy::SecurityPolicy;
 use crate::request::SecurityRequest;
@@ -12,10 +15,8 @@ pub const PASSTHROUGH_STAGES: &[SecurityStage] = &[];
 /// Executor-facing security façade (ports `SecurityManager` /
 /// `DisabledSecurityManager`).
 ///
-/// `check` is async: the rule manager (feature `rules`) dispatches the GRL
-/// evaluation to the dedicated worker thread its engine owns. Store
-/// persistence and audit fan-out from the Python manager remain host-bound
-/// (`agent_security_*` tables).
+/// `check` is async: a manager may store each decision. Audit fan-out stays
+/// with the caller.
 #[async_trait]
 pub trait SecurityManagement: Send + Sync {
     async fn check(&self, request: &SecurityRequest) -> SecurityDecision;
@@ -28,6 +29,13 @@ pub trait SecurityManagement: Send + Sync {
     /// The policy's step limit (Python `policy.max_steps`, default 50).
     fn max_steps(&self) -> u64 {
         SecurityPolicy::default().max_steps
+    }
+
+    /// The detectors that scan model output: the stream guard runs them as
+    /// text streams, and a `Mask` verdict masks what they flag. None by
+    /// default.
+    fn output_detectors(&self) -> Vec<Arc<dyn Detector>> {
+        Vec::new()
     }
 }
 
@@ -63,5 +71,6 @@ mod tests {
             .await;
         assert_eq!(d.action, SecurityAction::Allow);
         assert_eq!(DisabledSecurityManager.max_steps(), 50);
+        assert!(DisabledSecurityManager.output_detectors().is_empty());
     }
 }

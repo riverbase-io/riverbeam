@@ -30,5 +30,7 @@ pub use knowledge::{knowledge_search_tool, KNOWLEDGE_SEARCH};
 pub use mcp::{McpBridge, McpClient, McpToolDefinition};
 pub use output::{bound_tool_output, MAX_RESULT_CHARS};
 pub use registry::{McpSettings, ToolRegistry};
-pub use runtime::{ExecuteContext, ToolPolicyStores, ToolRuntime, ToolRuntimeResult};
+pub use runtime::{
+    ExecuteContext, ToolPolicyStores, ToolRuntime, ToolRuntimeResult, OUTPUT_WITHHELD,
+};
 pub use service::ToolService;

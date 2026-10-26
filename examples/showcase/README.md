@@ -94,10 +94,10 @@ Open http://127.0.0.1:8097/showcase, pick a showcase in the header, then a perso
 
 The first bind of an agent records its active revision in the database. When you later change an agent's tools or instructions, the next start records the change as a draft revision, and the active one keeps running: activate the draft (the loan desk admin's Revisions tab, or `activate-revision`), or start over with a fresh database (`DROP DATABASE showcase`, then step 3 again).
 
-Security: the checks run on `river_reed` (feature `rules`, on by default). `SECURITY_ENABLED=0` turns them off and `SECURITY_ENFORCE=0` makes them advisory; `--no-default-features` leaves `river_reed` out, and that build starts only with `SECURITY_ENABLED=0`:
+Security: `SECURITY_ENABLED=0` turns the checks off and `SECURITY_ENFORCE=0` makes them advisory (checked and recorded, never blocking):
 
 ```bash
-(cd examples/showcase && SECURITY_ENABLED=0 BEAM_EMBEDDED_WORKER=1 cargo run -p showcase --no-default-features --features audio --bin showcase-server)
+(cd examples/showcase && SECURITY_ENFORCE=0 BEAM_EMBEDDED_WORKER=1 cargo run -p showcase --features audio --bin showcase-server)
 ```
 
 NVIDIA retires models; when one answers 410, pick a live id from `https://integrate.api.nvidia.com/v1/models` and change `models.yaml`.

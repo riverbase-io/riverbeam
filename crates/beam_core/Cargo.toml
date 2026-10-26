@@ -6,12 +6,6 @@ edition = { workspace = true }
 license = { workspace = true }
 authors = { workspace = true }
 
-[features]
-default = ["security-rules"]
-# The enforcing security manager (beam_security's `rules`, on `river_reed`).
-# Without it a beam starts only with SECURITY_ENABLED off (`BEM-148`).
-security-rules = ["beam_security/rules"]
-
 [dependencies]
 beam_env = { workspace = true }
 async-trait = { workspace = true }

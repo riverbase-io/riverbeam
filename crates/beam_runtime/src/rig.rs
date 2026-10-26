@@ -344,6 +344,7 @@ impl Driver {
 
     /// Answer every pending call: preresolved results as given, held calls by
     /// the human's decision, the rest by running the tool.
+    #[allow(clippy::too_many_lines)] // One call's steps, in order.
     async fn run_tools(
         &mut self,
         emitter: &mut Emitter,
@@ -411,17 +412,23 @@ impl Driver {
                 _ => self.ctx.tool_runtime.execute(invocation).await,
             };
             let latency = clock.elapsed().as_secs_f64() * 1000.0;
+            // The model reads the result as data (LLM01), in `untrusted` tags
+            // unless spotlighting is off; events keep the tool's own text.
+            let tagged = |text: &str| {
+                vec![ToolResultContent::text(
+                    self.ctx.spotlight.wrap(&format!("tool:{name}"), text),
+                )]
+            };
             let (kind, text, result) = match outcome {
                 Ok(out) => (
                     RuntimeEventType::ToolCompleted,
                     out.clone(),
-                    call.tool_call.result(vec![ToolResultContent::text(out)]),
+                    call.tool_call.result(tagged(&out)),
                 ),
                 Err(e) => (
                     RuntimeEventType::ToolFailed,
                     e.errmesg.clone(),
-                    call.tool_call
-                        .error_result(vec![ToolResultContent::text(e.errmesg)]),
+                    call.tool_call.error_result(tagged(&e.errmesg)),
                 ),
             };
             let mut finished = emitter.event(kind);

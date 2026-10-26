@@ -1123,3 +1123,36 @@ async fn a_response_of_another_kind_does_not_answer_a_held_call() {
         "interrupted"
     );
 }
+
+/// Plan 030 (LLM01): a tool's result reaches the model inside `untrusted`
+/// tags; the run's record keeps it as the tool gave it. Spotlighting off
+/// sends it as it came.
+#[tokio::test]
+async fn tool_results_reach_the_model_tagged_as_untrusted() {
+    for spotlight in [beam_types::Spotlight::Tagged, beam_types::Spotlight::Off] {
+        let model = ScriptedModel::new([
+            ScriptedTurn::tool_call("c1", "lookup", json!({})),
+            ScriptedTurn::text("done"),
+        ]);
+        let tools = tools();
+        let runtime = RigRuntime::new(def(), Arc::new(InMemoryRuntimeStateStore::new()));
+        let ctx = RuntimeContext {
+            spotlight,
+            ..context(&model, &tools)
+        };
+        let (_, result) =
+            collect_events(runtime.start(start_request(Uuid::new_v4(), input("hi")), ctx))
+                .await
+                .unwrap();
+        assert_eq!(result.tool_calls[0].result.as_deref(), Some("found"));
+        let second = &model.seen()[1];
+        let prompt = format!("{:?} {:?}", second.prompt, second.prepared.chat_history);
+        let tagged = prompt.contains("tool:lookup") && prompt.contains("found</untrusted>");
+        assert_eq!(
+            tagged,
+            spotlight == beam_types::Spotlight::Tagged,
+            "{prompt}"
+        );
+        assert!(prompt.contains("found"), "{prompt}");
+    }
+}

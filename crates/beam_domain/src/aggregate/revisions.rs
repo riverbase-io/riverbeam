@@ -4,7 +4,7 @@
 //! Each queues a worker task: revisions live in every worker's revision
 //! book, which a worker reloads after one changes.
 
-use beam_store::tasks::NewTask;
+use beam_store::tasks::{NewTask, WorkerTask};
 use riverbase_core::RiverbaseResult;
 use serde_json::{json, Value};
 
@@ -29,8 +29,8 @@ impl BeamAggregate {
         self.db().writable_execution(&execution, &caller).await?;
         let task = NewTask {
             execution_id: Some(p.execution_id),
-            ..NewTask::new(
-                "submit_agent_feedback",
+            ..NewTask::of(
+                WorkerTask::SubmitAgentFeedback,
                 json!({
                     "execution_id": execution,
                     "thumb": p.thumb,
@@ -54,8 +54,8 @@ impl BeamAggregate {
         let task = NewTask {
             retryable: false,
             max_attempts: 1,
-            ..NewTask::new(
-                "run_evaluation",
+            ..NewTask::of(
+                WorkerTask::RunEvaluation,
                 json!({ "dataset_id": p.dataset_id, "agent_revision_id": p.agent_revision_id, "org_id": caller.org_id }),
             )
         };
@@ -73,8 +73,8 @@ impl BeamAggregate {
         p: MarkRevisionValidatingPayload,
     ) -> RiverbaseResult<Value> {
         let caller = self.caller();
-        let task = NewTask::new(
-            "mark_revision_validating",
+        let task = NewTask::of(
+            WorkerTask::MarkRevisionValidating,
             json!({ "revision_id": p.revision_id, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;
@@ -90,8 +90,8 @@ impl BeamAggregate {
         p: ActivateRevisionPayload,
     ) -> RiverbaseResult<Value> {
         let caller = self.caller();
-        let task = NewTask::new(
-            "activate_revision",
+        let task = NewTask::of(
+            WorkerTask::ActivateRevision,
             json!({ "revision_id": p.revision_id, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;
@@ -104,8 +104,8 @@ impl BeamAggregate {
     /// Store errors.
     pub async fn retire_revision(&mut self, p: RetireRevisionPayload) -> RiverbaseResult<Value> {
         let caller = self.caller();
-        let task = NewTask::new(
-            "retire_revision",
+        let task = NewTask::of(
+            WorkerTask::RetireRevision,
             json!({ "revision_id": p.revision_id, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;

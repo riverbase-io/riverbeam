@@ -79,6 +79,7 @@ impl RiverBeam {
             available_tools: ctx.map(|c| c.available_tools.clone()).unwrap_or_default(),
             restrict_tools: self.tool_source.restricts(),
             lease,
+            spotlight: beam_types::Spotlight::from_flag(self.config.security_spotlight),
             ..RuntimeContext::default()
         }
     }
@@ -161,6 +162,7 @@ impl RiverBeam {
                 context,
             )
         };
+        let mut guard = self.output_guard(input, ctx);
         let mut seen = Vec::new();
         // A step is reported when it starts and when it ends: count its id.
         let mut steps = std::collections::HashSet::new();
@@ -185,7 +187,12 @@ impl RiverBeam {
                 _ => {}
             }
             if let Some(chunk) = runtime_event_to_stream_chunk(&event) {
-                self.emit_frame(input, chunk, pending_done).await?;
+                for frame in self
+                    .guard_frames(input, guard.as_mut(), Some(chunk))
+                    .await?
+                {
+                    self.emit_frame(input, frame, pending_done).await?;
+                }
             }
             if let Some(step) = &event.step {
                 steps.insert(step.lc_step_id.clone());
@@ -197,6 +204,9 @@ impl RiverBeam {
                 break;
             }
         }
+        for frame in self.guard_frames(input, guard.as_mut(), None).await? {
+            self.emit_frame(input, frame, pending_done).await?;
+        }
         self.flush_stream(input).await?;
         let mut result = beam_runtime::terminal_result(&seen)?;
         let metered = meter.lock().map(|m| m.clone()).unwrap_or_default();
@@ -205,6 +215,46 @@ impl RiverBeam {
             result,
             steps: steps.len(),
         })
+    }
+
+    /// The run's stream guard (plan 030 D2): on when the invoke streams,
+    /// security enforces and `BEAM_SECURITY_STREAM_HOLDBACK` is not 0. It runs
+    /// the output detectors and the prompt-echo check on the agent's
+    /// instructions.
+    fn output_guard(&self, input: &AgentInput, ctx: &AgentContext) -> Option<ops::OutputGuard> {
+        let holdback = self.config.security_stream_holdback;
+        if !input.stream || holdback == 0 || !self.security.enforce() {
+            return None;
+        }
+        let mut detectors = self.security.output_detectors();
+        let echo =
+            beam_security::PromptEcho::new(&super::instructions_of(&ctx.conversation_history));
+        if !echo.is_empty() {
+            detectors.push(Arc::new(echo));
+        }
+        (!detectors.is_empty()).then(|| ops::OutputGuard::new(detectors, holdback))
+    }
+
+    /// The frames to send for `chunk` through the stream guard, or the held
+    /// text when `chunk` is `None` (the run's events ended). A blocked stream
+    /// is audited before its error ends the run.
+    async fn guard_frames(
+        &self,
+        input: &AgentInput,
+        guard: Option<&mut ops::OutputGuard>,
+        chunk: Option<beam_types::StreamChunk>,
+    ) -> RiverbaseResult<Vec<beam_types::StreamChunk>> {
+        let Some(guard) = guard else {
+            return Ok(chunk.into_iter().collect());
+        };
+        let frames = match chunk {
+            Some(chunk) => guard.admit(chunk),
+            None => guard.finish(),
+        };
+        if frames.is_err() {
+            self.audit_stream_block(input, guard.blocked()).await;
+        }
+        frames
     }
 
     /// The attempt's fitter (plan 023 A2 and B): the invoke's window, output

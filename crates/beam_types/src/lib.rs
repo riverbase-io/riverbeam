@@ -11,6 +11,7 @@ mod output;
 pub mod pyjson;
 mod result;
 pub mod spec;
+pub mod spotlight;
 mod step;
 mod stream;
 mod time;
@@ -28,6 +29,7 @@ pub use model::{CredentialRef, ModelConfig, ModelProvider};
 pub use output::{AgentOutputContract, Artifact};
 pub use result::{AgentResult, TokenUsage, ToolCallRecord};
 pub use spec::{AgentSpec, CompatibilityPolicy, RevisionStatus};
+pub use spotlight::{wrap_untrusted, Spotlight, UNTRUSTED_NOTICE};
 pub use step::{AgentAction, AgentStep};
 pub use stream::{StreamChunk, StreamChunkType};
 

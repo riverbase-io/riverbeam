@@ -2,11 +2,13 @@
 //!
 //! A domain command inserts a row with [`enqueue`] on its own transaction and
 //! emits a [`TASK_TOPIC`] hint. A worker claims the row with [`claim_by_id`]
-//! (the hint) or [`claim_next`] (its polling tick): one compare-and-swap
+//! (the hint) or [`claim_next_of`] (its polling tick): one compare-and-swap
 //! statement with `FOR UPDATE SKIP LOCKED`, so a row runs on one worker at a
-//! time. The worker renews its lease while it runs and records the outcome
-//! with [`complete`] or [`fail`]; both check that it still owns the lease.
-//! [`sweep_expired`] requeues a row whose worker died.
+//! time. Both claim only the task names they are given (a [`Lane`]'s), so a
+//! task this version does not know stays queued for a worker that does. The
+//! worker renews its lease while it runs and records the outcome with
+//! [`complete`] or [`fail`]; both check that it still owns the lease.
+//! [`sweep_expired`] requeues a row whose worker died, or fails it.
 //!
 //! Every function takes the connection to run on, so a command can enqueue
 //! inside its transaction and a worker can use any pooled connection. They
@@ -35,7 +37,125 @@ pub const TASK_TOPIC: &str = "beam.queue.task";
 pub const REVISION_TOPIC: &str = "beam.revision.changed";
 
 /// The task that runs an agent (`invoke`, `stream`, `resume`).
-pub const INVOKE_TASK: &str = "invoke_agent";
+pub const INVOKE_TASK: &str = WorkerTask::InvokeAgent.as_str();
+
+/// Declares [`WorkerTask`] from one list of variants and stored names, so
+/// every variant has a name and is in [`WorkerTask::ALL`], which `parse`
+/// and the lanes read: no task can exist that a worker never claims.
+macro_rules! worker_tasks {
+    ($($(#[$doc:meta])* $variant:ident => $name:literal,)+) => {
+        /// Every task a worker runs, by its stored name. Commands queue them
+        /// with [`NewTask::of`]; a worker claims only these names.
+        #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+        pub enum WorkerTask {
+            $($(#[$doc])* $variant,)+
+        }
+
+        impl WorkerTask {
+            /// Every task.
+            pub const ALL: &'static [Self] = &[$(Self::$variant),+];
+
+            /// The stored task name.
+            #[must_use]
+            pub const fn as_str(self) -> &'static str {
+                match self {
+                    $(Self::$variant => $name,)+
+                }
+            }
+        }
+    };
+}
+
+worker_tasks! {
+    InvokeAgent => "invoke_agent",
+    IngestKnowledgeDocument => "ingest_knowledge_document",
+    DeleteKnowledgeDocument => "delete_knowledge_document",
+    RememberMemory => "remember_memory",
+    EditMemory => "edit_memory",
+    ExpireMemory => "expire_memory",
+    ForgetMemory => "forget_memory",
+    CancelExecution => "cancel_execution",
+    RetryExecution => "retry_execution",
+    /// Publishes the terminal frame of a run that ended without its
+    /// pipeline (a queued run cancelled before it ran).
+    EndRun => "end_run",
+    // Operations.
+    ReconcileNow => "reconcile_now",
+    ListDeadLetters => "list_dead_letters",
+    RetryDeadLetter => "retry_dead_letter",
+    DiscardDeadLetter => "discard_dead_letter",
+    DeleteUserAgentData => "delete_user_agent_data",
+    // Revisions and evals.
+    MarkRevisionValidating => "mark_revision_validating",
+    ActivateRevision => "activate_revision",
+    RetireRevision => "retire_revision",
+    ListRevisions => "list_revisions",
+    SubmitAgentFeedback => "submit_agent_feedback",
+    RunEvaluation => "run_evaluation",
+}
+
+impl WorkerTask {
+    /// The task stored as `raw`, if this version runs it.
+    #[must_use]
+    pub fn parse(raw: &str) -> Option<Self> {
+        Self::ALL.iter().copied().find(|task| task.as_str() == raw)
+    }
+
+    /// The lane whose permits run it.
+    #[must_use]
+    pub const fn lane(self) -> Lane {
+        match self {
+            Self::CancelExecution | Self::EndRun => Lane::Control,
+            Self::InvokeAgent | Self::RetryExecution => Lane::Interactive,
+            Self::IngestKnowledgeDocument
+            | Self::DeleteKnowledgeDocument
+            | Self::RememberMemory
+            | Self::EditMemory
+            | Self::ExpireMemory
+            | Self::ForgetMemory
+            | Self::ReconcileNow
+            | Self::ListDeadLetters
+            | Self::RetryDeadLetter
+            | Self::DiscardDeadLetter
+            | Self::DeleteUserAgentData
+            | Self::MarkRevisionValidating
+            | Self::ActivateRevision
+            | Self::RetireRevision
+            | Self::ListRevisions
+            | Self::SubmitAgentFeedback
+            | Self::RunEvaluation => Lane::Batch,
+        }
+    }
+}
+
+/// A group of tasks with permits of its own, so one kind of work never
+/// waits behind another: control tasks act on the runs they would wait
+/// behind, and a burst of batch work must not hold up user runs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Lane {
+    /// Cancels and run endings.
+    Control,
+    /// Agent runs a user waits for.
+    Interactive,
+    /// Memory, knowledge, operations, revisions, feedback and evaluations.
+    Batch,
+}
+
+impl Lane {
+    /// Every lane, in the order a worker's tick claims from them.
+    pub const ALL: [Self; 3] = [Self::Control, Self::Interactive, Self::Batch];
+
+    /// The names of the tasks in this lane.
+    #[must_use]
+    pub fn names(self) -> Vec<&'static str> {
+        WorkerTask::ALL
+            .iter()
+            .copied()
+            .filter(|task| task.lane() == self)
+            .map(WorkerTask::as_str)
+            .collect()
+    }
+}
 
 /// A task row's state.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -77,7 +197,7 @@ impl TaskStatus {
 #[derive(Debug, Clone)]
 pub struct NewTask {
     pub id: Uuid,
-    /// The worker task name ([`INVOKE_TASK`], `remember_memory`, …).
+    /// The worker task name (a [`WorkerTask`]'s).
     pub task: String,
     pub payload: Value,
     /// Whether a task whose worker died may run again.
@@ -91,7 +211,14 @@ pub struct NewTask {
 }
 
 impl NewTask {
-    /// A retryable task with three attempts and no owner.
+    /// Task `task` of the catalog, retryable with three attempts and no owner.
+    #[must_use]
+    pub fn of(task: WorkerTask, payload: Value) -> Self {
+        Self::new(task.as_str(), payload)
+    }
+
+    /// A retryable task with three attempts and no owner, by any name: for
+    /// tests and for rows of other versions. Commands use [`Self::of`].
     #[must_use]
     pub fn new(task: impl Into<String>, payload: Value) -> Self {
         Self {
@@ -206,14 +333,16 @@ pub(crate) async fn get(
         .map_err(db)
 }
 
-/// The claim statement: move one due `QUEUED` row (`only` when given) to
-/// `RUNNING` under `owner`'s lease. The inner `SKIP LOCKED` select and the
-/// outer update are one statement, so two workers never claim the same row.
+/// The claim statement: move one due `QUEUED` row named in `$3` (row `$4`
+/// when `only`) to `RUNNING` under `owner`'s lease. The inner `SKIP LOCKED`
+/// select and the outer update are one statement, so two workers never
+/// claim the same row.
 fn claim_sql(schema: &SchemaName, only: bool) -> String {
-    claim_sql_where(schema, if only { " AND q._id = $3" } else { "" })
-}
-
-fn claim_sql_where(schema: &SchemaName, only: &str) -> String {
+    let only = if only {
+        " AND q.task = ANY($3) AND q._id = $4"
+    } else {
+        " AND q.task = ANY($3)"
+    };
     format!(
         "UPDATE {schema}.agent_task t SET status = 'RUNNING', attempt_count = t.attempt_count + 1, \
          lease_owner = $1, lease_expires_at = now() + make_interval(secs => $2), \
@@ -226,7 +355,12 @@ fn claim_sql_where(schema: &SchemaName, only: &str) -> String {
     )
 }
 
-/// Claim task `id` for `owner` if it is still queued and due.
+fn owned(names: &[&str]) -> Vec<String> {
+    names.iter().map(|n| (*n).to_owned()).collect()
+}
+
+/// Claim task `id` for `owner` if it is still queued, due, and named in
+/// `names`.
 ///
 /// # Errors
 /// `BEM-507` when the update fails.
@@ -236,10 +370,12 @@ pub(crate) async fn claim_by_id(
     id: Uuid,
     owner: &str,
     lease: Duration,
+    names: &[&str],
 ) -> StoreResult<Option<TaskRow>> {
     let rows: Vec<TaskRow> = sql_query(claim_sql(schema, true))
         .bind::<Text, _>(owner)
         .bind::<Double, _>(secs(lease))
+        .bind::<Array<Text>, _>(owned(names))
         .bind::<SqlUuid, _>(id)
         .load(conn)
         .await
@@ -247,27 +383,7 @@ pub(crate) async fn claim_by_id(
     Ok(rows.into_iter().next())
 }
 
-/// Claim the oldest due task for `owner`.
-///
-/// # Errors
-/// `BEM-507` when the update fails.
-pub(crate) async fn claim_next(
-    conn: &mut AsyncPgConnection,
-    schema: &SchemaName,
-    owner: &str,
-    lease: Duration,
-) -> StoreResult<Option<TaskRow>> {
-    let rows: Vec<TaskRow> = sql_query(claim_sql(schema, false))
-        .bind::<Text, _>(owner)
-        .bind::<Double, _>(secs(lease))
-        .load(conn)
-        .await
-        .map_err(db)?;
-    Ok(rows.into_iter().next())
-}
-
-/// Claim the oldest due task among `names` for `owner` (control tasks such
-/// as `cancel_execution`, which must not wait behind long runs).
+/// Claim the oldest due task among `names` for `owner`.
 ///
 /// # Errors
 /// `BEM-507` when the update fails.
@@ -278,11 +394,10 @@ pub(crate) async fn claim_next_of(
     lease: Duration,
     names: &[&str],
 ) -> StoreResult<Option<TaskRow>> {
-    let names: Vec<String> = names.iter().map(|n| (*n).to_owned()).collect();
-    let rows: Vec<TaskRow> = sql_query(claim_sql_where(schema, " AND q.task = ANY($3)"))
+    let rows: Vec<TaskRow> = sql_query(claim_sql(schema, false))
         .bind::<Text, _>(owner)
         .bind::<Double, _>(secs(lease))
-        .bind::<Array<Text>, _>(names)
+        .bind::<Array<Text>, _>(owned(names))
         .load(conn)
         .await
         .map_err(db)?;
@@ -427,16 +542,26 @@ pub(crate) async fn wait_busy(
     Ok(n == 1)
 }
 
+/// What [`sweep_expired`] did.
+#[derive(Debug, Clone, Default)]
+pub struct Swept {
+    /// Tasks put back to `QUEUED`.
+    pub requeued: Vec<Uuid>,
+    /// Tasks that ended `FAILED`, returned so the worker can tell a failed
+    /// run's clients.
+    pub failed: Vec<TaskRow>,
+}
+
 /// Running tasks whose lease expired (their worker died or hung): a
 /// retryable task with attempts left goes back to `QUEUED`; any other ends
-/// `FAILED` with `{"code": "worker_lost"}`. Returns the requeued ids.
+/// `FAILED` with `{"code": "worker_lost"}`.
 ///
 /// # Errors
 /// `BEM-507` when the update fails.
 pub(crate) async fn sweep_expired(
     conn: &mut AsyncPgConnection,
     schema: &SchemaName,
-) -> StoreResult<Vec<Uuid>> {
+) -> StoreResult<Swept> {
     let requeued: Vec<IdRow> = sql_query(format!(
         "UPDATE {schema}.agent_task SET status = 'QUEUED', next_attempt_at = now(), \
          lease_owner = NULL, lease_expires_at = NULL, error = $1, _updated = now() \
@@ -447,16 +572,20 @@ pub(crate) async fn sweep_expired(
     .load(conn)
     .await
     .map_err(db)?;
-    sql_query(format!(
-        "UPDATE {schema}.agent_task SET status = 'FAILED', error = $1, finished_at = now(), \
+    let failed: Vec<TaskRow> = sql_query(format!(
+        "UPDATE {schema}.agent_task t SET status = 'FAILED', error = $1, finished_at = now(), \
          lease_owner = NULL, lease_expires_at = NULL, _updated = now() \
-         WHERE status = 'RUNNING' AND lease_expires_at < now()"
+         WHERE t.status = 'RUNNING' AND t.lease_expires_at < now() \
+         RETURNING {COLUMNS}"
     ))
     .bind::<Jsonb, _>(json!({"code": "worker_lost"}))
-    .execute(conn)
+    .load(conn)
     .await
     .map_err(db)?;
-    Ok(requeued.into_iter().map(|r| r.id).collect())
+    Ok(Swept {
+        requeued: requeued.into_iter().map(|r| r.id).collect(),
+        failed,
+    })
 }
 
 /// Fail tasks still `QUEUED` after `ttl` (no worker ran them): they end
@@ -576,8 +705,44 @@ mod tests {
         let sql = claim_sql(&SchemaName::default(), true);
         assert!(sql.starts_with("UPDATE riverbeam.agent_task t SET status = 'RUNNING'"));
         assert!(sql.contains("FOR UPDATE SKIP LOCKED LIMIT 1"));
-        assert!(sql.contains("AND q._id = $3"));
-        assert!(!claim_sql(&SchemaName::default(), false).contains("$3"));
+        assert!(sql.contains("AND q._id = $4"));
+        let next = claim_sql(&SchemaName::default(), false);
+        assert!(!next.contains("q._id ="));
+        // Both claim only the names they are given.
+        for sql in [sql, next] {
+            assert!(sql.contains("AND q.task = ANY($3)"), "{sql}");
+        }
+    }
+
+    #[test]
+    fn every_catalog_task_round_trips_by_a_unique_name() {
+        let mut names = std::collections::HashSet::new();
+        for &task in WorkerTask::ALL {
+            assert_eq!(WorkerTask::parse(task.as_str()), Some(task));
+            assert!(names.insert(task.as_str()), "{} twice", task.as_str());
+        }
+        assert_eq!(WorkerTask::parse("nope"), None);
+        assert_eq!(INVOKE_TASK, "invoke_agent");
+    }
+
+    /// Control holds cancels and run endings, interactive the agent runs,
+    /// and batch everything else, memory included (plan 029 D1).
+    #[test]
+    fn lanes_hold_the_decided_tasks() {
+        assert_eq!(Lane::Control.names(), ["cancel_execution", "end_run"]);
+        assert_eq!(
+            Lane::Interactive.names(),
+            ["invoke_agent", "retry_execution"]
+        );
+        let batch = Lane::Batch.names();
+        assert_eq!(batch.len(), WorkerTask::ALL.len() - 4, "{batch:?}");
+        for name in [
+            "remember_memory",
+            "ingest_knowledge_document",
+            "run_evaluation",
+        ] {
+            assert!(batch.contains(&name), "{name} not in {batch:?}");
+        }
     }
 
     #[test]

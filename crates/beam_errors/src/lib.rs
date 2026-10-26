@@ -634,12 +634,6 @@ riverbase_core::declare_errors! {
         code: "BEM-147",
         message: "AUDIT_SINKS names an audit sink that does not exist.",
     },
-    BEM_148 {
-        status: 500,
-        title: "Internal Server Error",
-        code: "BEM-148",
-        message: "The security rules failed to load while security is enabled.",
-    },
     BEM_149 {
         status: 500,
         title: "Internal Server Error",
@@ -1583,5 +1577,11 @@ riverbase_core::declare_errors! {
         title: "Internal Server Error",
         code: "BEM-509",
         message: "The beam store and riverbase's command log must be in the same database.",
+    },
+    BEM_510 {
+        status: 500,
+        title: "Internal Server Error",
+        code: "BEM-510",
+        message: "The worker running the task stopped before it finished, and the task has no attempts left.",
     },
 }

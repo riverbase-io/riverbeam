@@ -31,29 +31,18 @@ pub(super) fn observe_outbox(snapshot: &beam_store::ops::OutboxSnapshot) {
 }
 
 impl RiverBeam {
-    /// The failed invoke as a dead
-    /// letter, its request snapshot redacted (best effort).
+    /// The failed invoke as a dead letter. It holds the ids, not the request:
+    /// a retry reloads the request from the execution, and a copy here would
+    /// keep whatever secrets the request carried (see plan 031 D2).
     pub(in crate::river_beam) async fn dead_letter_failure(
         &self,
         input: &AgentInput,
         err: &RiverbaseError,
     ) {
-        let snapshot = match input.execution_id {
-            Some(id) => self
-                .executions
-                .records()
-                .get(id)
-                .await
-                .ok()
-                .flatten()
-                .and_then(|row| row.metadata.get("invoke_request").cloned()),
-            None => None,
-        };
-        let payload = beam_telemetry::redact_secrets(&json!({
+        let payload = json!({
             "execution_id": input.execution_id.map(|e| e.to_string()),
             "session_id": input.session_id.to_string(),
-            "invoke_request": snapshot,
-        }));
+        });
         let letter = NewDeadLetter {
             task_name: "invoke_agent".into(),
             payload,

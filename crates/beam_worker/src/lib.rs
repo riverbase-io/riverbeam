@@ -11,7 +11,8 @@ mod queue;
 pub mod rtc;
 mod worker;
 
+pub use beam_store::tasks::WorkerTask;
 pub use local_bus::LocalBus;
-pub use queue::{QueueConfig, QueueWorker, CONTROL_TASKS};
+pub use queue::{QueueConfig, QueueWorker};
 pub use rtc::{caller_channel, rtc_stream_enabled, RtcMirrorTransport};
-pub use worker::{BeamWorker, WorkerTask};
+pub use worker::BeamWorker;

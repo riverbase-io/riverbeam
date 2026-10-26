@@ -2,7 +2,7 @@
 //! `expire-memory`. Each checks the caller, then queues a worker task (the
 //! worker embeds and stores).
 
-use beam_store::tasks::NewTask;
+use beam_store::tasks::{NewTask, WorkerTask};
 use riverbase_core::RiverbaseResult;
 use serde_json::{json, Value};
 use uuid::Uuid;
@@ -31,8 +31,8 @@ impl BeamAggregate {
             return Err(beam_core::BEM_071.with_data("user_id must be the caller"));
         }
         let memory_id = Uuid::new_v4().to_string();
-        let task = NewTask::new(
-            "remember_memory",
+        let task = NewTask::of(
+            WorkerTask::RememberMemory,
             json!({
                 "memory_id": memory_id,
                 "user_id": named,
@@ -57,8 +57,8 @@ impl BeamAggregate {
     pub async fn forget_memory(&mut self, p: ForgetMemoryPayload) -> RiverbaseResult<Value> {
         let caller = self.caller();
         self.db().writable_memory(&p.memory_id, &caller).await?;
-        let task = NewTask::new(
-            "forget_memory",
+        let task = NewTask::of(
+            WorkerTask::ForgetMemory,
             json!({ "memory_id": p.memory_id, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;
@@ -72,8 +72,8 @@ impl BeamAggregate {
     pub async fn edit_memory(&mut self, p: EditMemoryPayload) -> RiverbaseResult<Value> {
         let caller = self.caller();
         self.db().writable_memory(&p.memory_id, &caller).await?;
-        let task = NewTask::new(
-            "edit_memory",
+        let task = NewTask::of(
+            WorkerTask::EditMemory,
             json!({ "memory_id": p.memory_id, "content": p.content, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;
@@ -87,8 +87,8 @@ impl BeamAggregate {
     pub async fn expire_memory(&mut self, p: ExpireMemoryPayload) -> RiverbaseResult<Value> {
         let caller = self.caller();
         self.db().writable_memory(&p.memory_id, &caller).await?;
-        let task = NewTask::new(
-            "expire_memory",
+        let task = NewTask::of(
+            WorkerTask::ExpireMemory,
             json!({ "memory_id": p.memory_id, "expires_at": p.expires_at, "org_id": caller.org_id }),
         );
         let task_id = self.enqueue(task).await?;

@@ -7,7 +7,7 @@ use std::time::Instant;
 
 use beam_gateway::TokenCounter;
 use beam_knowledge::Hit;
-use beam_types::{AgentInput, ModelConfig};
+use beam_types::{AgentInput, ModelConfig, Spotlight};
 use chrono::{DateTime, Utc};
 use futures_util::future::join_all;
 use riverbase_core::RiverbaseResult;
@@ -243,6 +243,7 @@ impl ContextBuilder {
             .unwrap_or_default();
         let (envelope, mut manifest) = ContextComposer {
             counter: request.counter,
+            spotlight: request.spotlight,
         }
         .compose(
             &items,
@@ -401,6 +402,8 @@ pub struct BuildOptions {
     pub revision_id: Option<String>,
     pub deadline: Option<DateTime<Utc>>,
     pub cancelled: bool,
+    /// How untrusted text reaches the model (`BEAM_SECURITY_SPOTLIGHT`).
+    pub spotlight: Spotlight,
 }
 
 /// Everything a context build needs for one invoke.
@@ -427,6 +430,7 @@ pub fn assemble_build_request(
         spec: options.spec,
         services,
         counter: TokenCounter,
+        spotlight: options.spotlight,
         tool_names: options.tool_names,
         model: model.clone(),
         agent_input: input.clone(),
